@@ -1,11 +1,11 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
-import QRCode from "qrcode";
+import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { formatBRL, padNumber } from "@/lib/format";
 import { Button } from "@/components/ui/button";
-import { Copy, CheckCircle2, Clock, Loader2 } from "lucide-react";
+import { Copy, CheckCircle2, Clock, Loader2, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
+import { getOrGeneratePix } from "@/lib/api/payment.functions";
 
 export const Route = createFileRoute("/checkout/$orderId")({
   component: CheckoutPage,
@@ -23,14 +23,12 @@ function CheckoutPage() {
   const [campaignName, setCampaignName] = useState<string>("");
   const [buyerName, setBuyerName] = useState<string>("");
   const [numbers, setNumbers] = useState<number[]>([]);
-  const [qrDataUrl, setQrDataUrl] = useState<string>("");
   const [remaining, setRemaining] = useState<number>(0);
+  const [loadingPix, setLoadingPix] = useState(true);
+  const [pixError, setPixError] = useState<string | null>(null);
 
-  // MOCK PIX payload — substitua quando integrar provedor real
-  const pixPayload = useMemo(() => {
-    if (!order) return "";
-    return `00020126360014BR.GOV.BCB.PIX0114REVIVA-${order.id.slice(0,8)}5204000053039865406${order.amount.toFixed(2)}5802BR5917Reviva Brasil6009SAO PAULO62070503***6304ABCD`;
-  }, [order]);
+  const [realPixData, setRealPixData] = useState<{ qr_code: string; qr_code_base64: string } | null>(null);
+
 
   useEffect(() => {
     (async () => {
@@ -60,10 +58,25 @@ function CheckoutPage() {
   }, [orderId, navigate]);
 
   useEffect(() => {
-    if (!pixPayload) return;
-    QRCode.toDataURL(pixPayload, { width: 280, margin: 1, color: { dark: "#1F3D2B", light: "#FFFFFF" } })
-      .then(setQrDataUrl).catch(() => {});
-  }, [pixPayload]);
+    const fetchPix = async () => {
+      try {
+        const result = await getOrGeneratePix({ data: { orderId } });
+        if (result.qr_code && result.qr_code_base64) {
+          setRealPixData({
+            qr_code: result.qr_code,
+            qr_code_base64: result.qr_code_base64
+          });
+        }
+        setLoadingPix(false);
+      } catch (err: any) {
+        console.error("Erro ao obter PIX:", err);
+        setPixError("Não foi possível gerar o código PIX. Tente novamente em instantes.");
+        setLoadingPix(false);
+      }
+    };
+
+    fetchPix();
+  }, [orderId]);
 
   // Countdown
   useEffect(() => {
@@ -81,7 +94,8 @@ function CheckoutPage() {
   const ss = String(remaining % 60).padStart(2, "0");
 
   function copy() {
-    navigator.clipboard.writeText(pixPayload);
+    if (!realPixData?.qr_code) return;
+    navigator.clipboard.writeText(realPixData.qr_code);
     toast.success("Código PIX copiado!");
   }
 
@@ -113,19 +127,36 @@ function CheckoutPage() {
           </div>
 
           <div className="flex flex-col items-center">
-            {qrDataUrl ? (
-              <img src={qrDataUrl} alt="QR Code PIX" className="rounded-2xl border-4 border-secondary p-2" width={280} height={280} />
-            ) : (
-              <div className="h-[280px] w-[280px] animate-pulse rounded-2xl bg-muted" />
-            )}
+            {loadingPix ? (
+               <div className="flex h-[280px] w-[280px] items-center justify-center rounded-2xl bg-muted">
+                 <Loader2 className="h-8 w-8 animate-spin text-primary/30" />
+               </div>
+            ) : pixError ? (
+              <div className="flex h-[280px] w-[280px] flex-col items-center justify-center rounded-2xl bg-destructive/10 p-6 text-center text-destructive">
+                <AlertCircle className="mb-2 h-10 w-10" />
+                <p className="text-xs font-bold uppercase">Erro no Pagamento</p>
+                <p className="mt-1 text-[10px] leading-tight">{pixError}</p>
+                <Button variant="outline" size="sm" className="mt-4 h-8 text-[10px]" onClick={() => window.location.reload()}>Recarregar</Button>
+              </div>
+            ) : realPixData ? (
+              <img 
+                src={`data:image/png;base64,${realPixData.qr_code_base64}`} 
+                alt="QR Code PIX" 
+                className="rounded-2xl border-4 border-secondary p-2" 
+                width={280} 
+                height={280} 
+              />
+            ) : null}
             <p className="mt-3 text-xs text-muted-foreground">Abra o app do seu banco e escaneie o QR Code</p>
           </div>
 
           <div>
             <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Ou copie o código PIX</p>
             <div className="flex gap-2">
-              <code className="flex-1 truncate rounded-xl border border-border bg-secondary px-3 py-2.5 text-xs">{pixPayload}</code>
-              <Button onClick={copy} variant="outline" size="icon" className="shrink-0"><Copy className="h-4 w-4" /></Button>
+              <code className="flex-1 truncate rounded-xl border border-border bg-secondary px-3 py-2.5 text-xs">
+                {loadingPix ? "Gerando código..." : (realPixData?.qr_code || "Indisponível")}
+              </code>
+              <Button onClick={copy} variant="outline" size="icon" className="shrink-0" disabled={!realPixData}><Copy className="h-4 w-4" /></Button>
             </div>
           </div>
 

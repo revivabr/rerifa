@@ -527,6 +527,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      confirm_payment: {
+        Args: { p_external_id?: string; p_order_id: string }
+        Returns: Json
+      }
       expire_pending_orders: { Args: never; Returns: number }
       is_admin: { Args: never; Returns: boolean }
       reserve_numbers:

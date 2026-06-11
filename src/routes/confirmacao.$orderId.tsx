@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { formatBRL, padNumber } from "@/lib/format";
-import { CheckCircle2, Heart } from "lucide-react";
+import { CheckCircle2, Heart, ArrowLeft } from "lucide-react";
 import { getOrderPublic } from "@/lib/api/order.functions";
 
 export const Route = createFileRoute("/confirmacao/$orderId")({
@@ -26,34 +26,42 @@ function ConfirmationPage() {
     })();
   }, [orderId]);
 
+  if (!data) return <div className="flex min-h-[50vh] items-center justify-center">...</div>;
+
   return (
-    <div className="mx-auto max-w-xl px-4 py-12">
-      <div className="rounded-3xl border border-border bg-card p-8 text-center shadow-card">
-        <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-success/15">
-          <CheckCircle2 className="h-12 w-12 text-success" />
+    <div className="mx-auto max-w-xl px-6 py-16">
+      <div className="overflow-hidden rounded-3xl bg-white shadow-premium">
+        <div className="bg-success/5 p-12 text-center">
+            <div className="mx-auto flex h-24 w-24 items-center justify-center rounded-full bg-white shadow-sm border border-success/10">
+                <CheckCircle2 className="h-12 w-12 text-success" />
+            </div>
+            <h1 className="mt-8 text-3xl font-bold text-primary">Participação Confirmada</h1>
+            <p className="mt-3 flex items-center justify-center gap-1.5 text-sm font-medium text-muted-foreground">
+                Sua contribuição transforma vidas <Heart className="h-3.5 w-3.5 fill-success text-success" />
+            </p>
         </div>
-        <h1 className="mt-6 text-3xl font-black text-primary">Participação confirmada!</h1>
-        <p className="mt-2 flex items-center justify-center gap-1.5 text-sm text-muted-foreground">
-          Obrigado por apoiar a <strong className="text-foreground">Associação Reviva Brasil</strong>
-          <Heart className="h-4 w-4 fill-destructive text-destructive" />
-        </p>
 
-        {data && (
-          <div className="mt-8 space-y-3 rounded-2xl bg-secondary p-5 text-left text-sm">
-            <Row label="Campanha" value={data.campaign} />
-            <Row label="Comprador" value={data.buyer} />
-            <Row label="Números confirmados" value={<span className="tabular-nums font-bold text-primary">{data.numbers.map(n => padNumber(n, 1000)).join(", ")}</span>} />
-            <Row label="Valor pago" value={<strong className="text-primary">{formatBRL(data.amount)}</strong>} />
-          </div>
-        )}
+        <div className="p-8 md:p-12 space-y-8">
+            <div className="space-y-4 rounded-2xl border border-black/[0.03] bg-white p-6 text-sm">
+                <Row label="Campanha" value={data.campaign} />
+                <Row label="Comprador" value={data.buyer} />
+                <Row label="Números" value={<span className="font-bold text-primary">{data.numbers.map(n => padNumber(n, 1000)).join(", ")}</span>} />
+                <Row label="Valor" value={<span className="font-bold text-primary">{formatBRL(data.amount)}</span>} />
+            </div>
 
-        <p className="mt-6 text-xs text-muted-foreground">Guarde esta confirmação. Você pode tirar um print desta tela.</p>
+            <p className="text-center text-[11px] font-bold uppercase tracking-[0.15em] text-muted-foreground/50">
+                Guarde esta confirmação · Obrigado pelo apoio
+            </p>
 
-        {data?.slug && (
-          <Link to="/campanha/$slug" params={{ slug: data.slug }} className="mt-6 inline-block rounded-xl bg-primary px-6 py-3 text-sm font-bold text-primary-foreground hover:bg-primary/90">
-            Voltar para campanha
-          </Link>
-        )}
+            <Link 
+                to="/campanha/$slug" 
+                params={{ slug: data.slug }} 
+                className="flex h-14 w-full items-center justify-center gap-3 rounded-2xl bg-primary text-sm font-bold text-white shadow-premium transition-all hover:bg-primary/90 active:scale-95"
+            >
+                <ArrowLeft className="h-4 w-4" />
+                Voltar para Campanha
+            </Link>
+        </div>
       </div>
     </div>
   );
@@ -61,9 +69,9 @@ function ConfirmationPage() {
 
 function Row({ label, value }: { label: string; value: React.ReactNode }) {
   return (
-    <div className="flex flex-wrap justify-between gap-2 border-b border-border/50 pb-2 last:border-0 last:pb-0">
-      <span className="text-muted-foreground">{label}</span>
-      <span className="text-right font-medium">{value}</span>
+    <div className="flex justify-between items-start py-1 border-b border-black/[0.03] last:border-0 last:pb-0">
+      <span className="text-muted-foreground font-medium">{label}</span>
+      <span className="text-right text-primary font-bold max-w-[60%]">{value}</span>
     </div>
   );
 }

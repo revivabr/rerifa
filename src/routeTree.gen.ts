@@ -17,6 +17,7 @@ import { Route as CampanhaSlugRouteImport } from './routes/campanha.$slug'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
 import { Route as AdminDashboardRouteImport } from './routes/admin.dashboard'
 import { Route as AdminCampaignsIndexRouteImport } from './routes/admin.campaigns.index'
+import { Route as ApiWebhooksMercadopagoRouteImport } from './routes/api.webhooks.mercadopago'
 import { Route as AdminDrawIdRouteImport } from './routes/admin.draw.$id'
 import { Route as AdminCampaignsNewRouteImport } from './routes/admin.campaigns.new'
 import { Route as AdminCampaignsIdRouteImport } from './routes/admin.campaigns.$id'
@@ -61,6 +62,11 @@ const AdminCampaignsIndexRoute = AdminCampaignsIndexRouteImport.update({
   path: '/campaigns/',
   getParentRoute: () => AdminRoute,
 } as any)
+const ApiWebhooksMercadopagoRoute = ApiWebhooksMercadopagoRouteImport.update({
+  id: '/api/webhooks/mercadopago',
+  path: '/api/webhooks/mercadopago',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminDrawIdRoute = AdminDrawIdRouteImport.update({
   id: '/draw/$id',
   path: '/draw/$id',
@@ -88,6 +94,7 @@ export interface FileRoutesByFullPath {
   '/admin/campaigns/$id': typeof AdminCampaignsIdRoute
   '/admin/campaigns/new': typeof AdminCampaignsNewRoute
   '/admin/draw/$id': typeof AdminDrawIdRoute
+  '/api/webhooks/mercadopago': typeof ApiWebhooksMercadopagoRoute
   '/admin/campaigns/': typeof AdminCampaignsIndexRoute
 }
 export interface FileRoutesByTo {
@@ -101,6 +108,7 @@ export interface FileRoutesByTo {
   '/admin/campaigns/$id': typeof AdminCampaignsIdRoute
   '/admin/campaigns/new': typeof AdminCampaignsNewRoute
   '/admin/draw/$id': typeof AdminDrawIdRoute
+  '/api/webhooks/mercadopago': typeof ApiWebhooksMercadopagoRoute
   '/admin/campaigns': typeof AdminCampaignsIndexRoute
 }
 export interface FileRoutesById {
@@ -115,6 +123,7 @@ export interface FileRoutesById {
   '/admin/campaigns/$id': typeof AdminCampaignsIdRoute
   '/admin/campaigns/new': typeof AdminCampaignsNewRoute
   '/admin/draw/$id': typeof AdminDrawIdRoute
+  '/api/webhooks/mercadopago': typeof ApiWebhooksMercadopagoRoute
   '/admin/campaigns/': typeof AdminCampaignsIndexRoute
 }
 export interface FileRouteTypes {
@@ -130,6 +139,7 @@ export interface FileRouteTypes {
     | '/admin/campaigns/$id'
     | '/admin/campaigns/new'
     | '/admin/draw/$id'
+    | '/api/webhooks/mercadopago'
     | '/admin/campaigns/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -143,6 +153,7 @@ export interface FileRouteTypes {
     | '/admin/campaigns/$id'
     | '/admin/campaigns/new'
     | '/admin/draw/$id'
+    | '/api/webhooks/mercadopago'
     | '/admin/campaigns'
   id:
     | '__root__'
@@ -156,6 +167,7 @@ export interface FileRouteTypes {
     | '/admin/campaigns/$id'
     | '/admin/campaigns/new'
     | '/admin/draw/$id'
+    | '/api/webhooks/mercadopago'
     | '/admin/campaigns/'
   fileRoutesById: FileRoutesById
 }
@@ -165,6 +177,7 @@ export interface RootRouteChildren {
   CampanhaSlugRoute: typeof CampanhaSlugRoute
   CheckoutOrderIdRoute: typeof CheckoutOrderIdRoute
   ConfirmacaoOrderIdRoute: typeof ConfirmacaoOrderIdRoute
+  ApiWebhooksMercadopagoRoute: typeof ApiWebhooksMercadopagoRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -225,6 +238,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminCampaignsIndexRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/api/webhooks/mercadopago': {
+      id: '/api/webhooks/mercadopago'
+      path: '/api/webhooks/mercadopago'
+      fullPath: '/api/webhooks/mercadopago'
+      preLoaderRoute: typeof ApiWebhooksMercadopagoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/draw/$id': {
       id: '/admin/draw/$id'
       path: '/draw/$id'
@@ -275,6 +295,7 @@ const rootRouteChildren: RootRouteChildren = {
   CampanhaSlugRoute: CampanhaSlugRoute,
   CheckoutOrderIdRoute: CheckoutOrderIdRoute,
   ConfirmacaoOrderIdRoute: ConfirmacaoOrderIdRoute,
+  ApiWebhooksMercadopagoRoute: ApiWebhooksMercadopagoRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

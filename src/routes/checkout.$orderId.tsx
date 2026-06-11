@@ -29,9 +29,7 @@ function CheckoutPage() {
   const [remaining, setRemaining] = useState<number>(0);
   const [loadingPix, setLoadingPix] = useState(true);
   const [pixError, setPixError] = useState<string | null>(null);
-
   const [realPixData, setRealPixData] = useState<{ qr_code: string; qr_code_base64: string } | null>(null);
-
 
   useEffect(() => {
     let cancelled = false;
@@ -54,7 +52,6 @@ function CheckoutPage() {
       }
     };
     fetchOrder();
-    // Polling no lugar de realtime (RLS restringe leitura direta)
     const poll = setInterval(fetchOrder, 4000);
     return () => { cancelled = true; clearInterval(poll); };
   }, [orderId, navigate]);
@@ -64,23 +61,17 @@ function CheckoutPage() {
       try {
         const result = await getOrGeneratePix({ data: { orderId } });
         if (result.qr_code && result.qr_code_base64) {
-          setRealPixData({
-            qr_code: result.qr_code,
-            qr_code_base64: result.qr_code_base64
-          });
+          setRealPixData({ qr_code: result.qr_code, qr_code_base64: result.qr_code_base64 });
         }
         setLoadingPix(false);
       } catch (err: any) {
-        console.error("Erro ao obter PIX:", err);
-        setPixError("Não foi possível gerar o código PIX. Tente novamente em instantes.");
+        setPixError("Erro ao gerar PIX. Tente novamente.");
         setLoadingPix(false);
       }
     };
-
     fetchPix();
   }, [orderId]);
 
-  // Countdown
   useEffect(() => {
     if (!order?.expires_at) return;
     const tick = () => {
@@ -101,25 +92,15 @@ function CheckoutPage() {
     toast.success("Código PIX copiado!");
   }
 
-  if (!order) return <div className="mx-auto max-w-2xl px-4 py-20 text-center text-muted-foreground"><Loader2 className="mx-auto h-6 w-6 animate-spin" /></div>;
-
-  if (order.status === "paid") {
-    return (
-      <div className="mx-auto max-w-md px-4 py-20 text-center">
-        <CheckCircle2 className="mx-auto h-16 w-16 text-success" />
-        <h1 className="mt-4 text-2xl font-bold text-primary">Pagamento confirmado!</h1>
-        <Link to="/confirmacao/$orderId" params={{ orderId }} className="mt-6 inline-block text-primary underline">Ver confirmação</Link>
-      </div>
-    );
-  }
+  if (!order) return <div className="flex min-h-[50vh] items-center justify-center"><Loader2 className="h-6 w-6 animate-spin text-primary/30" /></div>;
 
   if (remaining === 0 && order.status === "pending") {
     return (
-      <div className="mx-auto max-w-md px-4 py-20 text-center">
-        <AlertCircle className="mx-auto h-16 w-16 text-destructive" />
-        <h1 className="mt-4 text-2xl font-bold text-primary">Reserva expirada</h1>
-        <p className="mt-2 text-muted-foreground">O tempo para pagamento acabou e os números foram liberados.</p>
-        <Link to="/campanha/$slug" params={{ slug: campaignSlug }} className="mt-6 inline-block rounded-xl bg-primary px-6 py-3 font-bold text-white transition hover:scale-105">
+      <div className="mx-auto max-w-md px-6 py-20 text-center">
+        <AlertCircle className="mx-auto h-12 w-12 text-destructive opacity-50" />
+        <h1 className="mt-6 text-2xl font-bold text-primary">Reserva expirada</h1>
+        <p className="mt-2 text-muted-foreground text-sm">O tempo para pagamento acabou e os números foram liberados.</p>
+        <Link to="/campanha/$slug" params={{ slug: campaignSlug }} className="mt-8 inline-flex h-12 items-center rounded-xl bg-primary px-8 font-bold text-white transition-all hover:shadow-premium active:scale-95">
           Tentar novamente
         </Link>
       </div>
@@ -127,68 +108,63 @@ function CheckoutPage() {
   }
 
   return (
-    <div className="mx-auto max-w-2xl px-4 py-8 md:py-12">
-      <div className="overflow-hidden rounded-3xl border border-border bg-card shadow-card">
-        <div className="bg-gradient-primary p-6 text-primary-foreground">
-          <p className="text-xs uppercase tracking-wider opacity-80">Pagamento PIX</p>
-          <h1 className="mt-1 text-2xl font-black">{formatBRL(order.amount)}</h1>
-          <p className="mt-1 text-sm opacity-90">{campaignName}</p>
+    <div className="mx-auto max-w-xl px-6 py-12">
+      <div className="overflow-hidden rounded-3xl bg-white shadow-premium">
+        <div className="bg-primary p-8 text-white">
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em] opacity-60">Checkout Seguro</p>
+          <h1 className="mt-2 text-4xl font-black">{formatBRL(order.amount)}</h1>
+          <p className="mt-1 text-sm font-medium opacity-80">{campaignName}</p>
         </div>
 
-        <div className="space-y-6 p-6 md:p-8">
+        <div className="p-8 space-y-8">
           <div className={cn(
-            "flex items-center justify-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold",
-            remaining < 60 ? "bg-destructive/15 text-destructive" : "bg-warning/15 text-warning-foreground"
+            "flex items-center justify-center gap-2 rounded-2xl py-3 text-sm font-bold",
+            remaining < 60 ? "bg-destructive/5 text-destructive" : "bg-primary/5 text-primary"
           )}>
             <Clock className="h-4 w-4" />
-            Reserva expira em <span className="tabular-nums">{mm}:{ss}</span>
+            <span>Expira em <span className="tabular-nums">{mm}:{ss}</span></span>
           </div>
 
           <div className="flex flex-col items-center">
             {loadingPix ? (
-               <div className="flex h-[280px] w-[280px] items-center justify-center rounded-2xl bg-muted">
-                 <Loader2 className="h-8 w-8 animate-spin text-primary/30" />
+               <div className="flex h-[280px] w-[280px] items-center justify-center rounded-3xl bg-secondary/50">
+                 <Loader2 className="h-8 w-8 animate-spin text-primary/20" />
                </div>
-            ) : pixError ? (
-              <div className="flex h-[280px] w-[280px] flex-col items-center justify-center rounded-2xl bg-destructive/10 p-6 text-center text-destructive">
-                <AlertCircle className="mb-2 h-10 w-10" />
-                <p className="text-xs font-bold uppercase">Erro no Pagamento</p>
-                <p className="mt-1 text-[10px] leading-tight">{pixError}</p>
-                <Button variant="outline" size="sm" className="mt-4 h-8 text-[10px]" onClick={() => window.location.reload()}>Recarregar</Button>
-              </div>
             ) : realPixData ? (
-              <img 
-                src={`data:image/png;base64,${realPixData.qr_code_base64}`} 
-                alt="QR Code PIX" 
-                className="rounded-2xl border-4 border-secondary p-2" 
-                width={280} 
-                height={280} 
-              />
-            ) : null}
-            <p className="mt-3 text-xs text-muted-foreground">Abra o app do seu banco e escaneie o QR Code</p>
+               <div className="rounded-3xl border border-black/[0.03] bg-white p-6 shadow-sm">
+                  <img 
+                    src={`data:image/png;base64,${realPixData.qr_code_base64}`} 
+                    alt="QR Code PIX" 
+                    className="h-[240px] w-[240px]"
+                  />
+               </div>
+            ) : (
+              <div className="flex h-[280px] w-[280px] flex-col items-center justify-center rounded-3xl bg-destructive/5 p-6 text-center text-destructive">
+                <AlertCircle className="h-8 w-8 opacity-40" />
+                <p className="mt-4 text-xs font-bold leading-tight">{pixError}</p>
+              </div>
+            )}
+            <p className="mt-6 text-[11px] font-bold uppercase tracking-widest text-muted-foreground/60">Escaneie o QR Code no seu banco</p>
           </div>
 
-          <div>
-            <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Ou copie o código PIX</p>
-            <div className="flex gap-2">
-              <code className="flex-1 truncate rounded-xl border border-border bg-secondary px-3 py-2.5 text-xs">
-                {loadingPix ? "Gerando código..." : (realPixData?.qr_code || "Indisponível")}
-              </code>
-              <Button onClick={copy} variant="outline" size="icon" className="shrink-0" disabled={!realPixData}><Copy className="h-4 w-4" /></Button>
+          <div className="space-y-3">
+            <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Ou copie o código</p>
+            <div className="flex gap-3">
+              <div className="flex-1 truncate rounded-2xl bg-secondary/50 px-5 py-4 text-xs font-medium text-primary">
+                {loadingPix ? "Gerando..." : (realPixData?.qr_code || "—")}
+              </div>
+              <Button onClick={copy} variant="outline" className="h-12 w-12 shrink-0 rounded-2xl border-black/[0.05] bg-white hover:bg-secondary"><Copy className="h-4 w-4" /></Button>
             </div>
           </div>
 
-          <div className="grid gap-2 rounded-2xl bg-secondary p-4 text-sm">
-            <Row label="Comprador" value={buyerName || "—"} />
-            {order.seller_name && <Row label="Vendedor" value={order.seller_name} />}
-            <Row label="Números" value={numbers.map(n => padNumber(n, 1000)).join(", ")} />
-            <Row label="Quantidade" value={String(order.quantity)} />
-            <Row label="Total" value={<strong className="text-primary">{formatBRL(order.amount)}</strong>} />
+          <div className="rounded-2xl border border-black/[0.03] bg-white p-6 space-y-3 text-sm">
+            <Row label="Comprador" value={buyerName} />
+            <Row label="Quantidade" value={order.quantity} />
+            <Row label="Total" value={<span className="font-bold text-primary">{formatBRL(order.amount)}</span>} />
           </div>
 
-          <div className="rounded-xl border border-dashed border-border p-4 text-center text-xs text-muted-foreground">
-            <strong className="text-foreground">Aguardando pagamento…</strong>
-            <br />Após o pagamento, a confirmação é automática. Esta página atualiza sozinha.
+          <div className="text-center">
+            <p className="text-[11px] font-bold uppercase tracking-widest text-success animate-pulse">Aguardando confirmação de pagamento...</p>
           </div>
         </div>
       </div>
@@ -198,9 +174,9 @@ function CheckoutPage() {
 
 function Row({ label, value }: { label: string; value: React.ReactNode }) {
   return (
-    <div className="flex justify-between gap-3">
-      <span className="text-muted-foreground">{label}</span>
-      <span className="text-right font-medium text-foreground">{value}</span>
+    <div className="flex justify-between items-center text-[13px]">
+      <span className="text-muted-foreground font-medium">{label}</span>
+      <span className="text-primary font-bold">{value}</span>
     </div>
   );
 }

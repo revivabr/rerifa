@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
-import { Trophy, Medal, Award, User } from "lucide-react";
+import { Trophy, Medal, Award } from "lucide-react";
 
 type RankingItem = {
   seller_name: string;
@@ -13,7 +13,6 @@ export function SellerRanking({ campaignId }: { campaignId: string }) {
 
   useEffect(() => {
     async function fetchRanking() {
-      // Fetch only paid orders that have a seller_name
       const { data, error } = await supabase
         .from("orders")
         .select("seller_name, quantity")
@@ -21,18 +20,11 @@ export function SellerRanking({ campaignId }: { campaignId: string }) {
         .eq("status", "paid")
         .not("seller_name", "is", null);
 
-      if (error) {
-        console.error("Error fetching ranking:", error);
-        setLoading(false);
-        return;
-      }
+      if (error) { setLoading(false); return; }
 
-      // Group by seller_name and sum quantity
       const grouped = data.reduce((acc: Record<string, number>, curr) => {
         const name = curr.seller_name?.trim();
-        if (name) {
-          acc[name] = (acc[name] || 0) + (curr.quantity || 0);
-        }
+        if (name) { acc[name] = (acc[name] || 0) + (curr.quantity || 0); }
         return acc;
       }, {});
 
@@ -46,59 +38,32 @@ export function SellerRanking({ campaignId }: { campaignId: string }) {
     }
 
     fetchRanking();
-    
-    // Realtime update when orders are updated to 'paid'
-    const channel = supabase
-      .channel(`ranking-${campaignId}`)
-      .on(
-        "postgres_changes",
-        {
-          event: "*",
-          schema: "public",
-          table: "orders",
-          filter: `campaign_id=eq.${campaignId}`,
-        },
-        () => fetchRanking()
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
+    const channel = supabase.channel(`ranking-${campaignId}`).on("postgres_changes", { event: "*", schema: "public", table: "orders", filter: `campaign_id=eq.${campaignId}` }, () => fetchRanking()).subscribe();
+    return () => { supabase.removeChannel(channel); };
   }, [campaignId]);
 
-  if (loading) return null;
-  if (ranking.length === 0) return null;
+  if (loading || ranking.length === 0) return null;
 
   return (
-    <section className="mt-10">
-      <h2 className="mb-4 inline-flex items-center gap-2 text-2xl font-bold text-primary">
-        <Trophy className="h-6 w-6 text-gold" /> Ranking de Vendedores
+    <section>
+      <h2 className="mb-6 flex items-center gap-3 text-lg font-bold text-primary">
+        <Trophy className="h-5 w-5 text-gold" /> Ranking de Vendedores
       </h2>
-      <div className="rounded-3xl border border-border bg-card p-6 shadow-soft">
-        <div className="space-y-4">
+      <div className="rounded-3xl border border-black/[0.03] bg-white p-6 shadow-premium">
+        <div className="space-y-5">
           {ranking.map((item, index) => (
-            <div key={item.seller_name} className="flex items-center justify-between border-b border-border/50 pb-3 last:border-0 last:pb-0">
+            <div key={item.seller_name} className="flex items-center justify-between">
               <div className="flex items-center gap-4">
-                <div className="flex h-10 w-10 items-center justify-center shrink-0">
-                  {index === 0 ? (
-                    <Trophy className="h-7 w-7 text-gold" />
-                  ) : index === 1 ? (
-                    <Medal className="h-6 w-6 text-silver" />
-                  ) : index === 2 ? (
-                    <Award className="h-6 w-6 text-bronze" />
-                  ) : (
-                    <span className="text-lg font-bold text-muted-foreground">{index + 1}º</span>
-                  )}
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-secondary text-primary font-bold">
+                  {index === 0 ? <Trophy className="h-4 w-4 text-gold" /> : index + 1}
                 </div>
                 <div>
-                  <p className="font-bold text-foreground">{item.seller_name}</p>
-                  <p className="text-xs text-muted-foreground">Top vendedor</p>
+                  <p className="text-sm font-bold text-primary">{item.seller_name}</p>
                 </div>
               </div>
               <div className="text-right">
-                <p className="text-lg font-black text-primary">{item.total_sales}</p>
-                <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Números vendidos</p>
+                <p className="text-sm font-black text-primary">{item.total_sales}</p>
+                <p className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground">Vendas</p>
               </div>
             </div>
           ))}
@@ -107,9 +72,3 @@ export function SellerRanking({ campaignId }: { campaignId: string }) {
     </section>
   );
 }
-
-const colors = {
-  gold: "#FFD700",
-  silver: "#C0C0C0",
-  bronze: "#CD7F32"
-};

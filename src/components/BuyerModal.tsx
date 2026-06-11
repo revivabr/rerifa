@@ -26,58 +26,53 @@ export function BuyerModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md">
-        <DialogHeader>
-          <DialogTitle className="text-2xl text-primary">Seus dados</DialogTitle>
-          <DialogDescription>
+      <DialogContent className="max-w-md rounded-3xl border-none p-8 shadow-premium">
+        <DialogHeader className="space-y-2">
+          <DialogTitle className="text-3xl font-bold tracking-tight text-primary">Seus Dados</DialogTitle>
+          <DialogDescription className="text-sm">
             {count} {count === 1 ? "número" : "números"} · Total <strong className="text-primary">{formatBRL(total)}</strong>
           </DialogDescription>
         </DialogHeader>
         <form
-          className="space-y-4"
+          className="mt-6 space-y-4"
           onSubmit={(e) => { e.preventDefault(); if (canSubmit) onSubmit({ name: name.trim(), email: email.trim(), whatsapp, sellerName: sellerName.trim() }); }}
         >
-          <div>
-            <Label htmlFor="name">Nome completo *</Label>
-            <Input id="name" value={name} onChange={(e) => setName(e.target.value)} placeholder="João da Silva" required />
+          <div className="space-y-2">
+            <Label htmlFor="name" className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Nome completo *</Label>
+            <Input id="name" value={name} onChange={(e) => setName(e.target.value)} placeholder="João da Silva" className="rounded-xl border-border bg-secondary/50" required />
           </div>
-          <div>
-            <Label htmlFor="wa">WhatsApp *</Label>
-            <Input id="wa" value={whatsapp} onChange={(e) => setWhatsapp(formatWhatsapp(e.target.value))} placeholder="(17) 99999-9999" inputMode="tel" required />
+          <div className="space-y-2">
+            <Label htmlFor="wa" className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">WhatsApp *</Label>
+            <Input id="wa" value={whatsapp} onChange={(e) => setWhatsapp(formatWhatsapp(e.target.value))} placeholder="(17) 99999-9999" inputMode="tel" className="rounded-xl border-border bg-secondary/50" required />
           </div>
-          <div>
-            <Label htmlFor="email">E-mail (recomendado)</Label>
-            <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="voce@email.com" />
-          </div>
-
-          <div className="relative py-2">
-            <div className="absolute inset-0 flex items-center" aria-hidden="true">
-              <div className="w-full border-t border-border"></div>
-            </div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-background px-2 text-muted-foreground font-semibold">Indicação</span>
-            </div>
+          <div className="space-y-2">
+            <Label htmlFor="email" className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">E-mail (opcional)</Label>
+            <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="voce@email.com" className="rounded-xl border-border bg-secondary/50" />
           </div>
 
-          <div className="rounded-xl border border-dashed border-primary/30 bg-primary/5 p-4">
-            <Label htmlFor="sellerName" className="text-primary font-bold">Quem fez esta venda?</Label>
-            <Input 
-              id="sellerName" 
-              value={sellerName} 
-              onChange={(e) => setSellerName(e.target.value)} 
-              placeholder="Nome completo do vendedor (opcional)"
-              className="mt-1.5 border-primary/20 focus-visible:ring-primary/30"
-            />
-            <p className="mt-1.5 text-[10px] text-muted-foreground">Preencha se alguém te indicou esta campanha.</p>
+          <div className="py-2">
+            <div className="relative flex items-center justify-center text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+              <span className="bg-white px-2">Indicação</span>
+            </div>
+            <div className="mt-4 rounded-2xl border border-dashed border-primary/20 bg-primary/5 p-4">
+              <Label htmlFor="sellerName" className="text-xs font-bold text-primary">Quem te indicou?</Label>
+              <Input 
+                id="sellerName" 
+                value={sellerName} 
+                onChange={(e) => setSellerName(e.target.value)} 
+                placeholder="Nome do vendedor (opcional)"
+                className="mt-2 rounded-lg border-primary/10 bg-white"
+              />
+            </div>
           </div>
-          <label className="flex cursor-pointer items-start gap-3 rounded-xl bg-secondary p-3 text-sm">
+          
+          <label className="flex cursor-pointer items-start gap-3 rounded-2xl bg-secondary/50 p-4 text-[11px] leading-relaxed text-muted-foreground">
             <Checkbox checked={agree} onCheckedChange={(v) => setAgree(Boolean(v))} className="mt-0.5" />
-            <span className="text-muted-foreground">
-              Autorizo a Associação Reviva Brasil a utilizar meus dados para identificação da minha participação,
-              confirmação de pagamento e comunicação sobre o sorteio.
+            <span>
+              Ao continuar, você concorda com o uso de seus dados para fins de processamento da rifa e comunicação oficial.
             </span>
           </label>
-          <Button type="submit" disabled={!canSubmit} className="w-full bg-gradient-primary text-base font-bold" size="lg">
+          <Button type="submit" disabled={!canSubmit} className="h-14 w-full rounded-2xl bg-primary text-sm font-bold shadow-premium transition-all duration-500 hover:bg-primary/90" size="lg">
             {submitting ? "Gerando PIX…" : "Gerar PIX"}
           </Button>
         </form>

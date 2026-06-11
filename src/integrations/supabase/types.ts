@@ -14,13 +14,405 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      admin_users: {
+        Row: {
+          auth_user_id: string | null
+          created_at: string | null
+          email: string
+          id: string
+          name: string | null
+          role: string
+        }
+        Insert: {
+          auth_user_id?: string | null
+          created_at?: string | null
+          email: string
+          id?: string
+          name?: string | null
+          role?: string
+        }
+        Update: {
+          auth_user_id?: string | null
+          created_at?: string | null
+          email?: string
+          id?: string
+          name?: string | null
+          role?: string
+        }
+        Relationships: []
+      }
+      buyers: {
+        Row: {
+          created_at: string | null
+          email: string | null
+          id: string
+          name: string
+          whatsapp: string
+        }
+        Insert: {
+          created_at?: string | null
+          email?: string | null
+          id?: string
+          name: string
+          whatsapp: string
+        }
+        Update: {
+          created_at?: string | null
+          email?: string | null
+          id?: string
+          name?: string
+          whatsapp?: string
+        }
+        Relationships: []
+      }
+      campaign_prizes: {
+        Row: {
+          campaign_id: string | null
+          created_at: string | null
+          description: string | null
+          id: string
+          image_url: string | null
+          position: number | null
+          title: string
+        }
+        Insert: {
+          campaign_id?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          position?: number | null
+          title: string
+        }
+        Update: {
+          campaign_id?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          position?: number | null
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "campaign_prizes_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      campaigns: {
+        Row: {
+          authorization_url: string | null
+          banner_url: string | null
+          created_at: string | null
+          created_by: string | null
+          description: string | null
+          draw_date: string | null
+          drive_folder_url: string | null
+          end_date: string
+          goal_amount: number | null
+          id: string
+          name: string
+          number_price: number
+          number_quantity: number
+          pix_key: string | null
+          regulation_text: string | null
+          regulation_url: string | null
+          slug: string
+          start_date: string
+          status: string
+          updated_at: string | null
+        }
+        Insert: {
+          authorization_url?: string | null
+          banner_url?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          draw_date?: string | null
+          drive_folder_url?: string | null
+          end_date: string
+          goal_amount?: number | null
+          id?: string
+          name: string
+          number_price: number
+          number_quantity: number
+          pix_key?: string | null
+          regulation_text?: string | null
+          regulation_url?: string | null
+          slug: string
+          start_date: string
+          status?: string
+          updated_at?: string | null
+        }
+        Update: {
+          authorization_url?: string | null
+          banner_url?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          draw_date?: string | null
+          drive_folder_url?: string | null
+          end_date?: string
+          goal_amount?: number | null
+          id?: string
+          name?: string
+          number_price?: number
+          number_quantity?: number
+          pix_key?: string | null
+          regulation_text?: string | null
+          regulation_url?: string | null
+          slug?: string
+          start_date?: string
+          status?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "campaigns_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "admin_users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      order_numbers: {
+        Row: {
+          campaign_id: string | null
+          created_at: string | null
+          id: string
+          number: number
+          order_id: string | null
+          raffle_number_id: string | null
+        }
+        Insert: {
+          campaign_id?: string | null
+          created_at?: string | null
+          id?: string
+          number: number
+          order_id?: string | null
+          raffle_number_id?: string | null
+        }
+        Update: {
+          campaign_id?: string | null
+          created_at?: string | null
+          id?: string
+          number?: number
+          order_id?: string | null
+          raffle_number_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_numbers_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "order_numbers_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "order_numbers_raffle_number_id_fkey"
+            columns: ["raffle_number_id"]
+            isOneToOne: false
+            referencedRelation: "raffle_numbers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      orders: {
+        Row: {
+          amount: number
+          buyer_id: string | null
+          campaign_id: string | null
+          created_at: string | null
+          expires_at: string | null
+          id: string
+          paid_at: string | null
+          payment_provider: string | null
+          payment_provider_id: string | null
+          pix_copy_paste: string | null
+          pix_qr_code: string | null
+          quantity: number
+          status: string
+          updated_at: string | null
+        }
+        Insert: {
+          amount: number
+          buyer_id?: string | null
+          campaign_id?: string | null
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string
+          paid_at?: string | null
+          payment_provider?: string | null
+          payment_provider_id?: string | null
+          pix_copy_paste?: string | null
+          pix_qr_code?: string | null
+          quantity: number
+          status?: string
+          updated_at?: string | null
+        }
+        Update: {
+          amount?: number
+          buyer_id?: string | null
+          campaign_id?: string | null
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string
+          paid_at?: string | null
+          payment_provider?: string | null
+          payment_provider_id?: string | null
+          pix_copy_paste?: string | null
+          pix_qr_code?: string | null
+          quantity?: number
+          status?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "orders_buyer_id_fkey"
+            columns: ["buyer_id"]
+            isOneToOne: false
+            referencedRelation: "buyers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      payments: {
+        Row: {
+          amount: number
+          campaign_id: string | null
+          confirmed_at: string | null
+          created_at: string | null
+          id: string
+          order_id: string | null
+          payload: Json | null
+          provider: string
+          provider_payment_id: string | null
+          status: string
+        }
+        Insert: {
+          amount: number
+          campaign_id?: string | null
+          confirmed_at?: string | null
+          created_at?: string | null
+          id?: string
+          order_id?: string | null
+          payload?: Json | null
+          provider: string
+          provider_payment_id?: string | null
+          status: string
+        }
+        Update: {
+          amount?: number
+          campaign_id?: string | null
+          confirmed_at?: string | null
+          created_at?: string | null
+          id?: string
+          order_id?: string | null
+          payload?: Json | null
+          provider?: string
+          provider_payment_id?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payments_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payments_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      raffle_numbers: {
+        Row: {
+          buyer_id: string | null
+          campaign_id: string | null
+          created_at: string | null
+          current_order_id: string | null
+          id: string
+          number: number
+          reserved_until: string | null
+          sold_at: string | null
+          status: string
+        }
+        Insert: {
+          buyer_id?: string | null
+          campaign_id?: string | null
+          created_at?: string | null
+          current_order_id?: string | null
+          id?: string
+          number: number
+          reserved_until?: string | null
+          sold_at?: string | null
+          status?: string
+        }
+        Update: {
+          buyer_id?: string | null
+          campaign_id?: string | null
+          created_at?: string | null
+          current_order_id?: string | null
+          id?: string
+          number?: number
+          reserved_until?: string | null
+          sold_at?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "raffle_numbers_buyer_id_fkey"
+            columns: ["buyer_id"]
+            isOneToOne: false
+            referencedRelation: "buyers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "raffle_numbers_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "raffle_numbers_current_order_id_fkey"
+            columns: ["current_order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      is_admin: { Args: never; Returns: boolean }
     }
     Enums: {
       [_ in never]: never

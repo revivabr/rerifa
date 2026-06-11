@@ -105,76 +105,146 @@ function CampaignPage() {
   if (!campaign) return <div className="mx-auto max-w-6xl px-4 py-20 text-center"><h1 className="text-2xl font-bold">Campanha não encontrada</h1></div>;
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-8 md:py-12">
-      <article className="overflow-hidden rounded-3xl border border-border bg-card shadow-soft">
-        <div className="relative aspect-video w-full bg-gradient-sand">
+    <div className="mx-auto max-w-6xl px-4 py-6 md:py-10">
+      <div className="mb-8 overflow-hidden rounded-[2rem] border border-border bg-card shadow-elegant">
+        <div className="relative aspect-[21/9] w-full bg-muted md:aspect-[3/1]">
           {campaign.banner_url ? (
-            <img src={campaign.banner_url} alt={campaign.name} className="h-full w-full object-cover" />
+            <img 
+              src={campaign.banner_url} 
+              alt={campaign.name} 
+              className="h-full w-full object-cover transition-transform duration-700 hover:scale-105" 
+            />
           ) : (
-            <div className="flex h-full items-center justify-center text-accent-foreground/30">
-              <Heart className="h-24 w-24" />
+            <div className="flex h-full items-center justify-center text-accent-foreground/20">
+              <Heart className="h-20 w-20 animate-pulse" />
             </div>
           )}
-        </div>
-        <div className="space-y-5 p-6 md:p-8">
-          <h1 className="text-3xl font-black text-primary md:text-4xl">{campaign.name}</h1>
-          {campaign.description && <p className="text-base leading-relaxed text-muted-foreground">{campaign.description}</p>}
-
-          <div className="grid gap-4 sm:grid-cols-3">
-            <StatBox label="Valor por número" value={formatBRL(campaign.number_price)} />
-            <StatBox label="Total de números" value={String(campaign.number_quantity)} />
-            <StatBox label="Vendidos" value={`${sold} (${pct}%)`} />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent md:hidden" />
+          <div className="absolute bottom-4 left-6 right-6 md:hidden">
+            <h1 className="text-2xl font-black text-white line-clamp-2">{campaign.name}</h1>
           </div>
+        </div>
+      </div>
 
-          <div>
-            <div className="h-3 w-full overflow-hidden rounded-full bg-secondary">
-              <div className="h-full bg-gradient-primary transition-all" style={{ width: `${pct}%` }} />
+      <div className="grid gap-8 lg:grid-cols-3">
+        <div className="lg:col-span-2 space-y-8">
+          <section className="rounded-3xl border border-border bg-card p-6 md:p-8 shadow-soft">
+            <div className="hidden md:block mb-4">
+               <h1 className="text-4xl font-black text-primary leading-tight">{campaign.name}</h1>
+            </div>
+            
+            {campaign.description && (
+              <div className="prose prose-sand max-w-none text-muted-foreground">
+                <p className="text-lg leading-relaxed">{campaign.description}</p>
+              </div>
+            )}
+
+            <div className="mt-8 grid gap-4 sm:grid-cols-3">
+              <StatCard icon={<Gift className="h-5 w-5" />} label="Cota" value={formatBRL(campaign.number_price)} />
+              <StatCard icon={<Calendar className="h-5 w-5" />} label="Sorteio" value={formatDateBR(campaign.end_date)} />
+              <StatCard icon={<ShieldCheck className="h-5 w-5" />} label="Status" value={campaign.status === "active" ? "Disponível" : "Finalizado"} />
+            </div>
+
+            <div className="mt-8 space-y-3">
+              <div className="flex items-center justify-between text-sm font-bold">
+                <span className="text-muted-foreground uppercase tracking-wider">Progresso de vendas</span>
+                <span className="text-primary">{pct}%</span>
+              </div>
+              <div className="h-4 w-full overflow-hidden rounded-full bg-secondary/50 p-1 shadow-inner">
+                <div 
+                  className="h-full rounded-full bg-gradient-to-r from-primary to-primary-hover shadow-lg transition-all duration-1000 ease-out" 
+                  style={{ width: `${pct}%` }} 
+                />
+              </div>
+              <p className="text-right text-xs text-muted-foreground italic">
+                {sold} de {campaign.number_quantity} números vendidos
+              </p>
+            </div>
+
+            <div className="mt-6 flex flex-wrap items-center gap-4 border-t border-border pt-6">
+              {campaign.regulation_text ? (
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <button className="inline-flex items-center gap-2 rounded-xl bg-secondary px-4 py-2 text-sm font-bold text-primary transition hover:bg-primary hover:text-white">
+                      <FileText className="h-4 w-4" /> Ver Regulamento
+                    </button>
+                  </DialogTrigger>
+                  <DialogContent className="max-h-[80vh] overflow-y-auto sm:max-w-2xl rounded-[2rem]">
+                    <DialogHeader>
+                      <DialogTitle className="text-2xl font-black text-primary">Regulamento</DialogTitle>
+                    </DialogHeader>
+                    <div className="prose prose-sm prose-sand mt-4 max-w-none dark:prose-invert">
+                      <ReactMarkdown>{campaign.regulation_text}</ReactMarkdown>
+                    </div>
+                  </DialogContent>
+                </Dialog>
+              ) : campaign.regulation_url && (
+                <a href={campaign.regulation_url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-xl bg-secondary px-4 py-2 text-sm font-bold text-primary transition hover:bg-primary hover:text-white">
+                  <FileText className="h-4 w-4" /> Ver Regulamento
+                </a>
+              )}
+              
+              <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                <Info className="h-4 w-4" />
+                <span>Início em {formatDateBR(campaign.start_date)}</span>
+              </div>
+            </div>
+          </section>
+
+          {prizes.length > 0 && (
+            <section>
+              <h2 className="mb-6 flex items-center gap-3 text-2xl font-black text-primary">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10">
+                  <Gift className="h-6 w-6 text-primary" />
+                </div>
+                Prêmios Principais
+              </h2>
+              <div className="grid gap-6 sm:grid-cols-2">
+                {prizes.map((p, idx) => (
+                  <div key={p.id} className="group overflow-hidden rounded-3xl border border-border bg-card shadow-soft transition hover:shadow-elegant">
+                    <div className="relative aspect-video overflow-hidden">
+                      {p.image_url ? (
+                        <img src={p.image_url} alt={p.title} className="h-full w-full object-cover transition duration-500 group-hover:scale-110" />
+                      ) : (
+                        <div className="flex h-full items-center justify-center bg-muted">
+                          <Gift className="h-12 w-12 text-muted-foreground/20" />
+                        </div>
+                      )}
+                      <div className="absolute left-4 top-4 rounded-xl bg-white/90 px-3 py-1 text-xs font-black text-primary shadow-sm backdrop-blur-sm">
+                        {idx + 1}º PRÊMIO
+                      </div>
+                    </div>
+                    <div className="p-5">
+                      <h3 className="text-lg font-black text-foreground group-hover:text-primary transition-colors">{p.title}</h3>
+                      {p.description && <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{p.description}</p>}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
+        </div>
+
+        <div className="space-y-8">
+          <div className="sticky top-8 space-y-8">
+            <SellerRanking campaignId={campaign.id} />
+            
+            <div className="rounded-3xl bg-gradient-to-br from-primary to-primary-hover p-6 text-white shadow-elegant">
+              <h3 className="text-xl font-black">Participe Agora!</h3>
+              <p className="mt-2 text-sm opacity-90">Escolha seus números da sorte abaixo e concorra a prêmios incríveis.</p>
+              <div className="mt-6 flex items-center justify-between border-t border-white/20 pt-6">
+                <div>
+                  <p className="text-[10px] font-bold uppercase tracking-widest opacity-70">A partir de</p>
+                  <p className="text-2xl font-black">{formatBRL(campaign.number_price)}</p>
+                </div>
+                <a href="#escolher-numeros" className="rounded-xl bg-white px-5 py-2.5 text-sm font-black text-primary shadow-lg transition hover:bg-sand hover:scale-105">
+                  Quero Ganhar
+                </a>
+              </div>
             </div>
           </div>
-
-          <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
-            <span className="inline-flex items-center gap-1.5"><Calendar className="h-4 w-4" />{formatDateBR(campaign.start_date)} — {formatDateBR(campaign.end_date)}</span>
-            {campaign.regulation_text ? (
-              <Dialog>
-                <DialogTrigger asChild>
-                  <button className="inline-flex items-center gap-1.5 font-semibold text-primary hover:underline">
-                    <FileText className="h-4 w-4" /> Regulamento
-                  </button>
-                </DialogTrigger>
-                <DialogContent className="max-h-[80vh] overflow-y-auto sm:max-w-2xl">
-                  <DialogHeader>
-                    <DialogTitle>Regulamento - {campaign.name}</DialogTitle>
-                  </DialogHeader>
-                  <div className="prose prose-sm prose-primary mt-4 max-w-none dark:prose-invert">
-                    <ReactMarkdown>{campaign.regulation_text}</ReactMarkdown>
-                  </div>
-                </DialogContent>
-              </Dialog>
-            ) : campaign.regulation_url && (
-              <a href={campaign.regulation_url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 font-semibold text-primary hover:underline">
-                <FileText className="h-4 w-4" /> Regulamento
-              </a>
-            )}
-          </div>
         </div>
-      </article>
-
-      {prizes.length > 0 && (
-        <section className="mt-10">
-          <h2 className="mb-4 inline-flex items-center gap-2 text-2xl font-bold text-primary"><Gift className="h-6 w-6" /> Prêmios</h2>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {prizes.map(p => (
-              <div key={p.id} className="rounded-2xl border border-border bg-card p-4 shadow-soft">
-                {p.image_url && <img src={p.image_url} alt={p.title} className="mb-3 aspect-video w-full rounded-xl object-cover" />}
-                <h3 className="font-bold text-foreground">{p.title}</h3>
-                {p.description && <p className="mt-1 text-sm text-muted-foreground">{p.description}</p>}
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
-      
-      {campaign && <SellerRanking campaignId={campaign.id} />}
+      </div>
 
       <section className="mt-10" id="escolher-numeros">
         <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
@@ -252,11 +322,16 @@ function CampaignPage() {
   );
 }
 
-function StatBox({ label, value }: { label: string; value: string }) {
+function StatCard({ label, value, icon }: { label: string; value: string; icon: React.ReactNode }) {
   return (
-    <div className="rounded-2xl bg-secondary p-4">
-      <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{label}</p>
-      <p className="mt-1 text-xl font-bold text-primary">{value}</p>
+    <div className="flex items-center gap-4 rounded-2xl bg-secondary/30 p-4 border border-border/50">
+      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white text-primary shadow-sm">
+        {icon}
+      </div>
+      <div>
+        <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">{label}</p>
+        <p className="text-lg font-black text-primary">{value}</p>
+      </div>
     </div>
   );
 }

@@ -31,20 +31,22 @@ export async function createPixPaymentRecord({
   const payment = new Payment(client);
 
   const body = {
-    transaction_amount: amount,
-    description: description,
+    transaction_amount: Number(amount.toFixed(2)),
+    description: description.substring(0, 60),
     payment_method_id: 'pix',
     installments: 1,
     external_reference: id,
     notification_url: `${process.env.APP_BASE_URL || ""}/api/webhooks/mercadopago`,
     payer: {
-      email: email || "comprador@revivabrasil.com.br", // MP requer um email válido
-      first_name: firstName,
-      last_name: lastName || "Silva",
+      email: email?.trim() || "comprador@revivabrasil.com.br",
+      first_name: firstName?.trim() || "Comprador",
+      last_name: lastName?.trim() || "Silva",
     },
     // Expira em 15 minutos (tempo de reserva padrão no DB)
     date_of_expiration: new Date(Date.now() + 15 * 60 * 1000).toISOString(),
   };
+  
+  console.log("MP Request Body:", JSON.stringify(body));
 
   return await payment.create({ body });
 }

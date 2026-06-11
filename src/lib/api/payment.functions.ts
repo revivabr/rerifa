@@ -32,6 +32,7 @@ export const getOrGeneratePix = createServerFn({ method: "POST" })
     if (order.pix_qr_code && order.pix_copy_paste && order.status === 'pending') {
       const expiresAt = order.expires_at ? new Date(order.expires_at).getTime() : 0;
       if (expiresAt > Date.now()) {
+        console.log("Retornando PIX existente para o pedido:", order.id);
         return {
           qr_code_base64: order.pix_qr_code,
           qr_code: order.pix_copy_paste,
@@ -52,6 +53,8 @@ export const getOrGeneratePix = createServerFn({ method: "POST" })
     const lastName = nameParts.slice(1).join(" ") || "Silva";
 
     try {
+      console.log("Gerando novo PIX no Mercado Pago para o pedido:", order.id);
+      console.log("Dados do comprador:", { email: buyer.email, firstName, lastName });
       const mpResponse = await createPixPaymentRecord({
         id: order.id,
         amount: Number(order.amount),
@@ -84,6 +87,10 @@ export const getOrGeneratePix = createServerFn({ method: "POST" })
       };
     } catch (err: any) {
       console.error("Erro ao processar PIX:", err);
+      // Log extra para depurar o erro no console do servidor
+      if (err instanceof Error) {
+        console.error("Stack trace:", err.stack);
+      }
       throw new Error(err.message || "Erro interno ao processar pagamento");
     }
   });

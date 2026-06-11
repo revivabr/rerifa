@@ -525,6 +525,16 @@ export type Database = {
     }
     Functions: {
       is_admin: { Args: never; Returns: boolean }
+      reserve_numbers: {
+        Args: {
+          p_buyer_email: string
+          p_buyer_name: string
+          p_buyer_whatsapp: string
+          p_campaign_id: string
+          p_numbers: number[]
+        }
+        Returns: Json
+      }
     }
     Enums: {
       [_ in never]: never

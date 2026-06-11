@@ -36,95 +36,100 @@ function HomePage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-sand selection:bg-primary/5">
-      {/* Premium Hero */}
-      <section className="relative flex min-h-[70vh] items-center justify-center overflow-hidden px-6 pt-24 pb-32">
+    <div className="min-h-screen bg-sand selection:bg-primary/10">
+      {/* Cinematic Hero */}
+      <section className="relative flex min-h-[85vh] items-center justify-center overflow-hidden px-6 pt-20">
         <div className="absolute inset-0 bg-gradient-subtle" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[600px] w-[600px] rounded-full bg-primary/5 blur-[120px]" />
+        <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none opacity-20">
+          <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-primary/10 blur-[120px] animate-pulse" />
+          <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-gold/5 blur-[120px] animate-pulse" style={{ animationDelay: '2s' }} />
+        </div>
         
-        <div className="relative mx-auto max-w-5xl text-center">
-          <div className="mb-10 inline-flex items-center gap-2 rounded-full border border-primary/10 bg-white/50 px-5 py-2 text-[10px] font-bold uppercase tracking-[0.2em] text-primary backdrop-blur-sm">
-            <Sparkles className="h-3 w-3 animate-pulse" />
+        <div className="relative mx-auto max-w-6xl text-center stagger-in">
+          <div className="mb-12 inline-flex items-center gap-3 rounded-full border border-primary/5 bg-white/40 px-6 py-2.5 text-[10px] font-bold uppercase tracking-[0.3em] text-primary/70 backdrop-blur-md shadow-sm">
+            <div className="h-1.5 w-1.5 rounded-full bg-primary animate-ping" />
             <span>Show de Prêmios Reviva Brasil</span>
           </div>
           
-          <h1 className="text-5xl font-extrabold tracking-tight text-primary md:text-8xl">
-            Onde a Sorte Encontra a Solidariedade
+          <h1 className="text-6xl font-extrabold tracking-tight text-primary md:text-9xl lg:leading-[0.95]">
+            Sua Sorte <br/>
+            <span className="font-light italic text-primary/40">Transforma</span> Vidas
           </h1>
           
-          <p className="mx-auto mt-10 max-w-2xl text-lg font-medium leading-relaxed text-muted-foreground md:text-xl">
-            Participe das nossas rifas exclusivas e concorra a prêmios extraordinários enquanto apoia os projetos sociais da Associação Reviva Brasil.
+          <p className="mx-auto mt-12 max-w-2xl text-lg font-medium leading-relaxed text-muted-foreground/80 md:text-xl md:px-12">
+            Experiência exclusiva de rifas solidárias. Concilie a busca pelos seus sonhos com o apoio direto a causas extraordinárias.
           </p>
 
-
-          <div className="mt-12 flex flex-col items-center justify-center gap-4 sm:flex-row">
+          <div className="mt-16 flex flex-col items-center justify-center gap-6 sm:flex-row">
             <a 
               href="#campanhas"
-              className="group inline-flex items-center gap-3 rounded-full bg-primary px-8 py-4 text-sm font-bold tracking-wide text-white transition-all duration-500 hover:bg-primary/90 hover:shadow-premium active:scale-95"
+              className="group relative inline-flex items-center gap-4 rounded-full bg-primary px-10 py-5 text-xs font-bold uppercase tracking-widest text-white transition-all duration-700 hover:bg-primary/90 hover:scale-[1.02] hover:shadow-premium active:scale-95"
             >
-              Ver Campanhas Ativas
-              <ArrowRight className="h-4 w-4 transition-transform duration-500 group-hover:translate-x-1" />
+              Explorar Campanhas
+              <ArrowRight className="h-4 w-4 transition-transform duration-500 group-hover:translate-x-1.5" />
             </a>
+            <button className="text-xs font-bold uppercase tracking-widest text-primary/60 hover:text-primary transition-colors py-5 px-10">
+              Como Funciona
+            </button>
           </div>
         </div>
       </section>
 
-      {/* Campaign Highlight */}
-      <section id="campanhas" className="relative mx-auto -mt-20 max-w-7xl px-6 pb-32">
-        <div className="grid gap-12">
+      {/* Bento Grid Featured Campaign */}
+      <section id="campanhas" className="relative mx-auto max-w-7xl px-6 pb-40">
+        <div className="stagger-in">
             {loading ? (
-                <div className="h-[600px] w-full animate-pulse rounded-3xl bg-white shadow-premium" />
+                <div className="h-[650px] w-full animate-pulse rounded-[2.5rem] bg-white shadow-premium" />
             ) : activeCampaign ? (
-                <div className="group relative overflow-hidden rounded-3xl bg-white shadow-premium transition-all duration-700 hover:shadow-2xl">
+                <div className="group relative overflow-hidden rounded-[2.5rem] bg-white shadow-premium transition-all duration-1000 hover:shadow-2xl">
                     <div className="flex flex-col lg:flex-row">
-                        {/* High-end Product Visual */}
-                        <div className="relative aspect-[4/3] w-full lg:w-[55%]">
-                            <div className="absolute inset-0 bg-black/5" />
+                        {/* Imagem de Alta Definição */}
+                        <div className="relative aspect-[4/3] w-full overflow-hidden lg:w-[60%]">
+                            <div className="absolute inset-0 z-10 bg-gradient-to-r from-white/10 to-transparent lg:from-white/20" />
                             <img 
                                 src={activeCampaign.banner_url || USER_BANNER} 
                                 alt={activeCampaign.name} 
-                                className="h-full w-full object-cover transition-transform duration-1000 group-hover:scale-[1.02]"
+                                className="h-full w-full object-cover transition-transform duration-[2000ms] cubic-bezier(0.16, 1, 0.3, 1) group-hover:scale-110"
                             />
-                            <div className="absolute top-8 left-8">
-                                <div className="flex items-center gap-2 rounded-full glass-morphism px-4 py-2 text-[10px] font-bold uppercase tracking-widest text-primary shadow-glass">
-                                    <div className="h-1.5 w-1.5 rounded-full bg-success animate-pulse" />
-                                    Campanha Ativa
+                            <div className="absolute top-10 left-10 z-20">
+                                <div className="flex items-center gap-3 rounded-full glass-morphism px-5 py-2.5 text-[10px] font-bold uppercase tracking-widest text-primary shadow-glass">
+                                    <Sparkles className="h-3 w-3" />
+                                    Destaque do Mês
                                 </div>
                             </div>
                         </div>
 
-                        {/* Sophisticated Content */}
-                        <div className="flex flex-1 flex-col justify-between p-10 lg:p-16">
+                        {/* Conteúdo Editorial */}
+                        <div className="flex flex-1 flex-col justify-between p-12 lg:p-20">
                             <div>
-                                <div className="mb-6 flex items-center gap-1 text-gold">
+                                <div className="mb-8 flex gap-1 text-gold/40">
                                     {[...Array(5)].map((_, i) => (
-                                        <Star key={i} className="h-3 w-3 fill-current opacity-80" />
+                                        <Star key={i} className="h-3 w-3 fill-current" />
                                     ))}
                                 </div>
                                 
-                                <h2 className="text-4xl font-bold leading-tight text-primary md:text-5xl">
+                                <h2 className="text-5xl font-bold leading-tight text-primary md:text-6xl tracking-tighter">
                                     {activeCampaign.name}
                                 </h2>
                                 
-                                <p className="mt-8 text-lg leading-relaxed text-muted-foreground/80">
-                                    {activeCampaign.description || "Uma oportunidade única de transformar vidas enquanto busca seus sonhos. Participe e faça parte desta corrente do bem."}
+                                <p className="mt-10 text-lg leading-relaxed text-muted-foreground font-medium">
+                                    {activeCampaign.description || "Uma curadoria exclusiva de prêmios onde cada participação é um investimento no futuro social do Brasil."}
                                 </p>
                             </div>
                             
-                            <div className="mt-12 space-y-10">
-                                <div className="flex items-end gap-6">
-                                    <div className="flex flex-col">
-                                        <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/60">Valor do Bilhete</span>
-                                        <span className="mt-1 text-4xl font-extrabold tracking-tight text-primary">
+                            <div className="mt-16 space-y-12">
+                                <div className="grid grid-cols-2 gap-12 border-t border-black/[0.03] pt-12">
+                                    <div className="space-y-2">
+                                        <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/50">Investimento</span>
+                                        <div className="text-3xl font-bold tracking-tight text-primary">
                                             {formatBRL(activeCampaign.number_price)}
-                                        </span>
+                                        </div>
                                     </div>
-                                    <div className="mb-1 flex h-12 w-[1px] bg-black/[0.05]" />
-                                    <div className="mb-1 flex flex-col">
-                                        <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/60">Status</span>
-                                        <span className="mt-1 text-xs font-bold text-success flex items-center gap-1.5">
-                                            <ShieldCheck className="h-4 w-4" /> Verificado
-                                        </span>
+                                    <div className="space-y-2">
+                                        <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/50">Autenticidade</span>
+                                        <div className="flex items-center gap-2 text-xs font-bold text-success">
+                                            <ShieldCheck className="h-4 w-4" /> 100% Verificado
+                                        </div>
                                     </div>
                                 </div>
 
@@ -132,49 +137,50 @@ function HomePage() {
                                     to="/campanha/$slug" 
                                     params={{ slug: activeCampaign.slug }} 
                                     hash="escolher-numeros"
-                                    className="group relative flex w-full items-center justify-center gap-4 overflow-hidden rounded-2xl bg-primary py-6 text-sm font-bold tracking-widest text-white transition-all duration-500 hover:bg-primary/95 hover:shadow-lg active:scale-[0.98]"
+                                    className="group relative flex w-full items-center justify-center gap-4 overflow-hidden rounded-2xl bg-primary py-7 text-xs font-bold uppercase tracking-[0.2em] text-white transition-all duration-700 hover:shadow-2xl active:scale-[0.98]"
                                 >
-                                    <div className="absolute inset-0 translate-x-[-100%] bg-gradient-to-r from-transparent via-white/10 to-transparent transition-transform duration-1000 group-hover:translate-x-[100%]" />
-                                    <Ticket className="h-5 w-5 opacity-80" />
-                                    PARTICIPAR AGORA
-                                    <ArrowRight className="h-5 w-5 transition-transform duration-500 group-hover:translate-x-1" />
+                                    <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/5 to-transparent transition-transform duration-1000 group-hover:translate-x-full" />
+                                    <Ticket className="h-4 w-4 opacity-50" />
+                                    Garantir Participação
+                                    <ArrowRight className="h-4 w-4 transition-transform duration-500 group-hover:translate-x-1.5" />
                                 </Link>
                             </div>
                         </div>
                     </div>
                 </div>
             ) : (
-                <div className="flex flex-col items-center justify-center rounded-3xl bg-white p-20 text-center shadow-premium">
-                    <div className="mb-10 flex h-20 w-20 items-center justify-center rounded-full bg-primary/5 text-primary">
-                        <Sparkles className="h-10 w-10 opacity-40" />
+                <div className="flex flex-col items-center justify-center rounded-[2.5rem] bg-white p-24 text-center shadow-premium">
+                    <div className="mb-12 flex h-24 w-24 items-center justify-center rounded-full bg-primary/[0.02] text-primary/20">
+                        <Sparkles className="h-10 w-10" />
                     </div>
-                    <h2 className="text-3xl font-bold text-primary">Próximas Campanhas em Breve</h2>
-                    <p className="mt-4 max-w-md text-muted-foreground">
-                        Estamos curando prêmios exclusivos para você. Siga-nos para ser o primeiro a saber.
+                    <h2 className="text-3xl font-bold text-primary tracking-tight">Novos Lançamentos em Breve</h2>
+                    <p className="mt-6 max-w-sm text-muted-foreground font-medium leading-relaxed">
+                        Estamos preparando uma nova coleção de prêmios exclusivos. Ative as notificações para ser o primeiro a saber.
                     </p>
                 </div>
             )}
+        </div>
 
-            {/* Features Row - Minimalist & Balanced */}
-            <div className="grid gap-8 md:grid-cols-3">
-                {[
-                    { icon: Zap, label: "Processo Instantâneo", desc: "Pagamento via PIX com baixa automática e segura." },
-                    { icon: Trophy, label: "Transparência Total", desc: "Sorteios realizados com base na Loteria Federal." },
-                    { icon: Sparkles, label: "Impacto Social", desc: "Contribua diretamente para os projetos da Reviva Brasil." },
-                ].map((item, i) => (
-                    <div key={i} className="group flex flex-col items-start gap-6 rounded-3xl bg-white/40 p-10 transition-all duration-500 hover:bg-white hover:shadow-premium">
-                        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/5 text-primary transition-colors duration-500 group-hover:bg-primary group-hover:text-white">
-                            <item.icon className="h-6 w-6" />
-                        </div>
-                        <div>
-                            <h3 className="text-lg font-bold text-primary">{item.label}</h3>
-                            <p className="mt-3 text-sm leading-relaxed text-muted-foreground/80">{item.desc}</p>
-                        </div>
+        {/* Triple Feature Section */}
+        <div className="mt-32 grid gap-12 md:grid-cols-3 stagger-in">
+            {[
+                { icon: Zap, label: "Velocidade Digital", desc: "Processamento via PIX com liquidação em tempo real." },
+                { icon: Trophy, label: "Ética no Sorteio", desc: "Resultados baseados na Loteria Federal brasileira." },
+                { icon: Sparkles, label: "Legado Social", desc: "Toda arrecadação líquida é reinvestida em projetos sociais." },
+            ].map((item, i) => (
+                <div key={i} className="group flex flex-col items-start gap-8 rounded-[2rem] bg-white/30 p-12 transition-all duration-700 hover:bg-white hover:shadow-premium border border-transparent hover:border-black/[0.02]">
+                    <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/[0.03] text-primary transition-all duration-700 group-hover:bg-primary group-hover:text-white group-hover:scale-110">
+                        <item.icon className="h-6 w-6" />
                     </div>
-                ))}
-            </div>
+                    <div>
+                        <h3 className="text-xl font-bold text-primary tracking-tight">{item.label}</h3>
+                        <p className="mt-4 text-[13px] leading-relaxed text-muted-foreground/70 font-medium">{item.desc}</p>
+                    </div>
+                </div>
+            ))}
         </div>
       </section>
     </div>
   );
 }
+

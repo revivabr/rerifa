@@ -20,9 +20,10 @@ interface ImageUploadProps {
   label?: string;
   bucket?: string;
   folder?: string;
+  isFolderSelect?: boolean;
 }
 
-export function ImageUpload({ value, onChange, label, bucket = "banners", folder = "campaigns" }: ImageUploadProps) {
+export function ImageUpload({ value, onChange, label, bucket = "banners", folder = "campaigns", isFolderSelect = false }: ImageUploadProps) {
   const [uploading, setUploading] = useState(false);
   const [showGoogleDriveHelp, setShowGoogleDriveHelp] = useState(false);
 
@@ -54,13 +55,24 @@ export function ImageUpload({ value, onChange, label, bucket = "banners", folder
   }
 
   function handleGoogleDriveUrl(url: string) {
+    if (isFolderSelect) {
+      // Se for seleção de pasta, apenas salva a URL da pasta
+      if (url.includes("drive.google.com/drive/folders/")) {
+        onChange(url);
+        toast.success("Pasta do Google Drive vinculada!");
+        setShowGoogleDriveHelp(false);
+      } else {
+        toast.error("URL da pasta do Google Drive inválida.");
+      }
+      return;
+    }
+
     // Converter URL compartilhada do Google Drive em URL de imagem pública
-    // Padrão: https://drive.google.com/open?id=FILE_ID
-    // Resultado: https://drive.google.com/uc?export=view&id=FILE_ID
-    const match = url.match(/[?&]id=([a-zA-Z0-9-_]+)/);
+    // Padrão: https://drive.google.com/open?id=FILE_ID ou https://drive.google.com/file/d/FILE_ID/view
+    const match = url.match(/[?&]id=([a-zA-Z0-9-_]+)/) || url.match(/\/file\/d\/([a-zA-Z0-9-_]+)/);
     if (match) {
       const fileId = match[1];
-      const publicUrl = `https://drive.google.com/uc?export=view&id=${fileId}`;
+      const publicUrl = `https://lh3.googleusercontent.com/u/0/d/${fileId}=w1000`;
       onChange(publicUrl);
       toast.success("URL do Google Drive vinculada!");
       setShowGoogleDriveHelp(false);
@@ -79,35 +91,37 @@ export function ImageUpload({ value, onChange, label, bucket = "banners", folder
           <Input 
             value={value} 
             onChange={(e) => onChange(e.target.value)} 
-            placeholder="https://... ou faça upload" 
+            placeholder={isFolderSelect ? "URL da pasta do Google Drive" : "https://... ou faça upload"} 
           />
         </div>
         
         {/* Upload Button */}
         <div className="relative">
-          <Button
-            type="button"
-            variant="outline"
-            disabled={uploading}
-            className="w-full sm:w-auto"
-            asChild
-          >
-            <label className="cursor-pointer">
-              {uploading ? (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              ) : (
-                <Upload className="mr-2 h-4 w-4" />
-              )}
-              {uploading ? "Enviando..." : "Upload"}
-              <input
-                type="file"
-                className="hidden"
-                accept="image/*"
-                onChange={handleUpload}
-                disabled={uploading}
-              />
-            </label>
-          </Button>
+          {!isFolderSelect && (
+            <Button
+              type="button"
+              variant="outline"
+              disabled={uploading}
+              className="w-full sm:w-auto"
+              asChild
+            >
+              <label className="cursor-pointer">
+                {uploading ? (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : (
+                  <Upload className="mr-2 h-4 w-4" />
+                )}
+                {uploading ? "Enviando..." : "Upload"}
+                <input
+                  type="file"
+                  className="hidden"
+                  accept="image/*"
+                  onChange={handleUpload}
+                  disabled={uploading}
+                />
+              </label>
+            </Button>
+          )}
         </div>
 
         {/* Google Drive Help Button */}
@@ -119,9 +133,11 @@ export function ImageUpload({ value, onChange, label, bucket = "banners", folder
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Usar imagem do Google Drive</DialogTitle>
+              <DialogTitle>{isFolderSelect ? "Vincular Pasta do Google Drive" : "Usar imagem do Google Drive"}</DialogTitle>
               <DialogDescription>
-                Cole aqui uma imagem compartilhada do Google Drive da Associação Reviva
+                {isFolderSelect 
+                  ? "Cole aqui a URL da pasta pública do Google Drive da Associação Reviva"
+                  : "Cole aqui uma imagem compartilhada do Google Drive da Associação Reviva"}
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-4">
@@ -129,7 +145,8 @@ export function ImageUpload({ value, onChange, label, bucket = "banners", folder
                 <Label htmlFor="drive-url">URL do Google Drive</Label>
                 <Input
                   id="drive-url"
-                  placeholder="https://drive.google.com/open?id=..."
+                  placeholder={isFolderSelect ? "https://drive.google.com/drive/folders/..." : "https://drive.google.com/open?id=..."}
+
                   onKeyPress={(e) => {
                     if (e.key === "Enter") {
                       const input = e.currentTarget;
@@ -141,10 +158,21 @@ export function ImageUpload({ value, onChange, label, bucket = "banners", folder
               <div className="rounded-lg bg-blue-50 p-3 text-sm text-blue-900">
                 <p className="font-semibold mb-2">Como obter a URL:</p>
                 <ol className="list-inside list-decimal space-y-1 text-xs">
-                  <li>Abra o arquivo no Google Drive</li>
-                  <li>Clique em "Compartilhar" (canto superior direito)</li>
-                  <li>Defina como "Qualquer pessoa com o link pode visualizar"</li>
-                  <li>Copie o link (algo como: https://drive.google.com/...)</li>
+                  {isFolderSelect ? (
+                    <>
+                      <li>Abra a pasta no Google Drive</li>
+                      <li>Clique em "Compartilhar"</li>
+                      <li>Defina como "Qualquer pessoa com o link pode visualizar"</li>
+                      <li>Copie o link da barra de endereços</li>
+                    </>
+                  ) : (
+                    <>
+                      <li>Abra o arquivo no Google Drive</li>
+                      <li>Clique em "Compartilhar"</li>
+                      <li>Defina como "Qualquer pessoa com o link pode visualizar"</li>
+                      <li>Copie o link gerado</li>
+                    </>
+                  )}
                   <li>Cole aqui e pressione Enter</li>
                 </ol>
               </div>
@@ -162,8 +190,7 @@ export function ImageUpload({ value, onChange, label, bucket = "banners", folder
         </Dialog>
       </div>
 
-      {/* Image Preview */}
-      {value && (
+      {value && !isFolderSelect && (
         <div className="relative mt-2 aspect-video w-full max-w-sm overflow-hidden rounded-lg border border-border bg-secondary">
           <img src={value} alt="Preview" className="h-full w-full object-cover" />
           <Button

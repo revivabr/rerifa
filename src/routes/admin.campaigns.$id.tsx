@@ -15,7 +15,7 @@ export const Route = createFileRoute("/admin/campaigns/$id")({
   component: CampaignAdmin,
 });
 
-type Campaign = { id: string; name: string; slug: string; status: string; banner_url: string | null; number_quantity: number; number_price: number; goal_amount: number | null; start_date: string; end_date: string; description: string | null; regulation_text: string | null; regulation_url: string | null; pix_key: string | null };
+type Campaign = { id: string; name: string; slug: string; status: string; banner_url: string | null; number_quantity: number; number_price: number; goal_amount: number | null; start_date: string; end_date: string; description: string | null; regulation_text: string | null; regulation_url: string | null; pix_key: string | null; drive_folder_url: string | null };
 type OrderRow = { id: string; status: string; amount: number; quantity: number; created_at: string; buyer: { name: string; whatsapp: string; email: string | null } | null };
 
 function CampaignAdmin() {
@@ -89,6 +89,8 @@ function CampaignAdmin() {
       pix_key: form.pix_key,
       regulation_text: form.regulation_text,
       regulation_url: form.regulation_url,
+      drive_folder_url: form.drive_folder_url,
+
       updated_at: new Date().toISOString()
     }).eq("id", id);
 
@@ -153,6 +155,14 @@ function CampaignAdmin() {
               label="Imagem do Banner" 
               value={form.banner_url ?? ""} 
               onChange={v => setForm(f => ({ ...f, banner_url: v }))} 
+            />
+          </div>
+          <div className="md:col-span-2">
+            <ImageUpload 
+              label="Pasta do Google Drive" 
+              value={form.drive_folder_url ?? ""} 
+              onChange={v => setForm(f => ({ ...f, drive_folder_url: v }))} 
+              isFolderSelect
             />
           </div>
           <div>

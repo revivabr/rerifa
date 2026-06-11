@@ -80,23 +80,37 @@ function RaffleDraw() {
     setIsDrawing(true);
     setWinner(null);
     
-    // Iniciar animação de números aleatórios
-    let count = 0;
-    const totalDuration = 5000; // 5 segundos
-    const intervalTime = 50;
-    const maxSteps = totalDuration / intervalTime;
+    // Animação caça-níquel (acelera e depois desacelera)
+    let currentInterval = 30;
+    const minInterval = 20;
+    const maxInterval = 300;
+    const totalDuration = 6000; // 6 segundos de emoção
+    const startTime = Date.now();
 
-    const interval = setInterval(() => {
+    const drawLoop = () => {
+      const elapsed = Date.now() - startTime;
+      
+      // Escolher número visual aleatório
       const randomIndex = Math.floor(Math.random() * soldNumbers.length);
       const randomNum = soldNumbers[randomIndex].number;
       setDisplayNumber(padNumber(randomNum, campaign.number_quantity));
-      
-      count++;
-      if (count >= maxSteps) {
-        clearInterval(interval);
+
+      if (elapsed < totalDuration) {
+        // Calcular próximo intervalo (acelera no começo, desacelera no final)
+        const progress = elapsed / totalDuration;
+        if (progress < 0.2) {
+          currentInterval = Math.max(minInterval, currentInterval - 5);
+        } else if (progress > 0.6) {
+          currentInterval = Math.min(maxInterval, currentInterval + (progress * 15));
+        }
+        
+        setTimeout(drawLoop, currentInterval);
+      } else {
         finalizeDraw();
       }
-    }, intervalTime);
+    };
+
+    drawLoop();
   };
 
   const finalizeDraw = () => {
@@ -179,7 +193,7 @@ function RaffleDraw() {
   if (isLoading) return <div className="flex h-screen items-center justify-center"><RefreshCw className="h-8 w-8 animate-spin text-primary" /></div>;
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-white p-4 md:p-8 flex flex-col items-center justify-center overflow-hidden">
+    <div className="min-h-screen bg-[#0a0a0a] bg-[radial-gradient(circle_at_50%_50%,rgba(43,75,235,0.1),transparent)] text-white p-4 md:p-8 flex flex-col items-center justify-center overflow-hidden">
       <Link 
         to="/admin/campaigns/$id" 
         params={{ id }} 
@@ -206,41 +220,36 @@ function RaffleDraw() {
         </motion.div>
 
         <div className="relative py-20 flex justify-center">
-          {/* Brilho de fundo */}
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="h-64 w-64 bg-primary/20 rounded-full blur-[100px] animate-pulse" />
-          </div>
-
-          <AnimatePresence mode="wait">
-            {!winner && !isDrawing ? (
-              <motion.div
-                key="idle"
-                initial={{ scale: 0.8, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 1.2, opacity: 0 }}
-                className="relative"
-              >
-                <Button 
-                  onClick={startDraw}
-                  className="h-32 w-32 md:h-48 md:w-48 rounded-full bg-gradient-primary text-white text-2xl font-black shadow-[0_0_50px_rgba(43,75,235,0.4)] hover:scale-105 transition-transform group"
+          {/* Slot Machine Container */}
+          <div className="relative bg-zinc-900 border-4 border-zinc-700 rounded-3xl p-6 shadow-2xl flex items-center justify-center overflow-hidden min-w-[200px] md:min-w-[400px] h-32 md:h-48">
+            <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-transparent to-black/50 pointer-events-none" />
+            
+            <AnimatePresence mode="wait">
+              {!winner && !isDrawing ? (
+                <motion.div
+                  key="idle"
+                  initial={{ scale: 0.8, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  exit={{ scale: 1.2, opacity: 0 }}
+                  className="relative z-10"
                 >
-                  <div className="flex flex-col items-center gap-2">
-                    <Play className="h-10 w-10 md:h-16 md:w-16 fill-current group-hover:scale-110 transition-transform" />
-                    <span className="text-sm md:text-base">SORTEAR</span>
-                  </div>
-                </Button>
-              </motion.div>
-            ) : (
-              <motion.div
-                key="drawing"
-                initial={{ scale: 0.5, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                className="text-8xl md:text-[12rem] font-black tracking-tighter tabular-nums drop-shadow-[0_0_30px_rgba(255,255,255,0.3)]"
-              >
-                {displayNumber || "000"}
-              </motion.div>
-            )}
-          </AnimatePresence>
+                  <Button 
+                    onClick={startDraw}
+                    className="h-24 w-24 md:h-32 md:w-32 rounded-full bg-gradient-primary text-white font-black shadow-lg hover:scale-105 transition-transform group"
+                  >
+                    <Play className="h-10 w-10 md:h-12 md:w-12 fill-current" />
+                  </Button>
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="drawing"
+                  className="text-6xl md:text-8xl font-black tabular-nums text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]"
+                >
+                  {displayNumber || "000"}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
         </div>
 
         <AnimatePresence>

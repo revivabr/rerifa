@@ -84,6 +84,10 @@ export const getOrGeneratePix = createServerFn({ method: "POST" })
       };
     } catch (err: any) {
       console.error("Erro ao processar PIX:", err);
+      // Log extra para depurar o erro no console do servidor
+      if (err instanceof Error) {
+        console.error("Stack trace:", err.stack);
+      }
       throw new Error(err.message || "Erro interno ao processar pagamento");
     }
   });

@@ -355,16 +355,16 @@ function StatCard({ label, value, icon }: { label: string; value: string; icon: 
 
 function Legend() {
   const items = [
-    { label: "Disponível", cls: "border-secondary bg-card" },
-    { label: "Selecionado", cls: "border-primary bg-primary" },
-    { label: "Reservado", cls: "border-accent/40 bg-accent/30" },
-    { label: "Vendido", cls: "bg-muted" },
+    { label: "Livre", cls: "border-secondary bg-white" },
+    { label: "Seu", cls: "border-primary bg-primary" },
+    { label: "Reservado", cls: "border-accent/20 bg-accent/10" },
+    { label: "Vendido", cls: "bg-muted/50 border-transparent" },
   ];
   return (
-    <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
+    <div className="flex flex-wrap items-center gap-4 rounded-2xl border border-border bg-white px-5 py-3 text-xs font-bold text-muted-foreground shadow-sm">
       {items.map(i => (
-        <span key={i.label} className="inline-flex items-center gap-1.5">
-          <span className={cn("h-3.5 w-3.5 rounded border-2", i.cls)} /> {i.label}
+        <span key={i.label} className="inline-flex items-center gap-2">
+          <span className={cn("h-4 w-4 rounded-md border-2", i.cls)} /> {i.label}
         </span>
       ))}
     </div>

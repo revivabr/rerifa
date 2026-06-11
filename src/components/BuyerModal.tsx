@@ -38,10 +38,6 @@ export function BuyerModal({
           onSubmit={(e) => { e.preventDefault(); if (canSubmit) onSubmit({ name: name.trim(), email: email.trim(), whatsapp, sellerName: sellerName.trim() }); }}
         >
           <div>
-            <Label htmlFor="sellerName">Quem te vendeu? (Vendedor)</Label>
-            <Input id="sellerName" value={sellerName} onChange={(e) => setSellerName(e.target.value)} placeholder="Nome do vendedor (opcional)" />
-          </div>
-          <div>
             <Label htmlFor="name">Nome completo *</Label>
             <Input id="name" value={name} onChange={(e) => setName(e.target.value)} placeholder="João da Silva" required />
           </div>
@@ -52,6 +48,27 @@ export function BuyerModal({
           <div>
             <Label htmlFor="email">E-mail (recomendado)</Label>
             <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="voce@email.com" />
+          </div>
+
+          <div className="relative py-2">
+            <div className="absolute inset-0 flex items-center" aria-hidden="true">
+              <div className="w-full border-t border-border"></div>
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-background px-2 text-muted-foreground font-semibold">Indicação</span>
+            </div>
+          </div>
+
+          <div className="rounded-xl border border-dashed border-primary/30 bg-primary/5 p-4">
+            <Label htmlFor="sellerName" className="text-primary font-bold">Quem te vendeu? (Vendedor)</Label>
+            <Input 
+              id="sellerName" 
+              value={sellerName} 
+              onChange={(e) => setSellerName(e.target.value)} 
+              placeholder="Nome do vendedor (opcional)"
+              className="mt-1.5 border-primary/20 focus-visible:ring-primary/30"
+            />
+            <p className="mt-1.5 text-[10px] text-muted-foreground">Preencha se alguém te indicou esta campanha.</p>
           </div>
           <label className="flex cursor-pointer items-start gap-3 rounded-xl bg-secondary p-3 text-sm">
             <Checkbox checked={agree} onCheckedChange={(v) => setAgree(Boolean(v))} className="mt-0.5" />

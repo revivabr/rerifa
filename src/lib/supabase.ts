@@ -3,7 +3,9 @@ import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 const url = (import.meta.env.VITE_SUPABASE_URL || process.env.VITE_SUPABASE_URL || "https://placeholder.supabase.co") as string;
 const anonKey = (import.meta.env.VITE_SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY || "placeholder") as string;
 
-export const isSupabaseConfigured = Boolean(import.meta.env.VITE_SUPABASE_URL && import.meta.env.VITE_SUPABASE_ANON_KEY);
+console.log("[Supabase Lib] Config:", { url, hasKey: !!anonKey, keyStart: anonKey?.substring(0, 10) });
+
+export const isSupabaseConfigured = Boolean(url && anonKey && !url.includes("placeholder") && anonKey !== "placeholder");
 
 // Em SSR ou quando faltar config, devolve um stub para não quebrar build.
 function makeStub(): SupabaseClient {
@@ -38,6 +40,11 @@ function makeStub(): SupabaseClient {
 export const supabase: SupabaseClient =
   isSupabaseConfigured && typeof window !== "undefined"
     ? createClient(url!, anonKey!, {
-        auth: { persistSession: true, autoRefreshToken: true, storageKey: "reviva-rifa-auth" },
+        auth: { 
+          persistSession: true, 
+          autoRefreshToken: true, 
+          storageKey: "reviva-rifa-auth",
+          detectSessionInUrl: true 
+        },
       })
     : makeStub();

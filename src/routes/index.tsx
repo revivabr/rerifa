@@ -48,14 +48,14 @@ function HomePage() {
             <span>Show de Prêmios Reviva Brasil</span>
           </div>
           
-          <h1 className="text-5xl font-extrabold leading-[1.1] tracking-tight text-primary md:text-8xl">
-            Onde a Sorte <br/>
-            <span className="bg-gradient-premium bg-clip-text text-transparent italic opacity-90">Encontra a Solidariedade</span>
+          <h1 className="text-5xl font-extrabold tracking-tight text-primary md:text-8xl">
+            Onde a Sorte Encontra a Solidariedade
           </h1>
           
           <p className="mx-auto mt-10 max-w-2xl text-lg font-medium leading-relaxed text-muted-foreground md:text-xl">
             Participe das nossas rifas exclusivas e concorra a prêmios extraordinários enquanto apoia os projetos sociais da Associação Reviva Brasil.
           </p>
+
 
           <div className="mt-12 flex flex-col items-center justify-center gap-4 sm:flex-row">
             <a 

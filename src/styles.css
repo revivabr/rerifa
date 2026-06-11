@@ -2,10 +2,10 @@
 @plugin "@tailwindcss/typography";
 
 @theme {
-  --color-primary: #1A3C23; /* Deeper, more sophisticated green */
+  --color-primary: #1A3C23;
   --color-primary-glow: #2D5F3A;
   --color-secondary: #F8FAF8;
-  --color-accent: #B8A382; /* More muted champagne/gold */
+  --color-accent: #B8A382;
   --color-gold: #C5A059;
   --color-gold-glow: #D4AF37;
   --color-sand: #FDFDFB;
@@ -33,7 +33,7 @@
   --border: 145 10% 92%;
   --input: 145 10% 92%;
   --ring: 145 40% 15%;
-  --radius: 0.75rem; /* More modern, tighter radius */
+  --radius: 0.75rem;
 }
 
 @theme inline {
@@ -83,17 +83,6 @@
   border: 1px solid rgba(255, 255, 255, 0.18);
 }
 
-@keyframes slow-pan {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
-.animate-slow-pan {
-  animation: slow-pan 20s ease infinite;
-  background-size: 200% 200%;
-}
-
 @layer base {
   * {
     @apply border-border;
@@ -102,6 +91,7 @@
     @apply bg-background text-foreground font-sans antialiased selection:bg-primary/10 selection:text-primary;
   }
   h1, h2, h3, h4, h5, h6 {
-    @apply font-display tracking-tight;
+    @apply font-display tracking-tight leading-tight;
   }
 }
+

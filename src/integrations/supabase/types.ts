@@ -41,6 +41,44 @@ export type Database = {
         }
         Relationships: []
       }
+      audit_logs: {
+        Row: {
+          action: string
+          admin_user_id: string | null
+          created_at: string | null
+          entity_id: string | null
+          entity_type: string | null
+          id: string
+          metadata: Json | null
+        }
+        Insert: {
+          action: string
+          admin_user_id?: string | null
+          created_at?: string | null
+          entity_id?: string | null
+          entity_type?: string | null
+          id?: string
+          metadata?: Json | null
+        }
+        Update: {
+          action?: string
+          admin_user_id?: string | null
+          created_at?: string | null
+          entity_id?: string | null
+          entity_type?: string | null
+          id?: string
+          metadata?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "audit_logs_admin_user_id_fkey"
+            columns: ["admin_user_id"]
+            isOneToOne: false
+            referencedRelation: "admin_users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       buyers: {
         Row: {
           created_at: string | null
@@ -176,6 +214,80 @@ export type Database = {
             columns: ["created_by"]
             isOneToOne: false
             referencedRelation: "admin_users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      draws: {
+        Row: {
+          campaign_id: string | null
+          draw_hash: string | null
+          draw_method: string
+          draw_seed: string | null
+          drawn_at: string | null
+          drawn_by: string | null
+          eligible_numbers_count: number
+          id: string
+          winner_art_url: string | null
+          winner_buyer_id: string | null
+          winner_number: number
+          winner_order_id: string | null
+        }
+        Insert: {
+          campaign_id?: string | null
+          draw_hash?: string | null
+          draw_method: string
+          draw_seed?: string | null
+          drawn_at?: string | null
+          drawn_by?: string | null
+          eligible_numbers_count: number
+          id?: string
+          winner_art_url?: string | null
+          winner_buyer_id?: string | null
+          winner_number: number
+          winner_order_id?: string | null
+        }
+        Update: {
+          campaign_id?: string | null
+          draw_hash?: string | null
+          draw_method?: string
+          draw_seed?: string | null
+          drawn_at?: string | null
+          drawn_by?: string | null
+          eligible_numbers_count?: number
+          id?: string
+          winner_art_url?: string | null
+          winner_buyer_id?: string | null
+          winner_number?: number
+          winner_order_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "draws_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "draws_drawn_by_fkey"
+            columns: ["drawn_by"]
+            isOneToOne: false
+            referencedRelation: "admin_users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "draws_winner_buyer_id_fkey"
+            columns: ["winner_buyer_id"]
+            isOneToOne: false
+            referencedRelation: "buyers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "draws_winner_order_id_fkey"
+            columns: ["winner_order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
             referencedColumns: ["id"]
           },
         ]

@@ -235,7 +235,6 @@ function CampaignAdmin() {
         </div>
       )}
 
-      )}
 
       {ranking.length > 0 && (
         <div className="rounded-2xl border border-border bg-card shadow-soft overflow-hidden">

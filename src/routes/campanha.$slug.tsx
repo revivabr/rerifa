@@ -21,7 +21,7 @@ type Campaign = {
   regulation_url: string | null;
   regulation_text: string | null;
 };
-type RaffleNumber = { number: number; status: "available" | "reserved" | "sold" | "cancelled" | "winner" };
+type RaffleNumber = { number: number; status: "available" | "reserved" | "sold" | "cancelled" | "winner"; reserved_until?: string };
 type Prize = { id: string; title: string; description: string | null; image_url: string | null; position: number };
 
 function CampaignPage() {
@@ -43,8 +43,13 @@ function CampaignPage() {
       const { data: c } = await supabase.from("campaigns").select("*").eq("slug", slug).maybeSingle();
       if (!c) { setLoading(false); return; }
       setCampaign(c as Campaign);
-      const { data: nums } = await supabase.from("raffle_numbers").select("number,status").eq("campaign_id", c.id).order("number");
-      setNumbers((nums ?? []) as RaffleNumber[]);
+      const { data: nums } = await supabase.from("raffle_numbers").select("number,status,reserved_until").eq("campaign_id", c.id).order("number");
+      setNumbers((nums ?? []).map(n => ({
+        ...n,
+        status: (n.status === "reserved" && n.reserved_until && new Date(n.reserved_until).getTime() < Date.now()) 
+          ? "available" 
+          : n.status
+      })) as RaffleNumber[]);
       const { data: pz } = await supabase.from("campaign_prizes").select("*").eq("campaign_id", c.id).order("position");
       setPrizes((pz ?? []) as Prize[]);
       setLoading(false);
@@ -56,9 +61,16 @@ function CampaignPage() {
           (payload) => {
             setNumbers((prev) => {
               const next = [...prev];
-              const row = (payload.new ?? payload.old) as RaffleNumber;
+              const row = (payload.new ?? payload.old) as any;
               const idx = next.findIndex(n => n.number === row.number);
-              if (idx >= 0 && payload.new) next[idx] = { number: row.number, status: (payload.new as RaffleNumber).status };
+              if (idx >= 0 && payload.new) {
+                const newRow = payload.new as any;
+                const isExpired = newRow.status === "reserved" && newRow.reserved_until && new Date(newRow.reserved_until).getTime() < Date.now();
+                next[idx] = { 
+                  number: row.number, 
+                  status: isExpired ? "available" : newRow.status 
+                };
+              }
               return next;
             });
           })

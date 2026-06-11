@@ -149,7 +149,7 @@ function CampaignPage() {
         </section>
       )}
 
-      <section className="mt-10">
+      <section className="mt-10" id="escolher-numeros">
         <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <h2 className="text-2xl font-bold text-primary">Escolha seus números</h2>

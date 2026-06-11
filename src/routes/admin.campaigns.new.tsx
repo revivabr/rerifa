@@ -61,7 +61,7 @@ function NewCampaign() {
       <form onSubmit={handleSubmit} className="space-y-5 rounded-2xl border border-border bg-card p-6 shadow-soft">
         <div className="grid gap-5 md:grid-cols-2">
           <div className="md:col-span-2">
-            <Label>Link do Banner da Rifas (imagem principal) *</Label>
+            <Label>Nome da Campanha *</Label>
             <Input required value={form.name} onChange={e => { set("name", e.target.value); if (!form.slug) set("slug", slugify(e.target.value)); }} placeholder="Ex: Rifa de Natal 2026" />
           </div>
           <div>

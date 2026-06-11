@@ -1,160 +1,57 @@
-@import "tailwindcss" source(none);
-@source "../src";
-@import "tw-animate-css";
+@import "tailwindcss";
 
-@custom-variant dark (&:is(.dark *));
-
-/* =========================================================
-   Reviva Brasil — Design System
-   Verde institucional + bege/caqui. Mobile-first, orgânico,
-   bordas generosas, sensação de confiança e generosidade.
-   ========================================================= */
-
-@theme inline {
-  --font-sans: "Nunito", "Inter", ui-sans-serif, system-ui, sans-serif;
-  --font-display: "Nunito", "Inter", ui-sans-serif, system-ui, sans-serif;
-
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
-  --radius-2xl: calc(var(--radius) + 8px);
-  --radius-3xl: calc(var(--radius) + 16px);
-
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
-  --color-popover: var(--popover);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-primary-glow: var(--primary-glow);
-  --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-destructive: var(--destructive);
-  --color-destructive-foreground: var(--destructive-foreground);
-  --color-border: var(--border);
-  --color-input: var(--input);
-  --color-ring: var(--ring);
-
-  --color-success: var(--success);
-  --color-success-foreground: var(--success-foreground);
-  --color-warning: var(--warning);
-  --color-warning-foreground: var(--warning-foreground);
-  --color-gold: var(--gold);
-  --color-gold-foreground: var(--gold-foreground);
-  --color-sand: var(--sand);
-  --color-sand-foreground: var(--sand-foreground);
-
-  --color-number-available: var(--number-available);
-  --color-number-selected: var(--number-selected);
-  --color-number-reserved: var(--number-reserved);
-  --color-number-sold: var(--number-sold);
-  --color-number-winner: var(--number-winner);
-}
-
-:root {
-  --radius: 0.875rem;
-
-  /* Paleta Reviva Brasil */
-  --background: oklch(0.985 0.008 95);            /* #FAFAF5 fundo claro */
-  --foreground: oklch(0.28 0.05 150);             /* #1F3D2B texto */
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.28 0.05 150);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.28 0.05 150);
-
-  --primary: oklch(0.41 0.09 150);                /* #2D5F3A verde principal */
-  --primary-foreground: oklch(0.985 0.008 95);
-  --primary-glow: oklch(0.62 0.18 152);           /* #00A95C verde destaque */
-
-  --secondary: oklch(0.95 0.025 145);             /* #E8F5EC verde claro */
-  --secondary-foreground: oklch(0.41 0.09 150);
-
-  --muted: oklch(0.96 0.012 95);
-  --muted-foreground: oklch(0.48 0.03 145);
-
-  --accent: oklch(0.78 0.045 85);                 /* #C8B69A bege/caqui */
-  --accent-foreground: oklch(0.28 0.05 150);
-
-  --sand: oklch(0.78 0.045 85);
-  --sand-foreground: oklch(0.28 0.05 150);
-
-  --destructive: oklch(0.58 0.22 27);
-  --destructive-foreground: oklch(0.985 0.008 95);
-
-  --success: oklch(0.62 0.18 152);
-  --success-foreground: oklch(0.985 0.008 95);
-
-  --warning: oklch(0.78 0.13 75);
-  --warning-foreground: oklch(0.25 0.05 150);
-
-  --gold: oklch(0.74 0.13 75);                    /* #D9A441 dourado vencedor */
-  --gold-foreground: oklch(0.25 0.05 150);
-
-  --border: oklch(0.91 0.015 145);
-  --input: oklch(0.91 0.015 145);
-  --ring: oklch(0.62 0.18 152);
-
-  /* Estados dos números da rifa */
-  --number-available: oklch(0.98 0.015 145);
-  --number-selected: oklch(0.41 0.09 150);
-  --number-reserved: oklch(0.85 0.07 85);         /* bege */
-  --number-sold: oklch(0.86 0.005 145);           /* #D7D7D7 cinza */
-  --number-winner: oklch(0.74 0.13 75);           /* dourado */
-
-  /* Gradientes & sombras */
-  --gradient-primary: linear-gradient(135deg, oklch(0.41 0.09 150), oklch(0.62 0.18 152));
-  --gradient-hero: linear-gradient(160deg, oklch(0.41 0.09 150) 0%, oklch(0.55 0.14 152) 60%, oklch(0.62 0.18 152) 100%);
-  --gradient-sand: linear-gradient(135deg, oklch(0.95 0.025 145), oklch(0.88 0.04 95));
-  --shadow-soft: 0 4px 20px -8px oklch(0.41 0.09 150 / 0.18);
-  --shadow-card: 0 8px 30px -12px oklch(0.41 0.09 150 / 0.22);
-  --shadow-elegant: 0 20px 50px -20px oklch(0.41 0.09 150 / 0.35);
-}
-
-.dark {
-  --background: oklch(0.18 0.025 150);
-  --foreground: oklch(0.96 0.012 95);
-  --card: oklch(0.22 0.03 150);
-  --card-foreground: oklch(0.96 0.012 95);
-  --popover: oklch(0.22 0.03 150);
-  --popover-foreground: oklch(0.96 0.012 95);
-  --primary: oklch(0.62 0.18 152);
-  --primary-foreground: oklch(0.18 0.025 150);
-  --primary-glow: oklch(0.72 0.18 152);
-  --secondary: oklch(0.28 0.04 150);
-  --secondary-foreground: oklch(0.96 0.012 95);
-  --muted: oklch(0.28 0.04 150);
-  --muted-foreground: oklch(0.72 0.03 145);
-  --accent: oklch(0.45 0.05 85);
-  --accent-foreground: oklch(0.96 0.012 95);
-  --border: oklch(1 0 0 / 12%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.62 0.18 152);
-}
-
-@layer base {
-  * { border-color: var(--color-border); }
-  html { font-family: var(--font-sans); }
-  body {
-    background-color: var(--color-background);
-    color: var(--color-foreground);
-    font-family: var(--font-sans);
-    -webkit-font-smoothing: antialiased;
-  }
-  h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 800; letter-spacing: -0.01em; }
+@theme {
+  --color-primary: #2D5F3A;
+  --color-primary-glow: #3d804e;
+  --color-secondary: #E8F5EC;
+  --color-accent: #C8B69A;
+  --color-gold: #D9A441;
+  --color-gold-glow: #f1b74d;
+  --color-sand: #FAFAF5;
+  --color-success: #00A95C;
 }
 
 @layer utilities {
-  .bg-gradient-hero { background-image: var(--gradient-hero); }
-  .bg-gradient-primary { background-image: var(--gradient-primary); }
-  .bg-gradient-sand { background-image: var(--gradient-sand); }
-  .shadow-soft { box-shadow: var(--shadow-soft); }
-  .shadow-card { box-shadow: var(--shadow-card); }
-  .shadow-elegant { box-shadow: var(--shadow-elegant); }
+  .bg-gradient-gold {
+    background: linear-gradient(135deg, #f1b74d 0%, #D9A441 100%);
+  }
+  .shadow-gold {
+    box-shadow: 0 10px 20px -5px rgba(217, 164, 65, 0.3);
+  }
+  .bg-pattern-cubes {
+    background-image: url('https://www.transparenttextures.com/patterns/cubes.png');
+  }
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary-foreground: 210 40% 98%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
+    --radius: 1.25rem;
+  }
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
 }

@@ -21,7 +21,7 @@ type Campaign = {
   regulation_url: string | null;
   regulation_text: string | null;
 };
-type RaffleNumber = { number: number; status: "available" | "reserved" | "sold" | "cancelled" | "winner" };
+type RaffleNumber = { number: number; status: "available" | "reserved" | "sold" | "cancelled" | "winner"; reserved_until?: string };
 type Prize = { id: string; title: string; description: string | null; image_url: string | null; position: number };
 
 function CampaignPage() {

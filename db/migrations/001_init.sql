@@ -42,6 +42,7 @@ create table if not exists public.campaigns (
   draw_date timestamptz,
   goal_amount numeric(10,2),
   pix_key text,
+  regulation_text text,
   regulation_url text,
   authorization_url text,
   created_by uuid references public.admin_users(id),

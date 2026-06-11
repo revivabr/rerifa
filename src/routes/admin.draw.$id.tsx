@@ -80,23 +80,37 @@ function RaffleDraw() {
     setIsDrawing(true);
     setWinner(null);
     
-    // Iniciar animação de números aleatórios
-    let count = 0;
-    const totalDuration = 5000; // 5 segundos
-    const intervalTime = 50;
-    const maxSteps = totalDuration / intervalTime;
+    // Animação caça-níquel (acelera e depois desacelera)
+    let currentInterval = 30;
+    const minInterval = 20;
+    const maxInterval = 300;
+    const totalDuration = 6000; // 6 segundos de emoção
+    const startTime = Date.now();
 
-    const interval = setInterval(() => {
+    const drawLoop = () => {
+      const elapsed = Date.now() - startTime;
+      
+      // Escolher número visual aleatório
       const randomIndex = Math.floor(Math.random() * soldNumbers.length);
       const randomNum = soldNumbers[randomIndex].number;
       setDisplayNumber(padNumber(randomNum, campaign.number_quantity));
-      
-      count++;
-      if (count >= maxSteps) {
-        clearInterval(interval);
+
+      if (elapsed < totalDuration) {
+        // Calcular próximo intervalo (acelera no começo, desacelera no final)
+        const progress = elapsed / totalDuration;
+        if (progress < 0.2) {
+          currentInterval = Math.max(minInterval, currentInterval - 5);
+        } else if (progress > 0.6) {
+          currentInterval = Math.min(maxInterval, currentInterval + (progress * 15));
+        }
+        
+        setTimeout(drawLoop, currentInterval);
+      } else {
         finalizeDraw();
       }
-    }, intervalTime);
+    };
+
+    drawLoop();
   };
 
   const finalizeDraw = () => {

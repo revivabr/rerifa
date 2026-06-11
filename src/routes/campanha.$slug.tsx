@@ -37,6 +37,7 @@ function CampaignPage() {
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
+    let channel: ReturnType<typeof supabase.channel> | null = null;
     (async () => {
       setLoading(true);
       const { data: c } = await supabase.from("campaigns").select("*").eq("slug", slug).maybeSingle();
@@ -48,8 +49,9 @@ function CampaignPage() {
       setPrizes((pz ?? []) as Prize[]);
       setLoading(false);
 
-      // Realtime
-      const ch = supabase.channel(`raffle-${c.id}`)
+      // Realtime - create channel and subscribe only once
+      channel = supabase.channel(`raffle-${c.id}-${Math.random().toString(36).slice(2, 8)}`);
+      channel
         .on("postgres_changes", { event: "*", schema: "public", table: "raffle_numbers", filter: `campaign_id=eq.${c.id}` },
           (payload) => {
             setNumbers((prev) => {
@@ -59,10 +61,12 @@ function CampaignPage() {
               if (idx >= 0 && payload.new) next[idx] = { number: row.number, status: (payload.new as RaffleNumber).status };
               return next;
             });
-          }).subscribe();
-      return () => { supabase.removeChannel(ch); };
+          })
+        .subscribe();
     })();
+    return () => { if (channel) supabase.removeChannel(channel); };
   }, [slug]);
+
 
   const total = useMemo(() => (campaign ? selected.size * Number(campaign.number_price) : 0), [selected, campaign]);
   const sold = useMemo(() => numbers.filter(n => n.status === "sold").length, [numbers]);

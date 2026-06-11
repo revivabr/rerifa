@@ -9,11 +9,16 @@ create extension if not exists pgcrypto;
 create table if not exists public.admin_users (
   id uuid primary key default gen_random_uuid(),
   auth_user_id uuid references auth.users(id) on delete cascade unique,
-  name text not null,
+  name text,
   email text not null unique,
   role text not null default 'admin' check (role in ('super_admin','admin','viewer')),
   created_at timestamptz default now()
 );
+
+-- Note: To log in as admin@revivabrasil.com.br, first create the user in Supabase Auth (Users tab)
+-- with the password 'reviva123', then copy their ID and run:
+-- INSERT INTO public.admin_users (auth_user_id, email, role) VALUES ('PASTE-THE-ID-HERE', 'admin@revivabrasil.com.br', 'super_admin');
+
 
 create or replace function public.is_admin()
 returns boolean

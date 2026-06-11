@@ -110,6 +110,19 @@ function CheckoutPage() {
     );
   }
 
+  if (remaining === 0 && order.status === "pending") {
+    return (
+      <div className="mx-auto max-w-md px-4 py-20 text-center">
+        <AlertCircle className="mx-auto h-16 w-16 text-destructive" />
+        <h1 className="mt-4 text-2xl font-bold text-primary">Reserva expirada</h1>
+        <p className="mt-2 text-muted-foreground">O tempo para pagamento acabou e os números foram liberados.</p>
+        <Link to="/campanha/$slug" params={{ slug: campaignName.toLowerCase().replace(/\s+/g, '-') }} className="mt-6 inline-block rounded-xl bg-primary px-6 py-3 font-bold text-white transition hover:scale-105">
+          Tentar novamente
+        </Link>
+      </div>
+    );
+  }
+
   return (
     <div className="mx-auto max-w-2xl px-4 py-8 md:py-12">
       <div className="overflow-hidden rounded-3xl border border-border bg-card shadow-card">
@@ -120,7 +133,10 @@ function CheckoutPage() {
         </div>
 
         <div className="space-y-6 p-6 md:p-8">
-          <div className="flex items-center justify-center gap-2 rounded-xl bg-warning/15 px-4 py-2 text-sm font-semibold text-warning-foreground">
+          <div className={cn(
+            "flex items-center justify-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold",
+            remaining < 60 ? "bg-destructive/15 text-destructive" : "bg-warning/15 text-warning-foreground"
+          )}>
             <Clock className="h-4 w-4" />
             Reserva expira em <span className="tabular-nums">{mm}:{ss}</span>
           </div>

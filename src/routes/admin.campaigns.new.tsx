@@ -25,7 +25,7 @@ function NewCampaign() {
     number_quantity: 100, number_price: 10,
     start_date: new Date().toISOString().slice(0, 10),
     end_date: new Date(Date.now() + 30 * 86400000).toISOString().slice(0, 10),
-    goal_amount: "", pix_key: "", regulation_url: "", regulation_text: "", status: "draft",
+    goal_amount: "", pix_key: "", regulation_url: "", regulation_text: "", status: "draft", drive_folder_url: "",
   });
   const [loading, setLoading] = useState(false);
 
@@ -47,6 +47,8 @@ function NewCampaign() {
       pix_key: form.pix_key || null,
       regulation_url: form.regulation_url || null,
       regulation_text: form.regulation_text || null,
+      drive_folder_url: form.drive_folder_url || null,
+
       status: form.status,
     }).select().single();
     setLoading(false);
@@ -87,6 +89,14 @@ function NewCampaign() {
               label="Imagem do Banner (16:9)" 
               value={form.banner_url} 
               onChange={v => set("banner_url", v)} 
+            />
+          </div>
+          <div className="md:col-span-2">
+            <ImageUpload 
+              label="Pasta do Google Drive (Opcional)" 
+              value={form.drive_folder_url} 
+              onChange={v => set("drive_folder_url", v)} 
+              isFolderSelect
             />
           </div>
           <div>

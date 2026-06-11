@@ -118,6 +118,7 @@ function HomePage() {
                             <Link 
                                 to="/campanha/$slug" 
                                 params={{ slug: activeCampaign.slug }} 
+                                hash="escolher-numeros"
                                 className="group mt-10 inline-flex items-center justify-center gap-4 rounded-2xl bg-gradient-gold px-10 py-6 text-xl font-black text-primary shadow-gold transition-all hover:scale-[1.03] hover:shadow-gold-glow active:scale-95"
                             >
                                 <Ticket className="h-7 w-7" />

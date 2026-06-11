@@ -18,21 +18,15 @@ export function useAdminSession() {
         setIsAdmin(false);
         return;
       }
-      console.log("[useAdminSession] Verificando admin para user:", currentSession.user.id);
       const { data, error } = await supabase
         .from('admin_users')
         .select('id')
         .eq('auth_user_id', currentSession.user.id)
         .maybeSingle();
       
-      if (error) {
-        console.error("[useAdminSession] Erro ao consultar admin_users:", error);
-        setIsAdmin(false);
-      } else if (!data) {
-        console.warn("[useAdminSession] Usuário não encontrado na tabela admin_users");
+      if (error || !data) {
         setIsAdmin(false);
       } else {
-        console.log("[useAdminSession] Admin confirmado com sucesso");
         setIsAdmin(true);
       }
     };

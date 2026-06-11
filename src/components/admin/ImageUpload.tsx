@@ -3,8 +3,16 @@ import { supabase } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Upload, Loader2, Check, X } from "lucide-react";
+import { Upload, Loader2, X, HelpCircle } from "lucide-react";
 import { toast } from "sonner";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 interface ImageUploadProps {
   value: string;
@@ -16,6 +24,7 @@ interface ImageUploadProps {
 
 export function ImageUpload({ value, onChange, label, bucket = "banners", folder = "campaigns" }: ImageUploadProps) {
   const [uploading, setUploading] = useState(false);
+  const [showGoogleDriveHelp, setShowGoogleDriveHelp] = useState(false);
 
   async function handleUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -27,8 +36,6 @@ export function ImageUpload({ value, onChange, label, bucket = "banners", folder
       const fileName = `${Math.random().toString(36).slice(2)}.${fileExt}`;
       const filePath = folder ? `${folder}/${fileName}` : fileName;
 
-      // Primeiro garantir que o bucket existe (em um ambiente real você já teria isso configurado)
-      // Aqui vamos apenas tentar o upload direto
       const { error: uploadError } = await supabase.storage
         .from(bucket)
         .upload(filePath, file);
@@ -43,6 +50,22 @@ export function ImageUpload({ value, onChange, label, bucket = "banners", folder
       console.error(error);
     } finally {
       setUploading(false);
+    }
+  }
+
+  function handleGoogleDriveUrl(url: string) {
+    // Converter URL compartilhada do Google Drive em URL de imagem pública
+    // Padrão: https://drive.google.com/open?id=FILE_ID
+    // Resultado: https://drive.google.com/uc?export=view&id=FILE_ID
+    const match = url.match(/[?&]id=([a-zA-Z0-9-_]+)/);
+    if (match) {
+      const fileId = match[1];
+      const publicUrl = `https://drive.google.com/uc?export=view&id=${fileId}`;
+      onChange(publicUrl);
+      toast.success("URL do Google Drive vinculada!");
+      setShowGoogleDriveHelp(false);
+    } else {
+      toast.error("URL do Google Drive inválida. Verifique o formato.");
     }
   }
 

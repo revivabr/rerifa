@@ -18,19 +18,21 @@ export function useAdminSession() {
         setIsAdmin(false);
         return;
       }
-      
+      console.log("[useAdminSession] Verificando admin para user:", currentSession.user.id);
       const { data, error } = await supabase
         .from('admin_users')
         .select('id')
         .eq('auth_user_id', currentSession.user.id)
         .maybeSingle();
       
-      if (error || !data) {
-        console.error("Erro ao verificar permissões de admin ou usuário não encontrado na tabela admin_users:", error);
+      if (error) {
+        console.error("[useAdminSession] Erro ao consultar admin_users:", error);
         setIsAdmin(false);
-        // Opcional: Deslogar se não for admin
-        // await supabase.auth.signOut();
+      } else if (!data) {
+        console.warn("[useAdminSession] Usuário não encontrado na tabela admin_users");
+        setIsAdmin(false);
       } else {
+        console.log("[useAdminSession] Admin confirmado com sucesso");
         setIsAdmin(true);
       }
     };

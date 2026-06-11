@@ -20,12 +20,32 @@ function AdminLogin() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!isSupabaseConfigured) { toast.error("Supabase não configurado"); return; }
+    
     setLoading(true);
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    setLoading(false);
-    if (error) { toast.error(error.message); return; }
-    toast.success("Bem-vindo!");
-    navigate({ to: "/admin/dashboard" });
+    console.log("[AdminLogin] Tentando login para:", email);
+    
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({ 
+        email, 
+        password 
+      });
+      
+      console.log("[AdminLogin] Resultado do login:", { user: data?.user?.id, error });
+
+      if (error) { 
+        console.error("[AdminLogin] Erro no signInWithPassword:", error);
+        toast.error(error.message); 
+        return; 
+      }
+      
+      toast.success("Bem-vindo!");
+      navigate({ to: "/admin/dashboard" });
+    } catch (err: any) {
+      console.error("[AdminLogin] Exceção capturada:", err);
+      toast.error(err.message || "Ocorreu um erro inesperado");
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (

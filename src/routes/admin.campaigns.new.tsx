@@ -5,8 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { ImageUpload } from "@/components/admin/ImageUpload";
 import { toast } from "sonner";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Info } from "lucide-react";
 
 export const Route = createFileRoute("/admin/campaigns/new")({
   component: NewCampaign,
@@ -24,7 +25,7 @@ function NewCampaign() {
     number_quantity: 100, number_price: 10,
     start_date: new Date().toISOString().slice(0, 10),
     end_date: new Date(Date.now() + 30 * 86400000).toISOString().slice(0, 10),
-    goal_amount: "", pix_key: "", regulation_url: "", status: "draft",
+    goal_amount: "", pix_key: "", regulation_url: "", regulation_text: "", status: "draft",
   });
   const [loading, setLoading] = useState(false);
 
@@ -45,6 +46,7 @@ function NewCampaign() {
       goal_amount: form.goal_amount ? Number(form.goal_amount) : null,
       pix_key: form.pix_key || null,
       regulation_url: form.regulation_url || null,
+      regulation_text: form.regulation_text || null,
       status: form.status,
     }).select().single();
     setLoading(false);
@@ -81,8 +83,11 @@ function NewCampaign() {
             <Textarea rows={3} value={form.description} onChange={e => set("description", e.target.value)} />
           </div>
           <div className="md:col-span-2">
-            <Label>URL da Imagem do Banner (16:9)</Label>
-            <Input value={form.banner_url} onChange={e => set("banner_url", e.target.value)} placeholder="https://..." />
+            <ImageUpload 
+              label="Imagem do Banner (16:9)" 
+              value={form.banner_url} 
+              onChange={v => set("banner_url", v)} 
+            />
           </div>
           <div>
             <Label>Quantidade de números (100–1000) *</Label>
@@ -109,8 +114,20 @@ function NewCampaign() {
             <Input value={form.pix_key} onChange={e => set("pix_key", e.target.value)} placeholder="CNPJ ou e-mail" />
           </div>
           <div className="md:col-span-2">
-            <Label>URL do regulamento</Label>
-            <Input value={form.regulation_url} onChange={e => set("regulation_url", e.target.value)} placeholder="https://…" />
+            <Label>Regulamento (Texto Markdown)</Label>
+            <div className="mb-2 flex items-center gap-2 text-xs text-muted-foreground">
+              <Info className="h-3 w-3" /> Este texto será exibido em um modal para o usuário.
+            </div>
+            <Textarea 
+              rows={6} 
+              value={form.regulation_text} 
+              onChange={e => set("regulation_text", e.target.value)} 
+              placeholder="Cole aqui o regulamento da campanha em formato Markdown..."
+            />
+          </div>
+          <div className="md:col-span-2">
+            <Label>URL do regulamento (Link Externo)</Label>
+            <Input value={form.regulation_url} onChange={e => set("regulation_url", e.target.value)} placeholder="https://… (Opcional se usar o texto acima)" />
           </div>
         </div>
         <Button type="submit" disabled={loading} className="bg-gradient-primary" size="lg">

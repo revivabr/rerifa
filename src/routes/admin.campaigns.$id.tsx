@@ -4,14 +4,18 @@ import { supabase } from "@/lib/supabase";
 import { formatBRL, formatDateBR } from "@/lib/format";
 import { StatusBadge } from "./admin.dashboard";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, ExternalLink, Check, X } from "lucide-react";
+import { ArrowLeft, ExternalLink, Check, X, Pencil, Save, Info } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { ImageUpload } from "@/components/admin/ImageUpload";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/admin/campaigns/$id")({
   component: CampaignAdmin,
 });
 
-type Campaign = { id: string; name: string; slug: string; status: string; banner_url: string | null; number_quantity: number; number_price: number; goal_amount: number | null; start_date: string; end_date: string };
+type Campaign = { id: string; name: string; slug: string; status: string; banner_url: string | null; number_quantity: number; number_price: number; goal_amount: number | null; start_date: string; end_date: string; description: string | null; regulation_text: string | null; regulation_url: string | null; pix_key: string | null };
 type OrderRow = { id: string; status: string; amount: number; quantity: number; created_at: string; buyer: { name: string; whatsapp: string; email: string | null } | null };
 
 function CampaignAdmin() {
@@ -19,11 +23,14 @@ function CampaignAdmin() {
   const [c, setC] = useState<Campaign | null>(null);
   const [stats, setStats] = useState({ sold: 0, reserved: 0, available: 0, raised: 0, buyers: 0 });
   const [orders, setOrders] = useState<OrderRow[]>([]);
+  const [isEditing, setIsEditing] = useState(false);
+  const [form, setForm] = useState<Partial<Campaign>>({});
 
   async function load() {
     const { data: camp } = await supabase.from("campaigns").select("*").eq("id", id).maybeSingle();
     if (!camp) return;
     setC(camp as Campaign);
+    setForm(camp as Campaign);
     const [{ count: sold }, { count: reserved }, { count: available }] = await Promise.all([
       supabase.from("raffle_numbers").select("*", { head: true, count: "exact" }).eq("campaign_id", id).eq("status", "sold"),
       supabase.from("raffle_numbers").select("*", { head: true, count: "exact" }).eq("campaign_id", id).eq("status", "reserved"),
@@ -73,6 +80,27 @@ function CampaignAdmin() {
     load();
   }
 
+  async function handleSave() {
+    if (!c) return;
+    const { error } = await supabase.from("campaigns").update({
+      name: form.name,
+      description: form.description,
+      banner_url: form.banner_url,
+      pix_key: form.pix_key,
+      regulation_text: form.regulation_text,
+      regulation_url: form.regulation_url,
+      updated_at: new Date().toISOString()
+    }).eq("id", id);
+
+    if (error) {
+      toast.error(error.message);
+    } else {
+      toast.success("Campanha atualizada!");
+      setIsEditing(false);
+      load();
+    }
+  }
+
   if (!c) return <p className="text-muted-foreground">Carregando…</p>;
   const pct = Math.round((stats.sold / c.number_quantity) * 100);
 
@@ -92,19 +120,67 @@ function CampaignAdmin() {
           <Link to="/campanha/$slug" params={{ slug: c.slug }} target="_blank" className="inline-flex items-center gap-1.5 rounded-xl border border-border px-3 py-2 text-sm hover:bg-secondary">
             Ver pública <ExternalLink className="h-3.5 w-3.5" />
           </Link>
-          {c.status !== "active" && <Button onClick={() => setStatus("active")} size="sm" className="bg-success">Ativar</Button>}
-          {c.status === "active" && <Button onClick={() => setStatus("paused")} size="sm" variant="outline">Pausar</Button>}
-          {c.status !== "finished" && <Button onClick={() => setStatus("finished")} size="sm" variant="outline">Encerrar</Button>}
+          <Button onClick={() => setIsEditing(!isEditing)} variant="outline" size="sm">
+            {isEditing ? <><X className="mr-2 h-4 w-4" /> Cancelar</> : <><Pencil className="mr-2 h-4 w-4" /> Editar</>}
+          </Button>
+          {!isEditing && (
+            <>
+              {c.status !== "active" && <Button onClick={() => setStatus("active")} size="sm" className="bg-success">Ativar</Button>}
+              {c.status === "active" && <Button onClick={() => setStatus("paused")} size="sm" variant="outline">Pausar</Button>}
+              {c.status !== "finished" && <Button onClick={() => setStatus("finished")} size="sm" variant="outline">Encerrar</Button>}
+            </>
+          )}
+          {isEditing && (
+            <Button onClick={handleSave} size="sm" className="bg-gradient-primary">
+              <Save className="mr-2 h-4 w-4" /> Salvar Alterações
+            </Button>
+          )}
         </div>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-        <Stat label="Vendidos" value={`${stats.sold}/${c.number_quantity}`} sub={`${pct}%`} />
-        <Stat label="Reservados" value={String(stats.reserved)} />
-        <Stat label="Disponíveis" value={String(stats.available)} />
-        <Stat label="Arrecadado" value={formatBRL(stats.raised)} sub={c.goal_amount ? `meta ${formatBRL(c.goal_amount)}` : undefined} />
-        <Stat label="Compradores" value={String(stats.buyers)} />
-      </div>
+      {isEditing ? (
+        <div className="grid gap-6 rounded-2xl border border-border bg-card p-6 shadow-soft md:grid-cols-2">
+          <div className="md:col-span-2">
+            <Label>Nome da Campanha</Label>
+            <Input value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} />
+          </div>
+          <div className="md:col-span-2">
+            <Label>Descrição</Label>
+            <Textarea rows={3} value={form.description ?? ""} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} />
+          </div>
+          <div className="md:col-span-2">
+            <ImageUpload 
+              label="Imagem do Banner" 
+              value={form.banner_url ?? ""} 
+              onChange={v => setForm(f => ({ ...f, banner_url: v }))} 
+            />
+          </div>
+          <div>
+            <Label>Chave PIX</Label>
+            <Input value={form.pix_key ?? ""} onChange={e => setForm(f => ({ ...f, pix_key: e.target.value }))} />
+          </div>
+          <div className="md:col-span-2">
+            <Label>Regulamento (Texto Markdown)</Label>
+            <Textarea 
+              rows={6} 
+              value={form.regulation_text ?? ""} 
+              onChange={e => setForm(f => ({ ...f, regulation_text: e.target.value }))} 
+            />
+          </div>
+          <div className="md:col-span-2">
+            <Label>URL do regulamento (Link Externo)</Label>
+            <Input value={form.regulation_url ?? ""} onChange={e => setForm(f => ({ ...f, regulation_url: e.target.value }))} />
+          </div>
+        </div>
+      ) : (
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+          <Stat label="Vendidos" value={`${stats.sold}/${c.number_quantity}`} sub={`${pct}%`} />
+          <Stat label="Reservados" value={String(stats.reserved)} />
+          <Stat label="Disponíveis" value={String(stats.available)} />
+          <Stat label="Arrecadado" value={formatBRL(stats.raised)} sub={c.goal_amount ? `meta ${formatBRL(c.goal_amount)}` : undefined} />
+          <Stat label="Compradores" value={String(stats.buyers)} />
+        </div>
+      )}
 
       <div className="rounded-2xl border border-border bg-card shadow-soft">
         <div className="border-b border-border p-5"><h2 className="font-bold text-primary">Pedidos</h2></div>

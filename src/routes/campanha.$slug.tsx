@@ -2,7 +2,9 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { formatBRL, padNumber, formatDateBR } from "@/lib/format";
-import { Heart, ShieldCheck, FileText, Calendar, Gift } from "lucide-react";
+import { Heart, ShieldCheck, FileText, Calendar, Gift, Info } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import ReactMarkdown from "react-markdown";
 import { BuyerModal } from "@/components/BuyerModal";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -16,6 +18,7 @@ type Campaign = {
   status: string; number_quantity: number; number_price: number;
   start_date: string; end_date: string; goal_amount: number | null;
   regulation_url: string | null;
+  regulation_text: string | null;
 };
 type RaffleNumber = { number: number; status: "available" | "reserved" | "sold" | "cancelled" | "winner" };
 type Prize = { id: string; title: string; description: string | null; image_url: string | null; position: number };
@@ -125,7 +128,23 @@ function CampaignPage() {
 
           <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
             <span className="inline-flex items-center gap-1.5"><Calendar className="h-4 w-4" />{formatDateBR(campaign.start_date)} — {formatDateBR(campaign.end_date)}</span>
-            {campaign.regulation_url && (
+            {campaign.regulation_text ? (
+              <Dialog>
+                <DialogTrigger asChild>
+                  <button className="inline-flex items-center gap-1.5 font-semibold text-primary hover:underline">
+                    <FileText className="h-4 w-4" /> Regulamento
+                  </button>
+                </DialogTrigger>
+                <DialogContent className="max-h-[80vh] overflow-y-auto sm:max-w-2xl">
+                  <DialogHeader>
+                    <DialogTitle>Regulamento - {campaign.name}</DialogTitle>
+                  </DialogHeader>
+                  <div className="prose prose-sm prose-primary mt-4 max-w-none dark:prose-invert">
+                    <ReactMarkdown>{campaign.regulation_text}</ReactMarkdown>
+                  </div>
+                </DialogContent>
+              </Dialog>
+            ) : campaign.regulation_url && (
               <a href={campaign.regulation_url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 font-semibold text-primary hover:underline">
                 <FileText className="h-4 w-4" /> Regulamento
               </a>

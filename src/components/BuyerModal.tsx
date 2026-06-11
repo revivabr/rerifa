@@ -11,7 +11,7 @@ export function BuyerModal({
 }: {
   open: boolean;
   onOpenChange: (v: boolean) => void;
-  onSubmit: (data: { name: string; email: string; whatsapp: string }) => void;
+  onSubmit: (data: { name: string; email: string; whatsapp: string; sellerName: string }) => void;
   submitting: boolean;
   total: number;
   count: number;
@@ -19,6 +19,7 @@ export function BuyerModal({
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [whatsapp, setWhatsapp] = useState("");
+  const [sellerName, setSellerName] = useState("");
   const [agree, setAgree] = useState(false);
 
   const canSubmit = name.trim().length >= 3 && whatsapp.replace(/\D/g, "").length >= 10 && agree && !submitting;
@@ -34,8 +35,12 @@ export function BuyerModal({
         </DialogHeader>
         <form
           className="space-y-4"
-          onSubmit={(e) => { e.preventDefault(); if (canSubmit) onSubmit({ name: name.trim(), email: email.trim(), whatsapp }); }}
+          onSubmit={(e) => { e.preventDefault(); if (canSubmit) onSubmit({ name: name.trim(), email: email.trim(), whatsapp, sellerName: sellerName.trim() }); }}
         >
+          <div>
+            <Label htmlFor="sellerName">Quem te vendeu? (Vendedor)</Label>
+            <Input id="sellerName" value={sellerName} onChange={(e) => setSellerName(e.target.value)} placeholder="Nome do vendedor (opcional)" />
+          </div>
           <div>
             <Label htmlFor="name">Nome completo *</Label>
             <Input id="name" value={name} onChange={(e) => setName(e.target.value)} placeholder="João da Silva" required />

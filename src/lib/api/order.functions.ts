@@ -21,7 +21,7 @@ export const getOrderPublic = createServerFn({ method: "GET" })
 
     const { data: order } = await supabase
       .from("orders")
-      .select("id,status,amount,quantity,pix_qr_code,pix_copy_paste,expires_at,paid_at,campaign_id,buyer_id")
+      .select("id,status,amount,quantity,pix_qr_code,pix_copy_paste,expires_at,paid_at,campaign_id,buyer_id,seller_name")
       .eq("id", data.orderId)
       .maybeSingle();
 
@@ -48,6 +48,7 @@ export const getOrderPublic = createServerFn({ method: "GET" })
       campaign_name: (campaign?.name as string) ?? "",
       campaign_slug: (campaign?.slug as string) ?? "",
       buyer_name: (buyer?.name as string) ?? "",
+      seller_name: order.seller_name as string | null,
       numbers: (nums ?? []).map((n: { number: number }) => n.number),
     };
   });

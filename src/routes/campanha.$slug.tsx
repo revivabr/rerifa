@@ -6,6 +6,7 @@ import { Heart, ShieldCheck, FileText, Calendar, Gift, Info } from "lucide-react
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import ReactMarkdown from "react-markdown";
 import { BuyerModal } from "@/components/BuyerModal";
+import { SellerRanking } from "@/components/SellerRanking";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
@@ -76,7 +77,7 @@ function CampaignPage() {
     });
   }
 
-  async function handleSubmit(form: { name: string; email: string; whatsapp: string }) {
+  async function handleSubmit(form: { name: string; email: string; whatsapp: string; sellerName: string }) {
     if (!campaign) return;
     setSubmitting(true);
     const nums = [...selected].sort((a,b) => a-b);
@@ -86,6 +87,7 @@ function CampaignPage() {
       p_buyer_name: form.name,
       p_buyer_email: form.email,
       p_buyer_whatsapp: form.whatsapp,
+      p_seller_name: form.sellerName,
     });
     setSubmitting(false);
     if (error) { toast.error(error.message); return; }
@@ -167,6 +169,8 @@ function CampaignPage() {
           </div>
         </section>
       )}
+      
+      {campaign && <SellerRanking campaignId={campaign.id} />}
 
       <section className="mt-10" id="escolher-numeros">
         <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">

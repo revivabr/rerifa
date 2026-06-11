@@ -4,7 +4,9 @@ import { supabase } from "@/lib/supabase";
 import { formatBRL, formatDateBR } from "@/lib/format";
 import { StatusBadge } from "./admin.dashboard";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, ExternalLink, Check, X, Pencil, Save, Info } from "lucide-react";
+import { ArrowLeft, ExternalLink, Check, X, Pencil, Save, Info, Trophy, FileDown, Share2 } from "lucide-react";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -16,7 +18,8 @@ export const Route = createFileRoute("/admin/campaigns/$id")({
 });
 
 type Campaign = { id: string; name: string; slug: string; status: string; banner_url: string | null; number_quantity: number; number_price: number; goal_amount: number | null; start_date: string; end_date: string; description: string | null; regulation_text: string | null; regulation_url: string | null; pix_key: string | null; drive_folder_url: string | null };
-type OrderRow = { id: string; status: string; amount: number; quantity: number; created_at: string; buyer: { name: string; whatsapp: string; email: string | null } | null };
+type OrderRow = { id: string; status: string; amount: number; quantity: number; seller_name: string | null; created_at: string; buyer: { name: string; whatsapp: string; email: string | null } | null };
+type SellerRank = { name: string; sales: number; total_amount: number };
 
 function CampaignAdmin() {
   const { id } = Route.useParams();
@@ -25,6 +28,7 @@ function CampaignAdmin() {
   const [orders, setOrders] = useState<OrderRow[]>([]);
   const [isEditing, setIsEditing] = useState(false);
   const [form, setForm] = useState<Partial<Campaign>>({});
+  const [ranking, setRanking] = useState<SellerRank[]>([]);
 
   async function load() {
     const { data: camp } = await supabase.from("campaigns").select("*").eq("id", id).maybeSingle();
@@ -42,9 +46,20 @@ function CampaignAdmin() {
     setStats({ sold: sold ?? 0, reserved: reserved ?? 0, available: available ?? 0, raised, buyers });
 
     const { data: ords } = await supabase.from("orders")
-      .select("id,status,amount,quantity,created_at,buyer:buyers(name,whatsapp,email)")
-      .eq("campaign_id", id).order("created_at", { ascending: false }).limit(30);
-    setOrders((ords ?? []) as unknown as OrderRow[]);
+      .select("id,status,amount,quantity,seller_name,created_at,buyer:buyers(name,whatsapp,email)")
+      .eq("campaign_id", id).order("created_at", { ascending: false });
+    const allOrders = (ords ?? []) as unknown as OrderRow[];
+    setOrders(allOrders.slice(0, 50)); // Display only 50 latest
+
+    // Calculate ranking from all paid orders
+    const ranks = allOrders.filter(o => o.status === "paid" && o.seller_name).reduce((acc: Record<string, SellerRank>, curr) => {
+      const name = curr.seller_name!.trim();
+      if (!acc[name]) acc[name] = { name, sales: 0, total_amount: 0 };
+      acc[name].sales += curr.quantity;
+      acc[name].total_amount += Number(curr.amount);
+      return acc;
+    }, {});
+    setRanking(Object.values(ranks).sort((a, b) => b.sales - a.sales));
   }
 
   useEffect(() => {
@@ -101,6 +116,34 @@ function CampaignAdmin() {
       setIsEditing(false);
       load();
     }
+  }
+
+  function exportPDF() {
+    if (!c) return;
+    const doc = new jsPDF();
+    doc.setFontSize(20);
+    doc.text(`Ranking de Vendedores - ${c.name}`, 14, 22);
+    doc.setFontSize(11);
+    doc.setTextColor(100);
+    doc.text(`Gerado em: ${new Date().toLocaleString('pt-BR')}`, 14, 30);
+
+    const tableData = ranking.map((r, i) => [
+      `${i + 1}º`,
+      r.name,
+      r.sales.toString(),
+      formatBRL(r.total_amount)
+    ]);
+
+    autoTable(doc, {
+      startY: 35,
+      head: [['Pos.', 'Vendedor', 'Números Vendidos', 'Total Arrecadado']],
+      body: tableData,
+      theme: 'grid',
+      headStyles: { fillColor: [43, 75, 235] }, // primary color
+    });
+
+    doc.save(`ranking-${c.slug}-${new Date().toISOString().split('T')[0]}.pdf`);
+    toast.success("PDF gerado com sucesso!");
   }
 
   if (!c) return <p className="text-muted-foreground">Carregando…</p>;
@@ -192,18 +235,57 @@ function CampaignAdmin() {
         </div>
       )}
 
+
+      {ranking.length > 0 && (
+        <div className="rounded-2xl border border-border bg-card shadow-soft overflow-hidden">
+          <div className="border-b border-border p-5 flex items-center justify-between bg-secondary/20">
+            <h2 className="font-bold text-primary flex items-center gap-2">
+              <Trophy className="h-5 w-5 text-gold" /> Ranking de Vendedores
+            </h2>
+            <Button onClick={exportPDF} variant="outline" size="sm" className="h-8 gap-1.5">
+              <FileDown className="h-4 w-4" /> Exportar PDF
+            </Button>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead className="bg-secondary/50 text-left text-xs uppercase tracking-wider text-muted-foreground">
+                <tr>
+                  <th className="p-3 w-16 text-center">Pos.</th>
+                  <th className="p-3">Vendedor</th>
+                  <th className="p-3 text-center">Vendas</th>
+                  <th className="p-3 text-right">Total</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border">
+                {ranking.map((r, i) => (
+                  <tr key={r.name} className="hover:bg-secondary/10">
+                    <td className="p-3 text-center font-black text-muted-foreground">
+                      {i === 0 ? "🥇" : i === 1 ? "🥈" : i === 2 ? "🥉" : `${i + 1}º`}
+                    </td>
+                    <td className="p-3 font-bold text-primary">{r.name}</td>
+                    <td className="p-3 text-center font-medium">{r.sales}</td>
+                    <td className="p-3 text-right font-bold text-success">{formatBRL(r.total_amount)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
       <div className="rounded-2xl border border-border bg-card shadow-soft">
         <div className="border-b border-border p-5"><h2 className="font-bold text-primary">Pedidos</h2></div>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead className="bg-secondary text-left text-xs uppercase tracking-wider text-muted-foreground">
-              <tr><th className="p-3">Comprador</th><th className="p-3">Contato</th><th className="p-3">Qtd</th><th className="p-3">Valor</th><th className="p-3">Status</th><th className="p-3">Data</th><th className="p-3"></th></tr>
+              <tr><th className="p-3">Comprador</th><th className="p-3">Vendedor</th><th className="p-3">Contato</th><th className="p-3">Qtd</th><th className="p-3">Valor</th><th className="p-3">Status</th><th className="p-3">Data</th><th className="p-3"></th></tr>
             </thead>
             <tbody className="divide-y divide-border">
               {orders.length === 0 && <tr><td colSpan={7} className="p-6 text-center text-muted-foreground">Nenhum pedido ainda.</td></tr>}
               {orders.map(o => (
                 <tr key={o.id} className="hover:bg-secondary/30">
                   <td className="p-3 font-medium">{o.buyer?.name ?? "—"}</td>
+                  <td className="p-3 text-xs font-semibold text-primary">{o.seller_name ?? "—"}</td>
                   <td className="p-3 text-xs text-muted-foreground">{o.buyer?.whatsapp}{o.buyer?.email ? ` · ${o.buyer.email}` : ""}</td>
                   <td className="p-3 tabular-nums">{o.quantity}</td>
                   <td className="p-3 font-bold text-primary">{formatBRL(o.amount)}</td>

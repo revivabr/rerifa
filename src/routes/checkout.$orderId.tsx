@@ -14,6 +14,7 @@ export const Route = createFileRoute("/checkout/$orderId")({
 type Order = {
   id: string; campaign_id: string; status: string; amount: number; quantity: number;
   pix_qr_code: string | null; pix_copy_paste: string | null; expires_at: string | null;
+  seller_name: string | null;
 };
 
 function CheckoutPage() {
@@ -39,6 +40,7 @@ function CheckoutPage() {
         id: o.id, campaign_id: o.campaign_id, status: o.status,
         amount: o.amount, quantity: o.quantity,
         pix_qr_code: o.pix_qr_code, pix_copy_paste: o.pix_copy_paste, expires_at: o.expires_at,
+        seller_name: o.seller_name,
       });
       setCampaignName(o.campaign_name);
       setBuyerName(o.buyer_name);
@@ -159,6 +161,7 @@ function CheckoutPage() {
 
           <div className="grid gap-2 rounded-2xl bg-secondary p-4 text-sm">
             <Row label="Comprador" value={buyerName || "—"} />
+            {order.seller_name && <Row label="Vendedor" value={order.seller_name} />}
             <Row label="Números" value={numbers.map(n => padNumber(n, 1000)).join(", ")} />
             <Row label="Quantidade" value={String(order.quantity)} />
             <Row label="Total" value={<strong className="text-primary">{formatBRL(order.amount)}</strong>} />

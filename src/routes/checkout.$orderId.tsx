@@ -23,6 +23,7 @@ function CheckoutPage() {
   const navigate = useNavigate();
   const [order, setOrder] = useState<Order | null>(null);
   const [campaignName, setCampaignName] = useState<string>("");
+  const [campaignSlug, setCampaignSlug] = useState<string>("");
   const [buyerName, setBuyerName] = useState<string>("");
   const [numbers, setNumbers] = useState<number[]>([]);
   const [remaining, setRemaining] = useState<number>(0);

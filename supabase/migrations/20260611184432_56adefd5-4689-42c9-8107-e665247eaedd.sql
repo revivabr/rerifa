@@ -1,0 +1,1 @@
+ALTER FUNCTION public.reserve_numbers(UUID, INTEGER[], TEXT, TEXT, TEXT) SET search_path = public;

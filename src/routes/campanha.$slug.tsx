@@ -21,7 +21,7 @@ type Campaign = {
   regulation_url: string | null;
   regulation_text: string | null;
 };
-type RaffleNumber = { number: number; status: "available" | "reserved" | "sold" | "cancelled" | "winner" };
+type RaffleNumber = { number: number; status: "available" | "reserved" | "sold" | "cancelled" | "winner"; reserved_until: string | null };
 type Prize = { id: string; title: string; description: string | null; image_url: string | null; position: number };
 
 function CampaignPage() {
@@ -43,7 +43,7 @@ function CampaignPage() {
       const { data: c } = await supabase.from("campaigns").select("*").eq("slug", slug).maybeSingle();
       if (!c) { setLoading(false); return; }
       setCampaign(c as Campaign);
-      const { data: nums } = await supabase.from("raffle_numbers").select("number,status").eq("campaign_id", c.id).order("number");
+      const { data: nums } = await supabase.from("raffle_numbers").select("number,status,reserved_until").eq("campaign_id", c.id).order("number");
       setNumbers((nums ?? []) as RaffleNumber[]);
       const { data: pz } = await supabase.from("campaign_prizes").select("*").eq("campaign_id", c.id).order("position");
       setPrizes((pz ?? []) as Prize[]);
@@ -250,7 +250,7 @@ function CampaignPage() {
         <div className="mb-8 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <h2 className="text-3xl font-black text-primary">Escolha seus números</h2>
-            <p className="mt-2 text-muted-foreground">Toque nos números desejados. Os números selecionados serão reservados por 3 minutos.</p>
+            <p className="mt-2 text-muted-foreground">Toque nos números desejados. Os números selecionados serão reservados por 90 segundos.</p>
           </div>
           <Legend />
         </div>
@@ -260,7 +260,9 @@ function CampaignPage() {
                style={{ gridTemplateColumns: `repeat(auto-fill, minmax(${campaign.number_quantity > 200 ? 56 : 72}px, 1fr))` }}>
             {numbers.map(n => {
               const isSelected = selected.has(n.number);
-              const status = isSelected ? "selected" : n.status;
+              const isExpired = n.status === 'reserved' && n.reserved_until && new Date(n.reserved_until).getTime() < Date.now();
+              const effectiveStatus = isExpired ? 'available' : n.status;
+              const status = isSelected ? "selected" : effectiveStatus;
               return (
                 <button
                   key={n.number}

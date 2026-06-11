@@ -52,10 +52,24 @@ function RaffleDraw() {
         }));
         setSoldNumbers(mapped);
       }
+
+      // Fetch admin user id for the draw record
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        const { data: admin } = await supabase
+          .from("admin_users")
+          .select("id")
+          .eq("auth_user_id", session.user.id)
+          .maybeSingle();
+        if (admin) setAdminId(admin.id);
+      }
+
       setIsLoading(false);
     }
     load();
   }, [id]);
+
+  const [adminId, setAdminId] = useState<string | null>(null);
 
   const startDraw = () => {
     if (soldNumbers.length === 0) {

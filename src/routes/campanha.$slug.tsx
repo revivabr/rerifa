@@ -170,10 +170,10 @@ function CampaignPage() {
                     </button>
                   </DialogTrigger>
                   <DialogContent className="max-h-[80vh] overflow-y-auto sm:max-w-2xl rounded-[2rem]">
-                    <DialogHeader>
+                    <DialogHeader className="border-b border-border pb-4">
                       <DialogTitle className="text-2xl font-black text-primary">Regulamento</DialogTitle>
                     </DialogHeader>
-                    <div className="prose prose-sm prose-sand mt-4 max-w-none dark:prose-invert">
+                    <div className="prose prose-sm md:prose-base prose-sand mt-6 max-w-none dark:prose-invert prose-p:text-foreground prose-headings:text-primary prose-strong:text-primary prose-li:text-foreground">
                       <ReactMarkdown>{campaign.regulation_text}</ReactMarkdown>
                     </div>
                   </DialogContent>

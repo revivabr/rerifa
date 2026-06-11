@@ -527,6 +527,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      cancel_order: { Args: { p_order_id: string }; Returns: Json }
       confirm_payment: {
         Args: { p_external_id?: string; p_order_id: string }
         Returns: Json

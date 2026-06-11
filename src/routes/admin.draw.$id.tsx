@@ -8,7 +8,7 @@ import confetti from "canvas-confetti";
 import { formatDateBR, padNumber } from "@/lib/format";
 import { toast } from "sonner";
 
-export const Route = createFileRoute("/admin/campaigns/$id/draw")({
+export const Route = createFileRoute("/admin/draw/$id")({
   component: RaffleDraw,
 });
 

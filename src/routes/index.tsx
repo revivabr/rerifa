@@ -14,7 +14,7 @@ type Campaign = {
   status: string; number_quantity: number; number_price: number;
 };
 
-const USER_BANNER = "https://wogunbzijppmeuleitjq.supabase.co/storage/v1/object/public/temp-images/56681184-dd25-4b69-871a-4047c7b5c9cc.jpg";
+const USER_BANNER = "/placeholder.svg";
 
 function HomePage() {
   const [activeCampaign, setActiveCampaign] = useState<Campaign | null>(null);

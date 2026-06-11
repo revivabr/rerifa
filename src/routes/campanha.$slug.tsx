@@ -43,8 +43,13 @@ function CampaignPage() {
       const { data: c } = await supabase.from("campaigns").select("*").eq("slug", slug).maybeSingle();
       if (!c) { setLoading(false); return; }
       setCampaign(c as Campaign);
-      const { data: nums } = await supabase.from("raffle_numbers").select("number,status").eq("campaign_id", c.id).order("number");
-      setNumbers((nums ?? []) as RaffleNumber[]);
+      const { data: nums } = await supabase.from("raffle_numbers").select("number,status,reserved_until").eq("campaign_id", c.id).order("number");
+      setNumbers((nums ?? []).map(n => ({
+        ...n,
+        status: (n.status === "reserved" && n.reserved_until && new Date(n.reserved_until).getTime() < Date.now()) 
+          ? "available" 
+          : n.status
+      })) as RaffleNumber[]);
       const { data: pz } = await supabase.from("campaign_prizes").select("*").eq("campaign_id", c.id).order("position");
       setPrizes((pz ?? []) as Prize[]);
       setLoading(false);

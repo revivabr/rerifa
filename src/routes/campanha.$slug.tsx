@@ -246,18 +246,18 @@ function CampaignPage() {
         </div>
       </div>
 
-      <section className="mt-10" id="escolher-numeros">
-        <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+      <section className="mt-16" id="escolher-numeros">
+        <div className="mb-8 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
           <div>
-            <h2 className="text-2xl font-bold text-primary">Escolha seus números</h2>
-            <p className="text-sm text-muted-foreground">Toque nos números desejados. Confirme depois de selecionar.</p>
+            <h2 className="text-3xl font-black text-primary">Escolha seus números</h2>
+            <p className="mt-2 text-muted-foreground">Toque nos números desejados. Os números selecionados serão reservados por 3 minutos.</p>
           </div>
           <Legend />
         </div>
 
-        <div className="rounded-3xl border border-border bg-card p-3 shadow-soft md:p-5">
-          <div className="grid gap-1.5"
-               style={{ gridTemplateColumns: `repeat(auto-fill, minmax(${campaign.number_quantity > 200 ? 52 : 64}px, 1fr))` }}>
+        <div className="rounded-[2.5rem] border border-border bg-card p-4 shadow-elegant md:p-8">
+          <div className="grid gap-2 md:gap-3"
+               style={{ gridTemplateColumns: `repeat(auto-fill, minmax(${campaign.number_quantity > 200 ? 56 : 72}px, 1fr))` }}>
             {numbers.map(n => {
               const isSelected = selected.has(n.number);
               const status = isSelected ? "selected" : n.status;
@@ -267,44 +267,61 @@ function CampaignPage() {
                   onClick={() => toggle(n.number, n.status)}
                   disabled={n.status !== "available"}
                   className={cn(
-                    "aspect-square rounded-xl text-sm font-bold tabular-nums transition",
-                    "border-2 outline-none focus-visible:ring-2 focus-visible:ring-ring",
-                    status === "available" && "border-secondary bg-card text-foreground hover:border-primary hover:bg-secondary",
-                    status === "selected"  && "border-primary bg-primary text-primary-foreground scale-[1.04] shadow-soft",
-                    status === "reserved"  && "cursor-not-allowed border-accent/40 bg-accent/30 text-accent-foreground/70",
-                    status === "sold"      && "cursor-not-allowed border-transparent bg-muted text-muted-foreground/60 line-through",
-                    status === "winner"    && "border-gold bg-gold text-gold-foreground shadow-elegant",
+                    "relative aspect-square rounded-2xl text-base font-black tabular-nums transition-all duration-300",
+                    "border-2 outline-none focus-visible:ring-4 focus-visible:ring-primary/20",
+                    status === "available" && "border-secondary bg-white text-foreground hover:border-primary hover:bg-secondary hover:scale-110",
+                    status === "selected"  && "border-primary bg-primary text-primary-foreground scale-110 shadow-lg z-10",
+                    status === "reserved"  && "cursor-not-allowed border-accent/20 bg-accent/10 text-accent-foreground/40",
+                    status === "sold"      && "cursor-not-allowed border-transparent bg-muted/50 text-muted-foreground/30",
+                    status === "winner"    && "border-gold bg-gold text-gold-foreground shadow-elegant animate-bounce",
                   )}
-                >{padNumber(n.number, campaign.number_quantity)}</button>
+                >
+                  {padNumber(n.number, campaign.number_quantity)}
+                  {status === "sold" && (
+                    <div className="absolute inset-0 flex items-center justify-center opacity-20">
+                      <div className="h-[2px] w-4/5 rotate-45 bg-current" />
+                    </div>
+                  )}
+                </button>
               );
             })}
           </div>
         </div>
       </section>
 
-      <p className="mt-6 inline-flex items-center gap-2 text-xs text-muted-foreground">
-        <ShieldCheck className="h-4 w-4 text-success" /> Os números só são confirmados após o pagamento PIX.
-      </p>
+      <div className="mt-8 flex items-center justify-center gap-3 rounded-2xl bg-success/10 p-4 text-sm font-bold text-success border border-success/20">
+        <ShieldCheck className="h-5 w-5" />
+        <span>Garantia de segurança: Seus números são confirmados imediatamente após o PIX.</span>
+      </div>
 
       {/* Selection Summary */}
       {selected.size > 0 && (
-        <div className="sticky bottom-4 z-30 mt-8">
-          <div className="mx-auto max-w-3xl rounded-2xl border border-primary/20 bg-card p-4 shadow-elegant">
-            <div className="flex flex-wrap items-center justify-between gap-4">
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Selecionados ({selected.size})</p>
-                <p className="mt-1 line-clamp-1 max-w-md text-sm font-bold tabular-nums text-primary">
-                  {[...selected].sort((a,b)=>a-b).map(n => padNumber(n, campaign.number_quantity)).join(", ")}
-                </p>
+        <div className="sticky bottom-6 z-40 mt-12 px-4">
+          <div className="mx-auto max-w-4xl rounded-[2rem] border border-primary/30 bg-white/80 p-5 shadow-2xl backdrop-blur-xl md:p-6">
+            <div className="flex flex-col items-center justify-between gap-6 md:flex-row">
+              <div className="flex items-center gap-4">
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary text-white shadow-lg">
+                  <Gift className="h-6 w-6" />
+                </div>
+                <div>
+                  <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Selecionados ({selected.size})</p>
+                  <p className="mt-0.5 line-clamp-1 max-w-[200px] text-lg font-black tabular-nums text-primary md:max-w-md">
+                    {[...selected].sort((a,b)=>a-b).map(n => padNumber(n, campaign.number_quantity)).join(", ")}
+                  </p>
+                </div>
               </div>
-              <div className="text-right">
-                <p className="text-xs uppercase tracking-wider text-muted-foreground">Total</p>
-                <p className="text-2xl font-black text-primary">{formatBRL(total)}</p>
+              <div className="flex w-full items-center justify-between gap-8 md:w-auto">
+                <div className="text-right">
+                  <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Total a pagar</p>
+                  <p className="text-3xl font-black text-primary">{formatBRL(total)}</p>
+                </div>
+                <button
+                  onClick={() => setShowModal(true)}
+                  className="rounded-2xl bg-gradient-to-r from-primary to-primary-hover px-10 py-4 text-base font-black text-white shadow-xl transition hover:scale-105 hover:shadow-primary/20 active:scale-95"
+                >
+                  PAGAR AGORA
+                </button>
               </div>
-              <button
-                onClick={() => setShowModal(true)}
-                className="rounded-xl bg-gradient-primary px-6 py-3 text-sm font-bold text-primary-foreground shadow-soft transition hover:scale-[1.02]"
-              >Continuar</button>
             </div>
           </div>
         </div>

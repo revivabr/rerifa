@@ -80,6 +80,27 @@ function CampaignAdmin() {
     load();
   }
 
+  async function handleSave() {
+    if (!c) return;
+    const { error } = await supabase.from("campaigns").update({
+      name: form.name,
+      description: form.description,
+      banner_url: form.banner_url,
+      pix_key: form.pix_key,
+      regulation_text: form.regulation_text,
+      regulation_url: form.regulation_url,
+      updated_at: new Date().toISOString()
+    }).eq("id", id);
+
+    if (error) {
+      toast.error(error.message);
+    } else {
+      toast.success("Campanha atualizada!");
+      setIsEditing(false);
+      load();
+    }
+  }
+
   if (!c) return <p className="text-muted-foreground">Carregando…</p>;
   const pct = Math.round((stats.sold / c.number_quantity) * 100);
 

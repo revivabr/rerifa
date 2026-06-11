@@ -38,6 +38,11 @@ function makeStub(): SupabaseClient {
 export const supabase: SupabaseClient =
   isSupabaseConfigured && typeof window !== "undefined"
     ? createClient(url!, anonKey!, {
-        auth: { persistSession: true, autoRefreshToken: true, storageKey: "reviva-rifa-auth" },
+        auth: { 
+          persistSession: true, 
+          autoRefreshToken: true, 
+          storageKey: "reviva-rifa-auth",
+          detectSessionInUrl: true 
+        },
       })
     : makeStub();

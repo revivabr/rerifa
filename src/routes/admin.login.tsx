@@ -31,11 +31,16 @@ function AdminLogin() {
 
       if (error) { 
         toast.error(error.message); 
+        setLoading(false);
         return; 
       }
       
-      toast.success("Bem-vindo!");
-      navigate({ to: "/admin/dashboard" });
+      toast.success("Login realizado com sucesso! Redirecionando...");
+      
+      // Pequeno delay para garantir que o estado da sessão seja propagado
+      setTimeout(() => {
+        window.location.href = "/admin/dashboard";
+      }, 1500);
     } catch (err: any) {
       toast.error(err.message || "Ocorreu um erro inesperado");
     } finally {

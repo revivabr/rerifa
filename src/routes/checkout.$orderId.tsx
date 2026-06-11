@@ -45,6 +45,7 @@ function CheckoutPage() {
         seller_name: o.seller_name,
       });
       setCampaignName(o.campaign_name);
+      setCampaignSlug(o.campaign_slug);
       setBuyerName(o.buyer_name);
       setNumbers(o.numbers);
       if (o.status === "paid") {

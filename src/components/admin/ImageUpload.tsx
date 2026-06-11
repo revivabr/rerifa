@@ -23,7 +23,7 @@ interface ImageUploadProps {
   isFolderSelect?: boolean;
 }
 
-export function ImageUpload({ value, onChange, label, bucket = "banners", folder = "campaigns", isFolderSelect = false }: ImageUploadProps) {
+export function ImageUpload({ value, onChange, label, bucket = "banners-reviva", folder = "campaigns", isFolderSelect = false }: ImageUploadProps) {
   const [uploading, setUploading] = useState(false);
   const [showGoogleDriveHelp, setShowGoogleDriveHelp] = useState(false);
 

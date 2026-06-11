@@ -119,7 +119,7 @@ function CheckoutPage() {
         <AlertCircle className="mx-auto h-16 w-16 text-destructive" />
         <h1 className="mt-4 text-2xl font-bold text-primary">Reserva expirada</h1>
         <p className="mt-2 text-muted-foreground">O tempo para pagamento acabou e os números foram liberados.</p>
-        <Link to="/campanha/$slug" params={{ slug: campaignName.toLowerCase().replace(/\s+/g, '-') }} className="mt-6 inline-block rounded-xl bg-primary px-6 py-3 font-bold text-white transition hover:scale-105">
+        <Link to="/campanha/$slug" params={{ slug: campaignSlug }} className="mt-6 inline-block rounded-xl bg-primary px-6 py-3 font-bold text-white transition hover:scale-105">
           Tentar novamente
         </Link>
       </div>

@@ -58,7 +58,7 @@ function CampaignPage() {
               const next = [...prev];
               const row = (payload.new ?? payload.old) as RaffleNumber;
               const idx = next.findIndex(n => n.number === row.number);
-              if (idx >= 0 && payload.new) next[idx] = { number: row.number, status: (payload.new as RaffleNumber).status };
+              if (idx >= 0 && payload.new) next[idx] = payload.new as RaffleNumber;
               return next;
             });
           })

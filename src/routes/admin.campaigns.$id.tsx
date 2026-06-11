@@ -158,11 +158,11 @@ function CampaignAdmin() {
             />
           </div>
           <div className="md:col-span-2">
-            <ImageUpload 
-              label="Pasta do Google Drive" 
+            <Label>Pasta do Google Drive</Label>
+            <Input 
+              placeholder="Cole a URL da pasta do Google Drive" 
               value={form.drive_folder_url ?? ""} 
-              onChange={v => setForm(f => ({ ...f, drive_folder_url: v }))} 
-              isFolderSelect
+              onChange={e => setForm(f => ({ ...f, drive_folder_url: e.target.value }))} 
             />
           </div>
           <div>

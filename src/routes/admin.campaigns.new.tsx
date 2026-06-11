@@ -92,11 +92,11 @@ function NewCampaign() {
             />
           </div>
           <div className="md:col-span-2">
-            <ImageUpload 
-              label="Pasta do Google Drive (Opcional)" 
+            <Label>Pasta do Google Drive (Opcional)</Label>
+            <Input 
+              placeholder="Cole a URL da pasta do Google Drive" 
               value={form.drive_folder_url} 
-              onChange={v => set("drive_folder_url", v)} 
-              isFolderSelect
+              onChange={e => set("drive_folder_url", e.target.value)} 
             />
           </div>
           <div>

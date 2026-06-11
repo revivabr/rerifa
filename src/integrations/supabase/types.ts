@@ -355,6 +355,7 @@ export type Database = {
           pix_copy_paste: string | null
           pix_qr_code: string | null
           quantity: number
+          seller_name: string | null
           status: string
           updated_at: string | null
         }
@@ -371,6 +372,7 @@ export type Database = {
           pix_copy_paste?: string | null
           pix_qr_code?: string | null
           quantity: number
+          seller_name?: string | null
           status?: string
           updated_at?: string | null
         }
@@ -387,6 +389,7 @@ export type Database = {
           pix_copy_paste?: string | null
           pix_qr_code?: string | null
           quantity?: number
+          seller_name?: string | null
           status?: string
           updated_at?: string | null
         }
@@ -525,16 +528,28 @@ export type Database = {
     }
     Functions: {
       is_admin: { Args: never; Returns: boolean }
-      reserve_numbers: {
-        Args: {
-          p_buyer_email: string
-          p_buyer_name: string
-          p_buyer_whatsapp: string
-          p_campaign_id: string
-          p_numbers: number[]
-        }
-        Returns: Json
-      }
+      reserve_numbers:
+        | {
+            Args: {
+              p_buyer_email: string
+              p_buyer_name: string
+              p_buyer_whatsapp: string
+              p_campaign_id: string
+              p_numbers: number[]
+            }
+            Returns: Json
+          }
+        | {
+            Args: {
+              p_buyer_email: string
+              p_buyer_name: string
+              p_buyer_whatsapp: string
+              p_campaign_id: string
+              p_numbers: number[]
+              p_seller_name?: string
+            }
+            Returns: Json
+          }
     }
     Enums: {
       [_ in never]: never

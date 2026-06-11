@@ -24,7 +24,7 @@ function AdminLayout() {
     }
   }, [session, isLogin, navigate]);
 
-  if (isLogin) return <Outlet />;
+  if (isLogin || isDraw) return <Outlet />;
 
   if (session === undefined) {
     return <div className="flex min-h-[60vh] items-center justify-center"><Loader2 className="h-6 w-6 animate-spin text-primary" /></div>;

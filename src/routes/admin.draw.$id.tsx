@@ -193,7 +193,7 @@ function RaffleDraw() {
   if (isLoading) return <div className="flex h-screen items-center justify-center"><RefreshCw className="h-8 w-8 animate-spin text-primary" /></div>;
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-white p-4 md:p-8 flex flex-col items-center justify-center overflow-hidden">
+    <div className="min-h-screen bg-[#0a0a0a] bg-[radial-gradient(circle_at_50%_50%,rgba(43,75,235,0.1),transparent)] text-white p-4 md:p-8 flex flex-col items-center justify-center overflow-hidden">
       <Link 
         to="/admin/campaigns/$id" 
         params={{ id }} 

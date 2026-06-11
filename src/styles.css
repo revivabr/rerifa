@@ -1,105 +1,12 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
-@layer theme {
-  :root {
-    --primary: #2D5F3A;
-    --primary-glow: #3d804e;
-    --secondary: #E8F5EC;
-    --accent: #C8B69A;
-    --gold: #D9A441;
-    --gold-glow: #f1b74d;
-    --sand: #FAFAF5;
-    --success: #00A95C;
-    --radius: 1.25rem;
-  }
-}
-
-@layer utilities {
-  .bg-gradient-raffle {
-    background: linear-gradient(135deg, var(--primary) 0%, #1a3d25 100%);
-  }
-
-  .bg-gradient-gold {
-    background: linear-gradient(135deg, #f1b74d 0%, var(--gold) 100%);
-  }
-
-  .bg-gradient-sand {
-    background: linear-gradient(to bottom, #FAFAF5, #F2F2E9);
-  }
-
-  .shadow-soft {
-    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.05);
-  }
-
-  .shadow-elegant {
-    box-shadow: 0 20px 40px -15px rgba(45, 95, 58, 0.1);
-  }
-
-  .shadow-gold {
-    box-shadow: 0 10px 20px -5px rgba(217, 164, 65, 0.3);
-  }
-
-  .bg-pattern-cubes {
-    background-image: url('https://www.transparenttextures.com/patterns/cubes.png');
-  }
-
-  .bg-pattern-dots {
-    background-image: url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
-  }
-
-  .ticket-cutout {
-    mask-image: radial-gradient(circle at 0 50%, transparent 12px, black 13px),
-                radial-gradient(circle at 100% 50%, transparent 12px, black 13px);
-    mask-composite: intersect;
-  }
+@theme {
+  --color-primary: #2D5F3A;
+  --color-gold: #D9A441;
 }
 
 @layer base {
-  :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary-foreground: 210 40% 98%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
-  }
-}
-
-@layer base {
-  * {
-    @apply border-border;
-  }
   body {
-    @apply bg-background text-foreground font-sans antialiased;
+    @apply bg-white text-gray-900;
   }
-}
-
-@keyframes shine {
-  0% { background-position: -200% center; }
-  100% { background-position: 200% center; }
-}
-
-@keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
-}
-
-.animate-shine {
-  animation: shine 2s infinite;
-}
-
-.animate-float {
-  animation: float 3s ease-in-out infinite;
 }

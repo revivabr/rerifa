@@ -1,8 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabase";
 import { formatBRL, padNumber } from "@/lib/format";
 import { CheckCircle2, Heart } from "lucide-react";
+import { getOrderPublic } from "@/lib/api/order.functions";
 
 export const Route = createFileRoute("/confirmacao/$orderId")({
   component: ConfirmationPage,
@@ -14,19 +14,14 @@ function ConfirmationPage() {
 
   useEffect(() => {
     (async () => {
-      const { data: o } = await supabase.from("orders").select("amount,campaign_id,buyer_id").eq("id", orderId).maybeSingle();
+      const o = await getOrderPublic({ data: { orderId } });
       if (!o) return;
-      const [{ data: c }, { data: nums }, { data: buyer }] = await Promise.all([
-        supabase.from("campaigns").select("name,slug").eq("id", o.campaign_id).maybeSingle(),
-        supabase.from("order_numbers").select("number").eq("order_id", orderId).order("number"),
-        supabase.from("buyers").select("name").eq("id", o.buyer_id).maybeSingle(),
-      ]);
       setData({
-        campaign: (c?.name as string) ?? "",
-        slug: (c?.slug as string) ?? "",
-        amount: o.amount as number,
-        numbers: (nums ?? []).map((n: { number: number }) => n.number),
-        buyer: (buyer?.name as string) ?? "",
+        campaign: o.campaign_name,
+        slug: o.campaign_slug,
+        amount: o.amount,
+        numbers: o.numbers,
+        buyer: o.buyer_name,
       });
     })();
   }, [orderId]);

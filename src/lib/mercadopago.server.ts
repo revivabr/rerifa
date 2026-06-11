@@ -46,7 +46,7 @@ export async function createPixPaymentRecord({
       headers: {
         "Authorization": `Bearer ${accessToken}`,
         "Content-Type": "application/json",
-        "X-Idempotency-Key": id // Usamos o ID do pedido como chave de idempotência
+        "X-Idempotency-Key": `${id}-${Date.now()}` // Chave única por tentativa para evitar lock 423
       },
       body: JSON.stringify(body)
     });

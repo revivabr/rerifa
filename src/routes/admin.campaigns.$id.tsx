@@ -174,7 +174,7 @@ function CampaignAdmin() {
               {c.status === "active" && <Button onClick={() => setStatus("paused")} size="sm" variant="outline">Pausar</Button>}
               {c.status !== "finished" && <Button onClick={() => setStatus("finished")} size="sm" variant="outline">Encerrar</Button>}
               <Link 
-                to="/admin/campaigns/$id/draw" 
+                to="/admin/draw/$id" 
                 params={{ id: c.id }}
                 className="inline-flex items-center gap-1.5 rounded-xl bg-orange-500 px-3 py-2 text-sm font-bold text-white hover:bg-orange-600 shadow-lg shadow-orange-500/20"
               >

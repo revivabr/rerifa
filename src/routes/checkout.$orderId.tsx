@@ -2,11 +2,12 @@ import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { formatBRL, padNumber } from "@/lib/format";
 import { Button } from "@/components/ui/button";
-import { Copy, CheckCircle2, Clock, Loader2, AlertCircle } from "lucide-react";
+import { Copy, CheckCircle2, Clock, Loader2, AlertCircle, X } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { getOrGeneratePix } from "@/lib/api/payment.functions";
-import { getOrderPublic } from "@/lib/api/order.functions";
+import { getOrderPublic, cancelOrder } from "@/lib/api/order.functions";
+
 
 export const Route = createFileRoute("/checkout/$orderId")({
   component: CheckoutPage,
@@ -92,7 +93,25 @@ function CheckoutPage() {
     toast.success("Código PIX copiado!");
   }
 
+  async function handleCancel() {
+    try {
+      setLoadingPix(true);
+      const res = await cancelOrder({ data: { orderId } });
+      if (res.ok) {
+        toast.success("Pedido cancelado e números liberados.");
+        navigate({ to: "/campanha/$slug", params: { slug: campaignSlug } });
+      } else {
+        toast.error(res.error || "Erro ao cancelar pedido.");
+        setLoadingPix(false);
+      }
+    } catch (err) {
+      toast.error("Erro ao cancelar pedido.");
+      setLoadingPix(false);
+    }
+  }
+
   if (!order) return <div className="flex min-h-[50vh] items-center justify-center"><Loader2 className="h-6 w-6 animate-spin text-primary/30" /></div>;
+
 
   if (remaining === 0 && order.status === "pending") {
     return (
@@ -110,11 +129,19 @@ function CheckoutPage() {
   return (
     <div className="mx-auto max-w-xl px-6 py-12">
       <div className="overflow-hidden rounded-3xl bg-white shadow-premium">
-        <div className="bg-primary p-8 text-white">
+        <div className="bg-primary p-8 text-white relative">
+          <button 
+            onClick={handleCancel}
+            className="absolute top-6 right-6 p-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors"
+            title="Cancelar e liberar números"
+          >
+            <X className="h-5 w-5" />
+          </button>
           <p className="text-[10px] font-bold uppercase tracking-[0.2em] opacity-60">Checkout Seguro</p>
           <h1 className="mt-2 text-4xl font-black">{formatBRL(order.amount)}</h1>
           <p className="mt-1 text-sm font-medium opacity-80">{campaignName}</p>
         </div>
+
 
         <div className="p-8 space-y-8">
           <div className={cn(

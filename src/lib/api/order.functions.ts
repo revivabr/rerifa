@@ -52,3 +52,23 @@ export const getOrderPublic = createServerFn({ method: "GET" })
       numbers: (nums ?? []).map((n: { number: number }) => n.number),
     };
   });
+
+/**
+ * Cancela um pedido e libera os números imediatamente.
+ */
+export const cancelOrder = createServerFn({ method: "POST" })
+  .inputValidator(z.object({ orderId: z.string().uuid() }))
+  .handler(async ({ data }) => {
+    const supabase = getSupabaseAdmin();
+    const { data: result, error } = await supabase.rpc("cancel_order", {
+      p_order_id: data.orderId,
+    });
+
+    if (error) {
+      console.error("Erro ao cancelar pedido:", error);
+      return { ok: false, error: error.message };
+    }
+
+    return result as { ok: boolean; error?: string };
+  });
+

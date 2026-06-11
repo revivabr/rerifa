@@ -2,11 +2,56 @@
 
 @theme {
   --color-primary: #2D5F3A;
+  --color-primary-glow: #3d804e;
+  --color-secondary: #E8F5EC;
+  --color-accent: #C8B69A;
   --color-gold: #D9A441;
+  --color-gold-glow: #f1b74d;
+  --color-sand: #FAFAF5;
+  --color-success: #00A95C;
+}
+
+@layer utilities {
+  .bg-gradient-gold {
+    background: linear-gradient(135deg, #f1b74d 0%, #D9A441 100%);
+  }
+  .shadow-gold {
+    box-shadow: 0 10px 20px -5px rgba(217, 164, 65, 0.3);
+  }
+  .bg-pattern-cubes {
+    background-image: url('https://www.transparenttextures.com/patterns/cubes.png');
+  }
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
 }
 
 @layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary-foreground: 210 40% 98%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
+    --radius: 1.25rem;
+  }
   body {
-    @apply bg-white text-gray-900;
+    @apply bg-background text-foreground font-sans antialiased;
   }
 }

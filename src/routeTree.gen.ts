@@ -9,38 +9,161 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ConfirmacaoOrderIdRouteImport } from './routes/confirmacao.$orderId'
+import { Route as CheckoutOrderIdRouteImport } from './routes/checkout.$orderId'
+import { Route as CampanhaSlugRouteImport } from './routes/campanha.$slug'
+import { Route as AdminLoginRouteImport } from './routes/admin.login'
+import { Route as AdminDashboardRouteImport } from './routes/admin.dashboard'
+import { Route as AdminCampaignsIndexRouteImport } from './routes/admin.campaigns.index'
+import { Route as AdminCampaignsNewRouteImport } from './routes/admin.campaigns.new'
+import { Route as AdminCampaignsIdRouteImport } from './routes/admin.campaigns.$id'
 
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ConfirmacaoOrderIdRoute = ConfirmacaoOrderIdRouteImport.update({
+  id: '/confirmacao/$orderId',
+  path: '/confirmacao/$orderId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CheckoutOrderIdRoute = CheckoutOrderIdRouteImport.update({
+  id: '/checkout/$orderId',
+  path: '/checkout/$orderId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CampanhaSlugRoute = CampanhaSlugRouteImport.update({
+  id: '/campanha/$slug',
+  path: '/campanha/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminLoginRoute = AdminLoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminDashboardRoute = AdminDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminCampaignsIndexRoute = AdminCampaignsIndexRouteImport.update({
+  id: '/campaigns/',
+  path: '/campaigns/',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminCampaignsNewRoute = AdminCampaignsNewRouteImport.update({
+  id: '/campaigns/new',
+  path: '/campaigns/new',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminCampaignsIdRoute = AdminCampaignsIdRouteImport.update({
+  id: '/campaigns/$id',
+  path: '/campaigns/$id',
+  getParentRoute: () => AdminRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteWithChildren
+  '/admin/dashboard': typeof AdminDashboardRoute
+  '/admin/login': typeof AdminLoginRoute
+  '/campanha/$slug': typeof CampanhaSlugRoute
+  '/checkout/$orderId': typeof CheckoutOrderIdRoute
+  '/confirmacao/$orderId': typeof ConfirmacaoOrderIdRoute
+  '/admin/campaigns/$id': typeof AdminCampaignsIdRoute
+  '/admin/campaigns/new': typeof AdminCampaignsNewRoute
+  '/admin/campaigns/': typeof AdminCampaignsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteWithChildren
+  '/admin/dashboard': typeof AdminDashboardRoute
+  '/admin/login': typeof AdminLoginRoute
+  '/campanha/$slug': typeof CampanhaSlugRoute
+  '/checkout/$orderId': typeof CheckoutOrderIdRoute
+  '/confirmacao/$orderId': typeof ConfirmacaoOrderIdRoute
+  '/admin/campaigns/$id': typeof AdminCampaignsIdRoute
+  '/admin/campaigns/new': typeof AdminCampaignsNewRoute
+  '/admin/campaigns': typeof AdminCampaignsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteWithChildren
+  '/admin/dashboard': typeof AdminDashboardRoute
+  '/admin/login': typeof AdminLoginRoute
+  '/campanha/$slug': typeof CampanhaSlugRoute
+  '/checkout/$orderId': typeof CheckoutOrderIdRoute
+  '/confirmacao/$orderId': typeof ConfirmacaoOrderIdRoute
+  '/admin/campaigns/$id': typeof AdminCampaignsIdRoute
+  '/admin/campaigns/new': typeof AdminCampaignsNewRoute
+  '/admin/campaigns/': typeof AdminCampaignsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/admin'
+    | '/admin/dashboard'
+    | '/admin/login'
+    | '/campanha/$slug'
+    | '/checkout/$orderId'
+    | '/confirmacao/$orderId'
+    | '/admin/campaigns/$id'
+    | '/admin/campaigns/new'
+    | '/admin/campaigns/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/admin'
+    | '/admin/dashboard'
+    | '/admin/login'
+    | '/campanha/$slug'
+    | '/checkout/$orderId'
+    | '/confirmacao/$orderId'
+    | '/admin/campaigns/$id'
+    | '/admin/campaigns/new'
+    | '/admin/campaigns'
+  id:
+    | '__root__'
+    | '/'
+    | '/admin'
+    | '/admin/dashboard'
+    | '/admin/login'
+    | '/campanha/$slug'
+    | '/checkout/$orderId'
+    | '/confirmacao/$orderId'
+    | '/admin/campaigns/$id'
+    | '/admin/campaigns/new'
+    | '/admin/campaigns/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRoute: typeof AdminRouteWithChildren
+  CampanhaSlugRoute: typeof CampanhaSlugRoute
+  CheckoutOrderIdRoute: typeof CheckoutOrderIdRoute
+  ConfirmacaoOrderIdRoute: typeof ConfirmacaoOrderIdRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,12 +171,100 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/confirmacao/$orderId': {
+      id: '/confirmacao/$orderId'
+      path: '/confirmacao/$orderId'
+      fullPath: '/confirmacao/$orderId'
+      preLoaderRoute: typeof ConfirmacaoOrderIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/checkout/$orderId': {
+      id: '/checkout/$orderId'
+      path: '/checkout/$orderId'
+      fullPath: '/checkout/$orderId'
+      preLoaderRoute: typeof CheckoutOrderIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/campanha/$slug': {
+      id: '/campanha/$slug'
+      path: '/campanha/$slug'
+      fullPath: '/campanha/$slug'
+      preLoaderRoute: typeof CampanhaSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/login': {
+      id: '/admin/login'
+      path: '/login'
+      fullPath: '/admin/login'
+      preLoaderRoute: typeof AdminLoginRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/dashboard': {
+      id: '/admin/dashboard'
+      path: '/dashboard'
+      fullPath: '/admin/dashboard'
+      preLoaderRoute: typeof AdminDashboardRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/campaigns/': {
+      id: '/admin/campaigns/'
+      path: '/campaigns'
+      fullPath: '/admin/campaigns/'
+      preLoaderRoute: typeof AdminCampaignsIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/campaigns/new': {
+      id: '/admin/campaigns/new'
+      path: '/campaigns/new'
+      fullPath: '/admin/campaigns/new'
+      preLoaderRoute: typeof AdminCampaignsNewRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/campaigns/$id': {
+      id: '/admin/campaigns/$id'
+      path: '/campaigns/$id'
+      fullPath: '/admin/campaigns/$id'
+      preLoaderRoute: typeof AdminCampaignsIdRouteImport
+      parentRoute: typeof AdminRoute
+    }
   }
 }
 
+interface AdminRouteChildren {
+  AdminDashboardRoute: typeof AdminDashboardRoute
+  AdminLoginRoute: typeof AdminLoginRoute
+  AdminCampaignsIdRoute: typeof AdminCampaignsIdRoute
+  AdminCampaignsNewRoute: typeof AdminCampaignsNewRoute
+  AdminCampaignsIndexRoute: typeof AdminCampaignsIndexRoute
+}
+
+const AdminRouteChildren: AdminRouteChildren = {
+  AdminDashboardRoute: AdminDashboardRoute,
+  AdminLoginRoute: AdminLoginRoute,
+  AdminCampaignsIdRoute: AdminCampaignsIdRoute,
+  AdminCampaignsNewRoute: AdminCampaignsNewRoute,
+  AdminCampaignsIndexRoute: AdminCampaignsIndexRoute,
+}
+
+const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRoute: AdminRouteWithChildren,
+  CampanhaSlugRoute: CampanhaSlugRoute,
+  CheckoutOrderIdRoute: CheckoutOrderIdRoute,
+  ConfirmacaoOrderIdRoute: ConfirmacaoOrderIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

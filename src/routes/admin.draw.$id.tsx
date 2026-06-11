@@ -290,7 +290,7 @@ function RaffleDraw() {
                   <Button onClick={saveResult} className="bg-primary hover:bg-primary/90 text-white font-bold px-8 h-12 rounded-xl gap-2">
                     <Download className="h-5 w-5" /> Salvar Resultado
                   </Button>
-                  <Button variant="outline" className="border-white/10 hover:bg-white/5 text-white font-bold px-8 h-12 rounded-xl gap-2">
+                  <Button onClick={shareResult} variant="outline" className="border-white/10 hover:bg-white/5 text-white font-bold px-8 h-12 rounded-xl gap-2">
                     <Share2 className="h-5 w-5" /> Compartilhar
                   </Button>
                   <Button onClick={startDraw} variant="ghost" className="text-zinc-500 hover:text-white h-12 rounded-xl gap-2">

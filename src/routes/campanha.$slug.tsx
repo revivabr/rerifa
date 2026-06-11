@@ -4,11 +4,13 @@ import { supabase } from "@/lib/supabase";
 import { formatBRL, padNumber, formatDateBR } from "@/lib/format";
 import { ShieldCheck, FileText, Calendar, Gift, Info, Sparkles, ArrowRight, Ticket, Star } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 import ReactMarkdown from "react-markdown";
 import { BuyerModal } from "@/components/BuyerModal";
 import { SellerRanking } from "@/components/SellerRanking";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+
 
 export const Route = createFileRoute("/campanha/$slug")({
   component: CampaignPage,

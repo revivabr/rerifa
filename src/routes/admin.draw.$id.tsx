@@ -193,11 +193,11 @@ function RaffleDraw() {
   if (isLoading) return <div className="flex h-screen items-center justify-center"><RefreshCw className="h-8 w-8 animate-spin text-primary" /></div>;
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] bg-[radial-gradient(circle_at_50%_50%,rgba(43,75,235,0.1),transparent)] text-white p-4 md:p-8 flex flex-col items-center justify-center overflow-hidden">
+    <div className="min-h-screen bg-sand bg-pattern-cubes text-foreground p-4 md:p-8 flex flex-col items-center justify-center overflow-hidden">
       <Link 
         to="/admin/campaigns/$id" 
         params={{ id }} 
-        className="absolute top-8 left-8 text-zinc-400 hover:text-white flex items-center gap-2 transition-colors"
+        className="absolute top-8 left-8 text-muted-foreground hover:text-primary flex items-center gap-2 transition-colors font-bold"
       >
         <ArrowLeft className="h-5 w-5" /> Voltar ao Painel
       </Link>
@@ -208,21 +208,21 @@ function RaffleDraw() {
           animate={{ opacity: 1, y: 0 }}
           className="space-y-4"
         >
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-500 text-sm font-bold uppercase tracking-widest">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-gold/10 border border-gold/20 text-gold text-sm font-bold uppercase tracking-widest shadow-sm">
             <Star className="h-4 w-4 fill-current" /> Sorteio Oficial <Star className="h-4 w-4 fill-current" />
           </div>
-          <h1 className="text-4xl md:text-6xl font-black tracking-tight bg-gradient-to-b from-white to-zinc-500 bg-clip-text text-transparent">
+          <h1 className="text-4xl md:text-6xl font-black tracking-tight text-primary drop-shadow-sm">
             {campaign?.name}
           </h1>
-          <p className="text-zinc-400 font-medium">
-            Sorteando entre <span className="text-white font-bold">{soldNumbers.length}</span> números vendidos
+          <p className="text-muted-foreground font-medium">
+            Sorteando entre <span className="text-primary font-bold">{soldNumbers.length}</span> números vendidos
           </p>
         </motion.div>
 
-        <div className="relative py-20 flex justify-center">
+        <div className="relative py-12 flex justify-center">
           {/* Slot Machine Container */}
-          <div className="relative bg-zinc-900 border-4 border-zinc-700 rounded-3xl p-6 shadow-2xl flex items-center justify-center overflow-hidden min-w-[200px] md:min-w-[400px] h-32 md:h-48">
-            <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-transparent to-black/50 pointer-events-none" />
+          <div className="relative bg-white border-8 border-primary/10 rounded-3xl p-6 shadow-elegant flex items-center justify-center overflow-hidden min-w-[200px] md:min-w-[400px] h-32 md:h-48">
+            <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-primary/5 pointer-events-none" />
             
             <AnimatePresence mode="wait">
               {!winner && !isDrawing ? (
@@ -243,7 +243,7 @@ function RaffleDraw() {
               ) : (
                 <motion.div
                   key="drawing"
-                  className="text-6xl md:text-8xl font-black tabular-nums text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]"
+                  className="text-6xl md:text-8xl font-black tabular-nums text-primary drop-shadow-[0_2px_4px_rgba(45,95,58,0.2)]"
                 >
                   {displayNumber || "000"}
                 </motion.div>
@@ -257,39 +257,39 @@ function RaffleDraw() {
             <motion.div
               initial={{ opacity: 0, y: 100 }}
               animate={{ opacity: 1, y: 0 }}
-              className="bg-zinc-900/80 backdrop-blur-xl border border-white/10 rounded-3xl p-8 md:p-12 shadow-2xl relative overflow-hidden"
+              className="bg-white border-2 border-gold/20 rounded-3xl p-8 md:p-12 shadow-gold relative overflow-hidden"
             >
               {/* Detalhe festivo */}
-              <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-orange-500 via-primary to-purple-500" />
+              <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-gold" />
               
               <div className="space-y-6">
                 <div className="flex justify-center">
-                  <div className="h-20 w-20 rounded-2xl bg-orange-500 flex items-center justify-center rotate-3 shadow-lg shadow-orange-500/20">
+                  <div className="h-20 w-20 rounded-2xl bg-gradient-gold flex items-center justify-center rotate-3 shadow-lg">
                     <Trophy className="h-10 w-10 text-white" />
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <h2 className="text-3xl md:text-5xl font-black text-white">
+                  <h2 className="text-3xl md:text-5xl font-black text-primary">
                     {winner.name}
                   </h2>
-                  <p className="text-primary font-bold text-xl uppercase tracking-widest">
+                  <p className="text-gold font-bold text-xl uppercase tracking-widest">
                     Vencedor Oficial
                   </p>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4 py-8 border-y border-white/5">
+                <div className="grid grid-cols-2 gap-4 py-8 border-y border-border">
                   <div className="text-left space-y-1">
-                    <div className="flex items-center gap-1.5 text-zinc-500 text-xs font-bold uppercase">
+                    <div className="flex items-center gap-1.5 text-muted-foreground text-xs font-bold uppercase">
                       <Calendar className="h-3 w-3" /> Data
                     </div>
-                    <div className="text-white font-bold">{formatDateBR(winner.date)}</div>
+                    <div className="text-foreground font-bold">{formatDateBR(winner.date)}</div>
                   </div>
                   <div className="text-left space-y-1">
-                    <div className="flex items-center gap-1.5 text-zinc-500 text-xs font-bold uppercase">
+                    <div className="flex items-center gap-1.5 text-muted-foreground text-xs font-bold uppercase">
                       <Clock className="h-3 w-3" /> Hora
                     </div>
-                    <div className="text-white font-bold">
+                    <div className="text-foreground font-bold">
                       {winner.date.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit", second: "2-digit" })}
                     </div>
                   </div>
@@ -299,10 +299,10 @@ function RaffleDraw() {
                   <Button onClick={saveResult} className="bg-primary hover:bg-primary/90 text-white font-bold px-8 h-12 rounded-xl gap-2">
                     <Download className="h-5 w-5" /> Salvar Resultado
                   </Button>
-                  <Button onClick={shareResult} variant="outline" className="border-white/10 hover:bg-white/5 text-white font-bold px-8 h-12 rounded-xl gap-2">
+                  <Button onClick={shareResult} variant="outline" className="border-border hover:bg-muted text-foreground font-bold px-8 h-12 rounded-xl gap-2">
                     <Share2 className="h-5 w-5" /> Compartilhar
                   </Button>
-                  <Button onClick={startDraw} variant="ghost" className="text-zinc-500 hover:text-white h-12 rounded-xl gap-2">
+                  <Button onClick={startDraw} variant="ghost" className="text-muted-foreground hover:text-primary h-12 rounded-xl gap-2 font-bold">
                     <RefreshCw className="h-5 w-5" /> Refazer Sorteio
                   </Button>
                 </div>
@@ -313,10 +313,10 @@ function RaffleDraw() {
       </div>
 
       {/* Partículas de fundo (opcional, para mais clima) */}
-      <div className="fixed inset-0 pointer-events-none opacity-20">
-        <div className="absolute top-1/4 left-1/4 h-2 w-2 bg-white rounded-full animate-ping" />
-        <div className="absolute bottom-1/4 right-1/4 h-2 w-2 bg-white rounded-full animate-ping delay-700" />
-        <div className="absolute top-1/2 right-1/3 h-1 w-1 bg-white rounded-full animate-ping delay-1000" />
+      <div className="fixed inset-0 pointer-events-none opacity-30">
+        <div className="absolute top-1/4 left-1/4 h-2 w-2 bg-primary rounded-full animate-ping" />
+        <div className="absolute bottom-1/4 right-1/4 h-2 w-2 bg-gold rounded-full animate-ping delay-700" />
+        <div className="absolute top-1/2 right-1/3 h-1 w-1 bg-primary rounded-full animate-ping delay-1000" />
       </div>
     </div>
   );

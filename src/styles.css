@@ -9,21 +9,81 @@
   --color-gold-glow: #f1b74d;
   --color-sand: #FAFAF5;
   --color-success: #00A95C;
+  --font-sans: "Nunito", sans-serif;
 }
 
-@layer utilities {
-  .bg-gradient-gold {
-    background: linear-gradient(135deg, #f1b74d 0%, #D9A441 100%);
-  }
-  .shadow-gold {
-    box-shadow: 0 10px 20px -5px rgba(217, 164, 65, 0.3);
-  }
-  .bg-pattern-cubes {
-    background-image: url('https://www.transparenttextures.com/patterns/cubes.png');
-  }
-  .animate-float {
-    animation: float 3s ease-in-out infinite;
-  }
+:root {
+  --background: 0 0% 100%;
+  --foreground: 145 30% 15%;
+  --card: 0 0% 100%;
+  --card-foreground: 145 30% 15%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 145 30% 15%;
+  --primary-foreground: 0 0% 100%;
+  --secondary-foreground: 145 30% 15%;
+  --muted: 145 10% 95%;
+  --muted-foreground: 145 10% 40%;
+  --accent-foreground: 145 30% 15%;
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 98%;
+  --warning: 38 92% 50%;
+  --warning-foreground: 38 92% 15%;
+  --border: 145 10% 90%;
+  --input: 145 10% 90%;
+  --ring: 145 35% 25%;
+  --radius: 1.25rem;
+}
+
+@theme inline {
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+  --color-warning: hsl(var(--warning));
+  --color-warning-foreground: hsl(var(--warning-foreground));
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
+}
+
+@utility bg-gradient-gold {
+  background: linear-gradient(135deg, #f1b74d 0%, #D9A441 100%);
+}
+
+@utility bg-gradient-primary {
+  background: linear-gradient(135deg, #2D5F3A 0%, #1a3d25 100%);
+}
+
+@utility bg-gradient-sand {
+  background: linear-gradient(to bottom, #FAFAF5, #F2F2E9);
+}
+
+@utility shadow-soft {
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.05);
+}
+
+@utility shadow-elegant {
+  box-shadow: 0 20px 40px -15px rgba(45, 95, 58, 0.1);
+}
+
+@utility shadow-gold {
+  box-shadow: 0 10px 20px -5px rgba(217, 164, 65, 0.3);
+}
+
+@utility bg-pattern-cubes {
+  background-image: url('https://www.transparenttextures.com/patterns/cubes.png');
 }
 
 @keyframes float {
@@ -31,25 +91,13 @@
   50% { transform: translateY(-10px); }
 }
 
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
 @layer base {
-  :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary-foreground: 210 40% 98%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
-    --radius: 1.25rem;
+  * {
+    @apply border-border;
   }
   body {
     @apply bg-background text-foreground font-sans antialiased;

@@ -1,11 +1,11 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabase";
 import { formatBRL, padNumber } from "@/lib/format";
 import { Button } from "@/components/ui/button";
 import { Copy, CheckCircle2, Clock, Loader2, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 import { getOrGeneratePix } from "@/lib/api/payment.functions";
+import { getOrderPublic } from "@/lib/api/order.functions";
 
 export const Route = createFileRoute("/checkout/$orderId")({
   component: CheckoutPage,
@@ -31,30 +31,27 @@ function CheckoutPage() {
 
 
   useEffect(() => {
-    (async () => {
-      const { data: o } = await supabase.from("orders").select("*").eq("id", orderId).maybeSingle();
-      if (!o) return;
-      setOrder(o as Order);
-      const { data: c } = await supabase.from("campaigns").select("name").eq("id", (o as Order).campaign_id).maybeSingle();
-      if (c) setCampaignName(c.name as string);
-      const { data: b } = await supabase.from("order_numbers").select("number").eq("order_id", orderId).order("number");
-      setNumbers((b ?? []).map((r: { number: number }) => r.number));
-      const { data: buyer } = await supabase.from("buyers").select("name").eq("id", (o as { buyer_id: string }).buyer_id ?? "").maybeSingle();
-      if (buyer) setBuyerName(buyer.name as string);
-
-      // Realtime listen to order status
-      const ch = supabase.channel(`order-${orderId}`)
-        .on("postgres_changes", { event: "UPDATE", schema: "public", table: "orders", filter: `id=eq.${orderId}` },
-          (payload) => {
-            const next = payload.new as Order;
-            setOrder(next);
-            if (next.status === "paid") {
-              toast.success("Pagamento confirmado!");
-              setTimeout(() => navigate({ to: "/confirmacao/$orderId", params: { orderId } }), 800);
-            }
-          }).subscribe();
-      return () => { supabase.removeChannel(ch); };
-    })();
+    let cancelled = false;
+    const fetchOrder = async () => {
+      const o = await getOrderPublic({ data: { orderId } });
+      if (cancelled || !o) return;
+      setOrder({
+        id: o.id, campaign_id: o.campaign_id, status: o.status,
+        amount: o.amount, quantity: o.quantity,
+        pix_qr_code: o.pix_qr_code, pix_copy_paste: o.pix_copy_paste, expires_at: o.expires_at,
+      });
+      setCampaignName(o.campaign_name);
+      setBuyerName(o.buyer_name);
+      setNumbers(o.numbers);
+      if (o.status === "paid") {
+        toast.success("Pagamento confirmado!");
+        setTimeout(() => navigate({ to: "/confirmacao/$orderId", params: { orderId } }), 800);
+      }
+    };
+    fetchOrder();
+    // Polling no lugar de realtime (RLS restringe leitura direta)
+    const poll = setInterval(fetchOrder, 4000);
+    return () => { cancelled = true; clearInterval(poll); };
   }, [orderId, navigate]);
 
   useEffect(() => {

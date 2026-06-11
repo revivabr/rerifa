@@ -4,6 +4,7 @@ import { formatBRL, padNumber } from "@/lib/format";
 import { Button } from "@/components/ui/button";
 import { Copy, CheckCircle2, Clock, Loader2, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 import { getOrGeneratePix } from "@/lib/api/payment.functions";
 import { getOrderPublic } from "@/lib/api/order.functions";
 

@@ -180,6 +180,8 @@ function CampaignAdmin() {
               >
                 <Trophy className="h-4 w-4" /> Sortear Ganhador
               </Link>
+            </>
+          )}
           {isEditing && (
             <Button onClick={handleSave} size="sm" className="bg-gradient-primary">
               <Save className="mr-2 h-4 w-4" /> Salvar Alterações

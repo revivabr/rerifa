@@ -35,24 +35,15 @@ function CampaignAdmin() {
     if (!camp) return;
     setC(camp as Campaign);
     setForm(camp as Campaign);
-    const [{ count: sold }, { count: reserved }, { data: all_reserved }, { count: available }] = await Promise.all([
+    const [{ count: sold }, { count: reserved }, { count: available }] = await Promise.all([
       supabase.from("raffle_numbers").select("*", { head: true, count: "exact" }).eq("campaign_id", id).eq("status", "sold"),
       supabase.from("raffle_numbers").select("*", { head: true, count: "exact" }).eq("campaign_id", id).eq("status", "reserved"),
-      supabase.from("raffle_numbers").select("reserved_until").eq("campaign_id", id).eq("status", "reserved"),
       supabase.from("raffle_numbers").select("*", { head: true, count: "exact" }).eq("campaign_id", id).eq("status", "available"),
     ]);
-    
-    // Calcula quantos reservados já expiraram
-    const now = new Date().getTime();
-    const expiredReserved = (all_reserved ?? []).filter(r => r.reserved_until && new Date(r.reserved_until).getTime() < now).length;
-    
-    const realReserved = (reserved ?? 0) - expiredReserved;
-    const realAvailable = (available ?? 0) + expiredReserved;
-    
     const { data: paid } = await supabase.from("orders").select("amount,buyer_id").eq("campaign_id", id).eq("status", "paid");
     const raised = (paid ?? []).reduce((s: number, o: { amount: number }) => s + Number(o.amount), 0);
     const buyers = new Set((paid ?? []).map((o: { buyer_id: string }) => o.buyer_id)).size;
-    setStats({ sold: sold ?? 0, reserved: realReserved, available: realAvailable, raised, buyers });
+    setStats({ sold: sold ?? 0, reserved: reserved ?? 0, available: available ?? 0, raised, buyers });
 
     const { data: ords } = await supabase.from("orders")
       .select("id,status,amount,quantity,seller_name,created_at,buyer:buyers(name,whatsapp,email)")

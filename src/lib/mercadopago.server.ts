@@ -34,8 +34,8 @@ export async function createPixPaymentRecord({
       first_name: firstName?.trim() || "Comprador",
       last_name: lastName?.trim() || "Silva",
     },
-    // Expira em 90 segundos (conforme solicitado pelo usuário)
-    date_of_expiration: new Date(Date.now() + 90 * 1000).toISOString(),
+    // Expira em 3 minutos (ajustado para dar uma margem segura)
+    date_of_expiration: new Date(Date.now() + 3 * 60 * 1000).toISOString(),
   };
   
   console.log("Iniciando requisição direta ao Mercado Pago para o pedido:", id);

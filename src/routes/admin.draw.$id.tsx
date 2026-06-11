@@ -145,13 +145,34 @@ function RaffleDraw() {
       winner_buyer_id: soldNumbers.find(s => s.number === winner.number)?.buyer_id,
       eligible_numbers_count: soldNumbers.length,
       draw_method: "Sistema Aleatório",
-      drawn_at: winner.date.toISOString()
+      drawn_at: winner.date.toISOString(),
+      drawn_by: adminId
     });
 
     if (error) {
       toast.error("Erro ao salvar resultado: " + error.message);
     } else {
       toast.success("Resultado salvo com sucesso!");
+    }
+  };
+
+  const shareResult = async () => {
+    if (!winner || !campaign) return;
+    
+    const text = `🎉 GANHADOR DO SORTEIO! 🎉\n\nCampanha: ${campaign.name}\nNúmero: ${padNumber(winner.number, campaign.number_quantity)}\nGanhador: ${winner.name}\nData: ${formatDateBR(winner.date)}\n\nParabéns! 🏆`;
+    
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: 'Ganhador do Sorteio',
+          text: text,
+        });
+      } catch (err) {
+        console.error("Error sharing:", err);
+      }
+    } else {
+      await navigator.clipboard.writeText(text);
+      toast.success("Resultado copiado para a área de transferência!");
     }
   };
 

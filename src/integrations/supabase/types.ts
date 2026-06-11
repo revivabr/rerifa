@@ -527,6 +527,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      expire_pending_orders: { Args: never; Returns: number }
       is_admin: { Args: never; Returns: boolean }
       reserve_numbers:
         | {

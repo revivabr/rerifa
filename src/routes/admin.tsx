@@ -16,7 +16,11 @@ function AdminLayout() {
   const isLogin = pathname === "/admin/login";
 
   useEffect(() => {
-    if (session === null && !isLogin) navigate({ to: "/admin/login" });
+    console.log("[AdminLayout] Session state:", { session, isLogin });
+    if (session === null && !isLogin) {
+      console.log("[AdminLayout] No session, redirecting to login");
+      navigate({ to: "/admin/login" });
+    }
   }, [session, isLogin, navigate]);
 
   if (isLogin) return <Outlet />;

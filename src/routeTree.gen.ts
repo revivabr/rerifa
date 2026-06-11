@@ -17,6 +17,7 @@ import { Route as CampanhaSlugRouteImport } from './routes/campanha.$slug'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
 import { Route as AdminDashboardRouteImport } from './routes/admin.dashboard'
 import { Route as AdminCampaignsIndexRouteImport } from './routes/admin.campaigns.index'
+import { Route as AdminDrawIdRouteImport } from './routes/admin.draw.$id'
 import { Route as AdminCampaignsNewRouteImport } from './routes/admin.campaigns.new'
 import { Route as AdminCampaignsIdRouteImport } from './routes/admin.campaigns.$id'
 
@@ -60,6 +61,11 @@ const AdminCampaignsIndexRoute = AdminCampaignsIndexRouteImport.update({
   path: '/campaigns/',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminDrawIdRoute = AdminDrawIdRouteImport.update({
+  id: '/draw/$id',
+  path: '/draw/$id',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminCampaignsNewRoute = AdminCampaignsNewRouteImport.update({
   id: '/campaigns/new',
   path: '/campaigns/new',
@@ -81,6 +87,7 @@ export interface FileRoutesByFullPath {
   '/confirmacao/$orderId': typeof ConfirmacaoOrderIdRoute
   '/admin/campaigns/$id': typeof AdminCampaignsIdRoute
   '/admin/campaigns/new': typeof AdminCampaignsNewRoute
+  '/admin/draw/$id': typeof AdminDrawIdRoute
   '/admin/campaigns/': typeof AdminCampaignsIndexRoute
 }
 export interface FileRoutesByTo {
@@ -93,6 +100,7 @@ export interface FileRoutesByTo {
   '/confirmacao/$orderId': typeof ConfirmacaoOrderIdRoute
   '/admin/campaigns/$id': typeof AdminCampaignsIdRoute
   '/admin/campaigns/new': typeof AdminCampaignsNewRoute
+  '/admin/draw/$id': typeof AdminDrawIdRoute
   '/admin/campaigns': typeof AdminCampaignsIndexRoute
 }
 export interface FileRoutesById {
@@ -106,6 +114,7 @@ export interface FileRoutesById {
   '/confirmacao/$orderId': typeof ConfirmacaoOrderIdRoute
   '/admin/campaigns/$id': typeof AdminCampaignsIdRoute
   '/admin/campaigns/new': typeof AdminCampaignsNewRoute
+  '/admin/draw/$id': typeof AdminDrawIdRoute
   '/admin/campaigns/': typeof AdminCampaignsIndexRoute
 }
 export interface FileRouteTypes {
@@ -120,6 +129,7 @@ export interface FileRouteTypes {
     | '/confirmacao/$orderId'
     | '/admin/campaigns/$id'
     | '/admin/campaigns/new'
+    | '/admin/draw/$id'
     | '/admin/campaigns/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -132,6 +142,7 @@ export interface FileRouteTypes {
     | '/confirmacao/$orderId'
     | '/admin/campaigns/$id'
     | '/admin/campaigns/new'
+    | '/admin/draw/$id'
     | '/admin/campaigns'
   id:
     | '__root__'
@@ -144,6 +155,7 @@ export interface FileRouteTypes {
     | '/confirmacao/$orderId'
     | '/admin/campaigns/$id'
     | '/admin/campaigns/new'
+    | '/admin/draw/$id'
     | '/admin/campaigns/'
   fileRoutesById: FileRoutesById
 }
@@ -213,6 +225,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminCampaignsIndexRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/draw/$id': {
+      id: '/admin/draw/$id'
+      path: '/draw/$id'
+      fullPath: '/admin/draw/$id'
+      preLoaderRoute: typeof AdminDrawIdRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/campaigns/new': {
       id: '/admin/campaigns/new'
       path: '/campaigns/new'
@@ -235,6 +254,7 @@ interface AdminRouteChildren {
   AdminLoginRoute: typeof AdminLoginRoute
   AdminCampaignsIdRoute: typeof AdminCampaignsIdRoute
   AdminCampaignsNewRoute: typeof AdminCampaignsNewRoute
+  AdminDrawIdRoute: typeof AdminDrawIdRoute
   AdminCampaignsIndexRoute: typeof AdminCampaignsIndexRoute
 }
 
@@ -243,6 +263,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminLoginRoute: AdminLoginRoute,
   AdminCampaignsIdRoute: AdminCampaignsIdRoute,
   AdminCampaignsNewRoute: AdminCampaignsNewRoute,
+  AdminDrawIdRoute: AdminDrawIdRoute,
   AdminCampaignsIndexRoute: AdminCampaignsIndexRoute,
 }
 

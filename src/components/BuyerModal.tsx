@@ -60,12 +60,12 @@ export function BuyerModal({
           </div>
 
           <div className="rounded-xl border border-dashed border-primary/30 bg-primary/5 p-4">
-            <Label htmlFor="sellerName" className="text-primary font-bold">Quem te vendeu? (Vendedor)</Label>
+            <Label htmlFor="sellerName" className="text-primary font-bold">Quem fez esta venda?</Label>
             <Input 
               id="sellerName" 
               value={sellerName} 
               onChange={(e) => setSellerName(e.target.value)} 
-              placeholder="Nome do vendedor (opcional)"
+              placeholder="Nome completo do vendedor (opcional)"
               className="mt-1.5 border-primary/20 focus-visible:ring-primary/30"
             />
             <p className="mt-1.5 text-[10px] text-muted-foreground">Preencha se alguém te indicou esta campanha.</p>

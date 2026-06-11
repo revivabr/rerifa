@@ -61,8 +61,8 @@ function NewCampaign() {
       <form onSubmit={handleSubmit} className="space-y-5 rounded-2xl border border-border bg-card p-6 shadow-soft">
         <div className="grid gap-5 md:grid-cols-2">
           <div className="md:col-span-2">
-            <Label>Nome da campanha *</Label>
-            <Input required value={form.name} onChange={e => { set("name", e.target.value); if (!form.slug) set("slug", slugify(e.target.value)); }} />
+            <Label>Link do Banner da Rifas (imagem principal) *</Label>
+            <Input required value={form.name} onChange={e => { set("name", e.target.value); if (!form.slug) set("slug", slugify(e.target.value)); }} placeholder="Ex: Rifa de Natal 2026" />
           </div>
           <div>
             <Label>Slug (URL) *</Label>
@@ -81,8 +81,8 @@ function NewCampaign() {
             <Textarea rows={3} value={form.description} onChange={e => set("description", e.target.value)} />
           </div>
           <div className="md:col-span-2">
-            <Label>URL do banner (16:9)</Label>
-            <Input value={form.banner_url} onChange={e => set("banner_url", e.target.value)} placeholder="https://…" />
+            <Label>URL da Imagem do Banner (16:9)</Label>
+            <Input value={form.banner_url} onChange={e => set("banner_url", e.target.value)} placeholder="https://..." />
           </div>
           <div>
             <Label>Quantidade de números (100–1000) *</Label>

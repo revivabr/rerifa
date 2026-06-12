@@ -2,8 +2,9 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 import { formatBRL } from "@/lib/format";
-import { Ticket, Sparkles, Zap, ArrowRight, Trophy, ShieldCheck, Heart } from "lucide-react";
+import { Ticket, Sparkles, Zap, ArrowRight, Trophy, ShieldCheck, Heart, Share2, Copy, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 import bannerRifa from "@/assets/banner-rifa-solidaria.jpeg.asset.json";
 
 export const Route = createFileRoute("/")({

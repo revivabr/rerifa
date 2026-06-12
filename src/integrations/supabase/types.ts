@@ -545,6 +545,14 @@ export type Database = {
         Returns: Json
       }
       expire_pending_orders: { Args: never; Returns: number }
+      get_seller_ranking: {
+        Args: { p_campaign_id: string }
+        Returns: {
+          seller_name: string
+          total_amount: number
+          total_sales: number
+        }[]
+      }
       is_admin: { Args: never; Returns: boolean }
       reserve_numbers:
         | {

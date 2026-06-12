@@ -36,7 +36,7 @@ function makeStub(): SupabaseClient {
 }
 
 export const supabase: SupabaseClient =
-  isSupabaseConfigured && typeof window !== "undefined"
+  isSupabaseConfigured
     ? createClient(url!, anonKey!, {
         auth: { 
           persistSession: true, 

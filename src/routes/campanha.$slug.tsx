@@ -47,26 +47,26 @@ function CampaignPage() {
       if (!c) { setLoading(false); return; }
       
       let campaignData = c as Campaign;
-      
-      // Handle banner_url to ensure it's accessible (using signed URL if needed)
-      if (campaignData.banner_url && campaignData.banner_url.includes('/storage/v1/object/public/')) {
-        const path = campaignData.banner_url.split('/public/')[1].split('/').slice(1).join('/');
-        const bucket = campaignData.banner_url.split('/public/')[1].split('/')[0];
+
+      async function signIfStorage(url: string | null): Promise<string | null> {
+        if (!url || !url.includes('/storage/v1/object/public/')) return url;
+        const path = url.split('/public/')[1].split('/').slice(1).join('/');
+        const bucket = url.split('/public/')[1].split('/')[0];
         const { data: signedData } = await supabase.storage.from(bucket).createSignedUrl(path, 3600);
-        if (signedData) {
-          campaignData = { ...campaignData, banner_url: signedData.signedUrl };
-        }
+        return signedData?.signedUrl ?? url;
       }
-      
+
+      const [signedBanner, signedPrize1, signedPrize2] = await Promise.all([
+        signIfStorage(campaignData.banner_url),
+        signIfStorage(campaignData.prize_image_1),
+        signIfStorage(campaignData.prize_image_2),
+      ]);
+      campaignData = { ...campaignData, banner_url: signedBanner, prize_image_1: signedPrize1, prize_image_2: signedPrize2 };
+
       setCampaign(campaignData);
       
-      const { data: nums } = await supabase.from("raffle_numbers").select("number,status,reserved_until").eq("campaign_id", c.id).order("number");
-      setNumbers((nums ?? []).map(n => ({
-        ...n,
-        status: (n.status === "reserved" && n.reserved_until && new Date(n.reserved_until).getTime() < Date.now()) 
-          ? "available" 
-          : n.status
-      })) as RaffleNumber[]);
+      const { data: nums } = await supabase.from("raffle_numbers").select("number,status").eq("campaign_id", c.id).order("number");
+      setNumbers((nums ?? []) as RaffleNumber[]);
 
       const { data: pz } = await supabase.from("campaign_prizes").select("*").eq("campaign_id", c.id).order("position");
       

@@ -34,7 +34,7 @@ export function Footer() {
                 { logo: logoMao, name: "Mão Amiga" }
               ].map((project, i) => (
                 <div key={i} className="group cursor-pointer">
-                  <div className="h-14 w-24 rounded-lg bg-white/5 p-2 transition-colors group-hover:bg-white/10">
+                  <div className="h-14 w-24 rounded-lg bg-[#faf7f0] p-2 transition-colors group-hover:bg-white flex items-center justify-center">
                     <img src={project.logo.url} alt={project.name} className="h-full w-full object-contain" />
                   </div>
                 </div>

@@ -88,7 +88,7 @@ function StatCard({ icon: Icon, label, value }: { icon: React.ComponentType<{ cl
   return (
     <div className="rounded-2xl border border-border bg-card p-5 shadow-soft">
       <div className="flex items-center gap-3">
-        <span className="rounded-xl bg-gradient-primary p-2.5 text-primary-foreground"><Icon className="h-5 w-5" /></span>
+        <span className="rounded-xl bg-primary p-2.5 text-white"><Icon className="h-5 w-5" /></span>
         <div className="min-w-0">
           <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{label}</p>
           <p className="truncate text-xl font-black text-primary">{value}</p>

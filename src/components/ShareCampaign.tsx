@@ -77,7 +77,7 @@ export function ShareCampaign({ campaignName, slug, price, endDate, shortDescrip
         <div className="mt-8 flex flex-wrap items-center justify-center gap-5">
           <ShareBubble
             label="WhatsApp"
-            href={whatsappUrl}
+            onClick={() => window.open(whatsappUrl, "_blank")}
             className="bg-[#25D366] hover:bg-[#1DA851] shadow-[0_10px_30px_-10px_rgba(37,211,102,0.6)]"
           >
             <WhatsappIcon />

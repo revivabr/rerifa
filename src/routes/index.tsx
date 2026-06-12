@@ -249,15 +249,14 @@ function CompactShareButtons({ campaign, copied, setCopied }: { campaign: Campai
 
   return (
     <div className="flex items-center gap-2">
-      <a
-        href={whatsappUrl}
-        target="_blank"
-        rel="noopener noreferrer"
+      <button
+        type="button"
+        onClick={() => window.open(whatsappUrl, "_blank")}
         className="flex h-8 w-8 items-center justify-center rounded-full bg-[#25D366] text-white shadow-md transition-transform hover:scale-110"
         aria-label="WhatsApp"
       >
         <svg viewBox="0 0 24 24" className="h-4 w-4 fill-white"><path d="M19.05 4.91A10 10 0 0 0 4.1 18.36L3 22l3.74-1.08a10 10 0 0 0 4.78 1.22h.01a10 10 0 0 0 7.52-17.23ZM11.54 20.3h-.01a8.3 8.3 0 0 1-4.23-1.16l-.3-.18-2.22.64.66-2.17-.2-.31a8.3 8.3 0 1 1 6.3 3.18Zm4.55-6.22c-.25-.13-1.47-.73-1.7-.81-.23-.08-.4-.13-.56.13-.16.25-.64.81-.78.97-.14.16-.29.18-.54.06-.25-.13-1.05-.39-2-1.24a7.4 7.4 0 0 1-1.37-1.7c-.14-.25 0-.38.11-.5.11-.11.25-.29.37-.43.13-.14.17-.25.25-.41.08-.16.04-.31-.02-.43-.06-.13-.56-1.35-.77-1.85-.2-.49-.41-.42-.56-.43h-.48a.92.92 0 0 0-.67.31 2.8 2.8 0 0 0-.88 2.08c0 1.22.9 2.4 1.02 2.57.13.16 1.77 2.7 4.28 3.78.6.26 1.06.42 1.43.54.6.19 1.15.16 1.58.1.48-.07 1.47-.6 1.68-1.18.2-.58.2-1.07.14-1.18-.06-.11-.23-.18-.48-.31Z"/></svg>
-      </a>
+      </button>
       <button
         type="button"
         onClick={copyToClipboard}

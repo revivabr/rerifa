@@ -20,12 +20,12 @@ export function ShareCampaign({ campaignName, slug, price, endDate, shortDescrip
       : `https://rifa.revivabrasil.com.br/campanha/${slug}`;
 
   const message =
-    `🎟️ *${campaignName}* — Rifa Solidária Reviva Brasil\n\n` +
-    `Participe você também dessa corrente do bem! Cada número adquirido ajuda a *restaurar vidas e transformar histórias* através de projetos sociais que mudam realidades. 💙\n\n` +
-    (shortDescription ? `${shortDescription}\n\n` : "") +
-    `💰 Cota: ${formatBRL(price)}\n` +
-    `🗓️ Sorteio: ${formatDateBR(endDate)}\n\n` +
-    `Garanta seus números agora e concorra a prêmios incríveis fazendo o bem:\n${url}\n\n` +
+    `🎟️ *Rifa Solidaria - Sistema de Água Reviva*\n\n` +
+    `Participe você também dessa corrente do bem! Cada número adquirido ajuda a *Restaurar Vidas e Transformar Histórias* através de projetos sociais que mudam realidades. 💙\n\n` +
+    `💰 Cota: R$ 10,00\n` +
+    `🗓️ Sorteio: 23/06/2026\n\n` +
+    `Garanta seus números agora e concorra a prêmios incríveis fazendo o bem:\n` +
+    `https://rifa.revivabrasil.com.br\n\n` +
     `#RifaSolidária #RevivaBrasil 🙏`;
 
   const subject = `Participe da Rifa Solidária — ${campaignName}`;

@@ -34,6 +34,7 @@ function AdminLayout() {
   const links = [
     { to: "/admin/dashboard", icon: LayoutDashboard, label: "Dashboard" },
     { to: "/admin/campaigns", icon: Ticket, label: "Campanhas" },
+    { to: "/admin/draw", icon: Trophy, label: "Sorteador" },
   ];
 
   return (

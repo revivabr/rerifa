@@ -236,7 +236,6 @@ function CampaignPage() {
       
       <BuyerModal open={showModal} onOpenChange={setShowModal} onSubmit={handleSubmit} submitting={submitting} total={total} count={selected.size} />
     </div>
-    </div>
   );
 }
 

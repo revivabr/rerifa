@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import ReactMarkdown from "react-markdown";
 import { BuyerModal } from "@/components/BuyerModal";
 import { SellerRanking } from "@/components/SellerRanking";
+import { ShareCampaign } from "@/components/ShareCampaign";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
@@ -230,7 +231,16 @@ function CampaignPage() {
           </div>
         </section>
 
-        {/* 4) Ranking de vendedores abaixo do grid */}
+        {/* 4) Convite para compartilhar */}
+        <ShareCampaign
+          campaignName={campaign.name}
+          slug={campaign.slug}
+          price={Number(campaign.number_price)}
+          endDate={campaign.end_date}
+          shortDescription={campaign.short_description}
+        />
+
+        {/* 5) Ranking de vendedores abaixo do grid */}
         <SellerRanking campaignId={campaign.id} />
 
         {selected.size > 0 && (

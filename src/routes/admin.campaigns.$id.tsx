@@ -97,6 +97,32 @@ function CampaignAdmin() {
 
   async function handleSave() {
     if (!c) return;
+    const newQty = Number(form.number_quantity ?? c.number_quantity);
+    const oldQty = c.number_quantity;
+
+    // Ajustar números da rifa se quantidade mudou
+    if (newQty !== oldQty) {
+      if (newQty < 100 || newQty > 1000) { toast.error("Quantidade deve ser entre 100 e 1000"); return; }
+      if (newQty < oldQty) {
+        const { count: blocked } = await supabase.from("raffle_numbers")
+          .select("*", { head: true, count: "exact" })
+          .eq("campaign_id", id).gt("number", newQty).neq("status", "available");
+        if ((blocked ?? 0) > 0) {
+          toast.error(`Não é possível reduzir: existem ${blocked} número(s) acima de ${newQty} já vendidos/reservados.`);
+          return;
+        }
+        const { error: delErr } = await supabase.from("raffle_numbers")
+          .delete().eq("campaign_id", id).gt("number", newQty);
+        if (delErr) { toast.error(delErr.message); return; }
+      } else {
+        const rows = Array.from({ length: newQty - oldQty }, (_, i) => ({
+          campaign_id: id, number: oldQty + i + 1, status: "available",
+        }));
+        const { error: insErr } = await supabase.from("raffle_numbers").insert(rows);
+        if (insErr) { toast.error(insErr.message); return; }
+      }
+    }
+
     const { error } = await supabase.from("campaigns").update({
       name: form.name,
       description: form.description,
@@ -109,7 +135,11 @@ function CampaignAdmin() {
       regulation_text: form.regulation_text,
       regulation_url: form.regulation_url,
       drive_folder_url: form.drive_folder_url,
-
+      number_quantity: newQty,
+      number_price: Number(form.number_price ?? c.number_price),
+      start_date: form.start_date ? new Date(form.start_date).toISOString() : c.start_date,
+      end_date: form.end_date ? new Date(form.end_date).toISOString() : c.end_date,
+      goal_amount: form.goal_amount != null && form.goal_amount !== ("" as unknown) ? Number(form.goal_amount) : null,
       updated_at: new Date().toISOString()
     }).eq("id", id);
 
@@ -242,6 +272,36 @@ function CampaignAdmin() {
               value={form.drive_folder_url ?? ""} 
               onChange={e => setForm(f => ({ ...f, drive_folder_url: e.target.value }))} 
             />
+          </div>
+          <div className="md:col-span-2 pt-3 border-t border-border">
+            <h3 className="text-sm font-bold text-primary mb-3">Configuração da Rifa</h3>
+          </div>
+          <div>
+            <Label>Quantidade de números *</Label>
+            <select
+              className="flex h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+              value={Number(form.number_quantity ?? c.number_quantity)}
+              onChange={e => setForm(f => ({ ...f, number_quantity: Number(e.target.value) }))}
+            >
+              {[100,200,300,400,500,600,700,800,900,1000].map(n => <option key={n} value={n}>{n} números</option>)}
+            </select>
+            <p className="mt-1 text-[11px] text-muted-foreground">Aumentar gera novos números. Reduzir só é possível se os números acima estiverem disponíveis.</p>
+          </div>
+          <div>
+            <Label>Valor por número (R$) *</Label>
+            <Input type="number" min={1} step="0.01" value={form.number_price ?? c.number_price} onChange={e => setForm(f => ({ ...f, number_price: Number(e.target.value) as unknown as number }))} />
+          </div>
+          <div>
+            <Label>Data inicial *</Label>
+            <Input type="date" value={(form.start_date ?? c.start_date).slice(0,10)} onChange={e => setForm(f => ({ ...f, start_date: e.target.value }))} />
+          </div>
+          <div>
+            <Label>Data final *</Label>
+            <Input type="date" value={(form.end_date ?? c.end_date).slice(0,10)} onChange={e => setForm(f => ({ ...f, end_date: e.target.value }))} />
+          </div>
+          <div className="md:col-span-2">
+            <Label>Meta financeira (R$)</Label>
+            <Input type="number" min={0} step="0.01" value={form.goal_amount ?? ""} onChange={e => setForm(f => ({ ...f, goal_amount: e.target.value === "" ? null : Number(e.target.value) }))} placeholder="Deixe em branco para calcular automaticamente" />
           </div>
           <div>
             <Label>Chave PIX</Label>

@@ -1,4 +1,4 @@
-import logoBranco from "@/assets/logo-reviva-quadrado.png.asset.json";
+import logoBranco from "@/assets/logo-reviva-branco-trans.png.asset.json";
 import logoVirando from "@/assets/logo-virando-jogo.png.asset.json";
 import logoBazar from "@/assets/logo-bazar-solidario.png.asset.json";
 import logoMao from "@/assets/logo-mao-amiga.png.asset.json";
@@ -11,12 +11,7 @@ export function Footer() {
       <div className="mx-auto max-w-7xl px-6 py-20">
         <div className="grid gap-12 lg:grid-cols-3">
           <div className="space-y-8">
-            <div className="flex items-center gap-3">
-              <div className="h-10 w-10 rounded-lg bg-[#faf7f0] p-1 flex items-center justify-center">
-                <img src={logoBranco.url} alt="Reviva Brasil" className="h-full w-full object-contain" />
-              </div>
-              <span className="text-xl font-bold tracking-tight">Reviva Brasil</span>
-            </div>
+            <img src={logoBranco.url} alt="Associação Reviva Brasil" className="h-32 w-auto object-contain" />
             <p className="text-sm leading-relaxed text-white/60">
               Restaurando vidas e valores através da solidariedade. Junte-se a nós e transforme o futuro de milhares de famílias.
             </p>

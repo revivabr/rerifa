@@ -65,7 +65,7 @@ function AdminLogin() {
             <Label htmlFor="password">Senha</Label>
             <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required autoComplete="current-password" />
           </div>
-          <Button type="submit" disabled={loading} className="w-full bg-gradient-primary text-base font-bold" size="lg">
+          <Button type="submit" disabled={loading} className="w-full bg-primary text-white text-base font-bold shadow-premium hover:bg-primary/90 transition-all" size="lg">
             {loading ? "Entrando…" : "Entrar"}
           </Button>
         </form>

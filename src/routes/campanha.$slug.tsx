@@ -146,97 +146,96 @@ function CampaignPage() {
   return (
     <div className="min-h-screen bg-white selection:bg-primary/10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] bg-fixed">
       <div className="mx-auto max-w-7xl px-6 py-12 md:py-24">
-
-      <div className="grid gap-12 lg:grid-cols-3">
-        <div className="lg:col-span-2 space-y-12">
-          {/* Main Campaign Section */}
-          <div className="rounded-[2.5rem] border border-black/[0.05] bg-white p-3 shadow-2xl">
-            <div className="relative aspect-video overflow-hidden rounded-[2rem] bg-stone-100">
-               <img src={campaign.banner_url || "/placeholder.svg"} className="h-full w-full object-cover" />
-            </div>
-            <div className="p-8 md:p-10">
+        <div className="grid gap-12 lg:grid-cols-3">
+          <div className="lg:col-span-2 space-y-12">
+            {/* Main Campaign Section */}
+            <div className="rounded-[2.5rem] border border-black/[0.05] bg-white p-3 shadow-2xl">
+              <div className="relative aspect-video overflow-hidden rounded-[2rem] bg-stone-100">
+                <img src={campaign.banner_url || "/placeholder.svg"} className="h-full w-full object-cover" />
+              </div>
+              <div className="p-8 md:p-10">
                 <h1 className="text-4xl font-extrabold text-primary md:text-5xl">{campaign.name}</h1>
                 <p className="mt-6 text-lg leading-relaxed text-muted-foreground">{campaign.description}</p>
                 <div className="mt-8 grid grid-cols-2 gap-4">
                   <StatCard icon={<Gift />} label="Cota" value={formatBRL(campaign.number_price)} />
                   <StatCard icon={<Calendar />} label="Sorteio" value={formatDateBR(campaign.end_date)} />
                 </div>
+              </div>
+            </div>
+
+            {/* Prizes */}
+            {prizes.length > 0 && (
+              <section>
+                <h2 className="mb-8 text-2xl font-bold text-primary">Prêmios</h2>
+                <div className="grid gap-6 sm:grid-cols-2">
+                  {prizes.map((p, idx) => (
+                    <div key={p.id} className="overflow-hidden rounded-3xl bg-white shadow-premium">
+                      <div className="aspect-video bg-muted"><img src={p.image_url || "/placeholder.svg"} className="h-full w-full object-cover" /></div>
+                      <div className="p-6">
+                        <span className="text-[10px] font-bold uppercase tracking-widest text-gold">{idx + 1}º Prêmio</span>
+                        <h3 className="mt-2 text-lg font-bold">{p.title}</h3>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
+          </div>
+
+          {/* Sidebar */}
+          <div className="space-y-8">
+            <SellerRanking campaignId={campaign.id} />
+          </div>
+        </div>
+
+        <section className="mt-20" id="escolher-numeros">
+          <h2 className="text-3xl font-bold text-primary mb-2">Escolha seus números</h2>
+          <p className="text-muted-foreground mb-8">Toque para selecionar. Reserva de 3 minutos.</p>
+
+          <div className="rounded-[2.5rem] border border-black/[0.05] bg-white p-8 md:p-16 shadow-2xl relative overflow-hidden">
+            <div className="absolute top-0 right-0 p-8 opacity-5">
+              <Ticket className="h-64 w-64 rotate-12" />
+            </div>
+
+            <div className="grid gap-2" style={{ gridTemplateColumns: `repeat(auto-fill, minmax(60px, 1fr))` }}>
+              {numbers.map(n => {
+                const status = selected.has(n.number) ? "selected" : n.status;
+                return (
+                  <button
+                    key={n.number}
+                    onClick={() => toggle(n.number, n.status)}
+                    disabled={n.status !== "available"}
+                    className={cn(
+                      "relative aspect-square rounded-xl font-bold tabular-nums transition-all duration-300",
+                      "border border-black/[0.05]",
+                      status === "available" && "bg-secondary text-primary hover:bg-primary/10",
+                      status === "selected" && "bg-primary text-white scale-105 shadow-lg",
+                      status === "reserved" && "bg-black/[0.03] text-black/20 cursor-not-allowed",
+                      status === "sold" && "bg-black/[0.05] text-black/20 cursor-not-allowed",
+                    )}
+                  >
+                    {padNumber(n.number, campaign.number_quantity)}
+                  </button>
+                );
+              })}
             </div>
           </div>
+        </section>
 
-          {/* Prizes */}
-          {prizes.length > 0 && (
-            <section>
-              <h2 className="mb-8 text-2xl font-bold text-primary">Prêmios</h2>
-              <div className="grid gap-6 sm:grid-cols-2">
-                {prizes.map((p, idx) => (
-                  <div key={p.id} className="overflow-hidden rounded-3xl bg-white shadow-premium">
-                    <div className="aspect-video bg-muted"><img src={p.image_url || "/placeholder.svg"} className="h-full w-full object-cover" /></div>
-                    <div className="p-6">
-                        <span className="text-[10px] font-bold uppercase tracking-widest text-gold">{idx+1}º Prêmio</span>
-                        <h3 className="mt-2 text-lg font-bold">{p.title}</h3>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </section>
-          )}
-        </div>
-
-        {/* Sidebar */}
-        <div className="space-y-8">
-            <SellerRanking campaignId={campaign.id} />
-        </div>
-      </div>
-
-      <section className="mt-20" id="escolher-numeros">
-        <h2 className="text-3xl font-bold text-primary mb-2">Escolha seus números</h2>
-        <p className="text-muted-foreground mb-8">Toque para selecionar. Reserva de 3 minutos.</p>
-        
-        <div className="rounded-[2.5rem] border border-black/[0.05] bg-white p-8 md:p-16 shadow-2xl relative overflow-hidden">
-          <div className="absolute top-0 right-0 p-8 opacity-5">
-             <Ticket className="h-64 w-64 rotate-12" />
-          </div>
-
-          <div className="grid gap-2" style={{ gridTemplateColumns: `repeat(auto-fill, minmax(60px, 1fr))` }}>
-            {numbers.map(n => {
-              const status = selected.has(n.number) ? "selected" : n.status;
-              return (
-                <button
-                  key={n.number}
-                  onClick={() => toggle(n.number, n.status)}
-                  disabled={n.status !== "available"}
-                  className={cn(
-                    "relative aspect-square rounded-xl font-bold tabular-nums transition-all duration-300",
-                    "border border-black/[0.05]",
-                    status === "available" && "bg-secondary text-primary hover:bg-primary/10",
-                    status === "selected"  && "bg-primary text-white scale-105 shadow-lg",
-                    status === "reserved"  && "bg-black/[0.03] text-black/20 cursor-not-allowed",
-                    status === "sold"      && "bg-black/[0.05] text-black/20 cursor-not-allowed",
-                  )}
-                >
-                  {padNumber(n.number, campaign.number_quantity)}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {selected.size > 0 && (
-        <div className="fixed bottom-6 left-6 right-6 z-50 flex items-center justify-center">
-          <div className="flex w-full max-w-xl items-center justify-between rounded-3xl bg-white p-6 shadow-[0_20px_50px_-12px_rgba(0,0,0,0.25)] border border-black/[0.03]">
-             <div>
+        {selected.size > 0 && (
+          <div className="fixed bottom-6 left-6 right-6 z-50 flex items-center justify-center">
+            <div className="flex w-full max-w-xl items-center justify-between rounded-3xl bg-white p-6 shadow-[0_20px_50px_-12px_rgba(0,0,0,0.25)] border border-black/[0.03]">
+              <div>
                 <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">{selected.size} selecionados</p>
                 <p className="text-2xl font-black text-primary">{formatBRL(total)}</p>
-             </div>
-             <Button onClick={() => setShowModal(true)} className="h-14 px-8 rounded-2xl bg-primary text-white font-black shadow-premium">PAGAR AGORA</Button>
+              </div>
+              <Button onClick={() => setShowModal(true)} className="h-14 px-8 rounded-2xl bg-primary text-white font-black shadow-premium">PAGAR AGORA</Button>
+            </div>
           </div>
-        </div>
-      )}
-      
-      <BuyerModal open={showModal} onOpenChange={setShowModal} onSubmit={handleSubmit} submitting={submitting} total={total} count={selected.size} />
-    </div>
+        )}
+
+        <BuyerModal open={showModal} onOpenChange={setShowModal} onSubmit={handleSubmit} submitting={submitting} total={total} count={selected.size} />
+      </div>
     </div>
   );
 }

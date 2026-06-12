@@ -198,7 +198,7 @@ function RaffleDraw() {
 
         {/* Tabela de números */}
         <div className="bg-white/95 backdrop-blur rounded-3xl p-4 md:p-6 shadow-2xl">
-          <div className="grid grid-cols-10 sm:grid-cols-12 md:grid-cols-15 lg:grid-cols-20 gap-1.5 md:gap-2">
+          <div className="grid grid-cols-10 sm:grid-cols-12 md:grid-cols-[repeat(15,minmax(0,1fr))] lg:grid-cols-[repeat(20,minmax(0,1fr))] gap-1.5 md:gap-2">
             {allNumbers.map((n) => {
               const sold = soldSet.has(n);
               const isHighlight = highlight === n && isDrawing;

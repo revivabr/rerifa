@@ -49,7 +49,7 @@ function HomePage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-gradient-to-b from-[#f5efe1] via-white to-[#faf7f0]">
       {/* Banner Rifa Solidária */}
       <section className="px-4 pt-6 sm:px-6 sm:pt-8">
         <div className="mx-auto max-w-6xl overflow-hidden rounded-2xl shadow-xl ring-1 ring-black/5">
@@ -62,7 +62,7 @@ function HomePage() {
       </section>
 
       {/* Hero Section with Dynamic Background */}
-      <section className="relative flex min-h-[85vh] items-center justify-center overflow-hidden px-6 pb-12 pt-20">
+      <section className="relative flex min-h-[85vh] items-center justify-center overflow-hidden px-6 pb-12 pt-20 bg-gradient-to-br from-[#faf7f0] via-white to-[#eef3ec]">
         <div className="absolute inset-0 bg-mesh opacity-50" />
         <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/clean-gray-paper.png')] opacity-20" />
         
@@ -131,7 +131,7 @@ function HomePage() {
       </section>
 
       {/* Campaign Section - Textured Background */}
-      <section id="campanhas" className="py-24 bg-slate-50 relative overflow-hidden">
+      <section id="campanhas" className="py-24 bg-gradient-to-b from-[#eef3ec] via-[#f5efe1] to-white relative overflow-hidden">
         <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-[0.03]" />
         <div className="max-w-7xl mx-auto px-6 relative z-10">
             <div className="mb-16 text-center">
@@ -192,7 +192,7 @@ function HomePage() {
       </section>
 
       {/* Features - White Background with Cards */}
-      <section className="py-24 bg-white">
+      <section className="py-24 bg-gradient-to-b from-white via-[#faf7f0] to-[#f5efe1]">
         <div className="max-w-7xl mx-auto px-6">
             <div className="grid md:grid-cols-3 gap-8">
                 {[

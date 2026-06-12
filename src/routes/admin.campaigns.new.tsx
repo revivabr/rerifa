@@ -86,7 +86,12 @@ function NewCampaign() {
             </select>
           </div>
           <div className="md:col-span-2">
-            <Label>Descrição</Label>
+            <Label>Descrição curta (card lateral)</Label>
+            <Textarea rows={2} maxLength={280} value={form.short_description} onChange={e => set("short_description", e.target.value)} placeholder="Resumo objetivo da campanha — aparece no card 'Descrição da campanha'." />
+            <p className="mt-1 text-[11px] text-muted-foreground">Até ~280 caracteres. Se vazio, usa a Descrição completa.</p>
+          </div>
+          <div className="md:col-span-2">
+            <Label>Descrição completa (Markdown)</Label>
             <Textarea rows={3} value={form.description} onChange={e => set("description", e.target.value)} />
           </div>
           <div className="md:col-span-2">
@@ -96,6 +101,26 @@ function NewCampaign() {
               onChange={v => set("banner_url", v)} 
             />
           </div>
+          <div className="md:col-span-2 pt-2 border-t border-border">
+            <h3 className="text-sm font-bold text-primary mb-3">Prêmio</h3>
+            <Label>Descrição do prêmio</Label>
+            <Textarea rows={3} value={form.prize_description} onChange={e => set("prize_description", e.target.value)} placeholder="Descreva o prêmio principal." />
+          </div>
+          <div>
+            <ImageUpload 
+              label="Foto 1 do prêmio (1:1)" 
+              value={form.prize_image_1} 
+              onChange={v => set("prize_image_1", v)} 
+            />
+          </div>
+          <div>
+            <ImageUpload 
+              label="Foto 2 do prêmio (1:1)" 
+              value={form.prize_image_2} 
+              onChange={v => set("prize_image_2", v)} 
+            />
+          </div>
+
           <div className="md:col-span-2">
             <Label>Pasta do Google Drive (Opcional)</Label>
             <Input 

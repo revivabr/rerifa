@@ -100,7 +100,11 @@ function CampaignAdmin() {
     const { error } = await supabase.from("campaigns").update({
       name: form.name,
       description: form.description,
+      short_description: form.short_description,
       banner_url: form.banner_url,
+      prize_description: form.prize_description,
+      prize_image_1: form.prize_image_1,
+      prize_image_2: form.prize_image_2,
       pix_key: form.pix_key,
       regulation_text: form.regulation_text,
       regulation_url: form.regulation_url,

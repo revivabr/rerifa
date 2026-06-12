@@ -35,6 +35,9 @@ function NewCampaign() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
+    const qty = Number(form.number_quantity);
+    const price = Number(form.number_price);
+    const goal = qty * price;
     const { data, error } = await supabase.from("campaigns").insert({
       name: form.name,
       slug: form.slug || slugify(form.name),
@@ -44,11 +47,11 @@ function NewCampaign() {
       prize_description: form.prize_description || null,
       prize_image_1: form.prize_image_1 || null,
       prize_image_2: form.prize_image_2 || null,
-      number_quantity: Number(form.number_quantity),
-      number_price: Number(form.number_price),
+      number_quantity: qty,
+      number_price: price,
       start_date: new Date(form.start_date).toISOString(),
       end_date: new Date(form.end_date).toISOString(),
-      goal_amount: form.goal_amount ? Number(form.goal_amount) : null,
+      goal_amount: goal,
       pix_key: form.pix_key || null,
       regulation_url: form.regulation_url || null,
       regulation_text: form.regulation_text || null,
@@ -130,8 +133,10 @@ function NewCampaign() {
             />
           </div>
           <div>
-            <Label>Quantidade de números (100–1000) *</Label>
-            <Input required type="number" min={100} max={1000} value={form.number_quantity} onChange={e => set("number_quantity", Number(e.target.value))} />
+            <Label>Quantidade de números *</Label>
+            <select required className="flex h-10 w-full rounded-md border border-input bg-background px-3 text-sm" value={form.number_quantity} onChange={e => set("number_quantity", Number(e.target.value))}>
+              {[100,200,300,400,500,600,700,800,900,1000].map(n => <option key={n} value={n}>{n} números</option>)}
+            </select>
           </div>
           <div>
             <Label>Valor por número (R$) *</Label>
@@ -145,9 +150,12 @@ function NewCampaign() {
             <Label>Data final *</Label>
             <Input required type="date" value={form.end_date} onChange={e => set("end_date", e.target.value)} />
           </div>
-          <div>
-            <Label>Meta financeira (R$)</Label>
-            <Input type="number" step="0.01" value={form.goal_amount} onChange={e => set("goal_amount", e.target.value)} />
+          <div className="md:col-span-2 rounded-xl border border-dashed border-primary/30 bg-primary/5 p-4">
+            <p className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Meta financeira (calculada automaticamente)</p>
+            <p className="mt-1 text-2xl font-black text-primary">
+              {(Number(form.number_quantity) * Number(form.number_price || 0)).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
+            </p>
+            <p className="mt-1 text-[11px] text-muted-foreground">{form.number_quantity} números × R$ {Number(form.number_price || 0).toFixed(2)}</p>
           </div>
           <div>
             <Label>Chave PIX</Label>

@@ -48,12 +48,13 @@ function CheckoutPage() {
       setBuyerName(o.buyer_name);
       setNumbers(o.numbers);
       if (o.status === "paid") {
-        toast.success("Pagamento confirmado!");
-        setTimeout(() => navigate({ to: "/confirmacao/$orderId", params: { orderId } }), 800);
+        cancelled = true;
+        clearInterval(poll);
+        navigate({ to: "/confirmacao/$orderId", params: { orderId } });
       }
     };
     fetchOrder();
-    const poll = setInterval(fetchOrder, 4000);
+    const poll = setInterval(fetchOrder, 1500);
     return () => { cancelled = true; clearInterval(poll); };
   }, [orderId, navigate]);
 

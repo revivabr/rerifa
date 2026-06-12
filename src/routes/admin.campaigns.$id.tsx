@@ -201,16 +201,40 @@ function CampaignAdmin() {
             <Input value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} />
           </div>
           <div className="md:col-span-2">
-            <Label>Descrição</Label>
+            <Label>Descrição curta (card lateral)</Label>
+            <Textarea rows={2} maxLength={280} value={form.short_description ?? ""} onChange={e => setForm(f => ({ ...f, short_description: e.target.value }))} placeholder="Resumo objetivo — aparece no card 'Descrição da campanha'." />
+          </div>
+          <div className="md:col-span-2">
+            <Label>Descrição completa (Markdown)</Label>
             <Textarea rows={3} value={form.description ?? ""} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} />
           </div>
           <div className="md:col-span-2">
             <ImageUpload 
-              label="Imagem do Banner" 
+              label="Imagem do Banner (16:9)" 
               value={form.banner_url ?? ""} 
               onChange={v => setForm(f => ({ ...f, banner_url: v }))} 
             />
           </div>
+          <div className="md:col-span-2 pt-3 border-t border-border">
+            <h3 className="text-sm font-bold text-primary mb-3">Prêmio</h3>
+            <Label>Descrição do prêmio</Label>
+            <Textarea rows={3} value={form.prize_description ?? ""} onChange={e => setForm(f => ({ ...f, prize_description: e.target.value }))} placeholder="Descreva o prêmio principal." />
+          </div>
+          <div>
+            <ImageUpload 
+              label="Foto 1 do prêmio (1:1)" 
+              value={form.prize_image_1 ?? ""} 
+              onChange={v => setForm(f => ({ ...f, prize_image_1: v }))} 
+            />
+          </div>
+          <div>
+            <ImageUpload 
+              label="Foto 2 do prêmio (1:1)" 
+              value={form.prize_image_2 ?? ""} 
+              onChange={v => setForm(f => ({ ...f, prize_image_2: v }))} 
+            />
+          </div>
+
           <div className="md:col-span-2">
             <Label>Pasta do Google Drive</Label>
             <Input 

@@ -13,6 +13,7 @@ import faviconAsset from "@/assets/favicon-reviva.png.asset.json";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Toaster } from "@/components/ui/sonner";
 import { Header } from "@/components/Header";
+import { Footer } from "@/components/Footer";
 
 import { SetupNotice } from "@/components/SetupNotice";
 

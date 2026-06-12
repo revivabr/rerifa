@@ -76,7 +76,7 @@ function HomePage() {
           <div className="mt-16 flex flex-col items-center justify-center gap-6 sm:flex-row">
             <a 
               href="#campanhas"
-              className="group relative inline-flex items-center gap-4 rounded-full bg-primary px-12 py-6 text-xs font-bold uppercase tracking-widest text-white transition-all duration-500 hover:bg-primary/90 hover:scale-[1.02] hover:shadow-2xl active:scale-95"
+              className="group relative inline-flex items-center gap-4 rounded-full bg-primary px-12 py-6 text-xs font-black uppercase tracking-widest text-white transition-all duration-500 hover:bg-primary/90 hover:scale-[1.02] hover:shadow-2xl active:scale-95"
             >
               Ver Campanhas Ativas
               <ArrowRight className="h-4 w-4 transition-transform duration-500 group-hover:translate-x-1.5" />
@@ -114,7 +114,7 @@ function HomePage() {
                             <Link 
                                 to="/campanha/$slug" 
                                 params={{ slug: activeCampaign.slug }} 
-                                className="mt-10 flex w-full items-center justify-center gap-3 rounded-2xl bg-gold py-6 text-xs font-bold uppercase tracking-widest text-white hover:bg-gold-glow transition-all hover:shadow-lg active:scale-[0.98]"
+                                className="mt-10 flex w-full items-center justify-center gap-3 rounded-2xl bg-gold py-6 text-xs font-black uppercase tracking-widest text-white hover:bg-gold-glow transition-all hover:shadow-lg active:scale-[0.98]"
                             >
                                 <Ticket className="h-4 w-4" />
                                 Participar Agora
@@ -138,8 +138,8 @@ function HomePage() {
         <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-3 gap-8">
              {[
                 { icon: Zap, label: "Rapidez", desc: "Processamento via PIX instantâneo." },
-                { icon: Trophy, label: "Transparência", desc: "Sorteios auditáveis e seguros." },
-                { icon: Sparkles, label: "Legado", desc: "Recursos 100% voltados a projetos." },
+                { icon: Trophy, label: "Segurança", desc: "Sorteios auditáveis e seguros via Loteria Federal." },
+                { icon: Sparkles, label: "Legado", desc: "Recursos 100% voltados a projetos que transformam vidas." },
             ].map((item, i) => (
                 <div key={i} className="p-10 rounded-[2rem] bg-gradient-to-br from-white to-stone-50 border border-black/[0.05] hover:border-primary/20 transition-all duration-500 hover:shadow-lg">
                     <item.icon className="h-8 w-8 text-primary mb-6" />

@@ -41,7 +41,7 @@ function AdminDashboard() {
           <h1 className="text-3xl font-black text-primary">Dashboard</h1>
           <p className="text-sm text-muted-foreground">Visão geral das campanhas</p>
         </div>
-        <Link to="/admin/campaigns/new" className="inline-flex items-center gap-2 rounded-xl bg-gradient-primary px-4 py-2.5 text-sm font-bold text-primary-foreground shadow-soft hover:scale-[1.02] transition">
+        <Link to="/admin/campaigns/new" className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-bold text-white shadow-premium hover:scale-[1.02] transition">
           <Plus className="h-4 w-4" /> Nova campanha
         </Link>
       </div>
@@ -67,7 +67,7 @@ function AdminDashboard() {
                     <StatusBadge status={c.status} />
                   </div>
                   <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-secondary">
-                    <div className="h-full bg-gradient-primary" style={{ width: `${pct}%` }} />
+                    <div className="h-full bg-primary" style={{ width: `${pct}%` }} />
                   </div>
                   <p className="mt-1 text-xs text-muted-foreground">{c.sold}/{c.total} vendidos · {pct}%</p>
                 </div>
@@ -88,7 +88,7 @@ function StatCard({ icon: Icon, label, value }: { icon: React.ComponentType<{ cl
   return (
     <div className="rounded-2xl border border-border bg-card p-5 shadow-soft">
       <div className="flex items-center gap-3">
-        <span className="rounded-xl bg-gradient-primary p-2.5 text-primary-foreground"><Icon className="h-5 w-5" /></span>
+        <span className="rounded-xl bg-primary p-2.5 text-white"><Icon className="h-5 w-5" /></span>
         <div className="min-w-0">
           <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{label}</p>
           <p className="truncate text-xl font-black text-primary">{value}</p>

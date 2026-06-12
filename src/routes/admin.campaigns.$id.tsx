@@ -183,7 +183,7 @@ function CampaignAdmin() {
             </>
           )}
           {isEditing && (
-            <Button onClick={handleSave} size="sm" className="bg-gradient-primary">
+            <Button onClick={handleSave} size="sm" className="bg-primary text-white">
               <Save className="mr-2 h-4 w-4" /> Salvar Alterações
             </Button>
           )}

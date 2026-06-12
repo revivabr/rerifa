@@ -140,7 +140,7 @@ function NewCampaign() {
             <Input value={form.regulation_url} onChange={e => set("regulation_url", e.target.value)} placeholder="https://… (Opcional se usar o texto acima)" />
           </div>
         </div>
-        <Button type="submit" disabled={loading} className="bg-gradient-primary" size="lg">
+        <Button type="submit" disabled={loading} className="bg-primary text-white" size="lg">
           {loading ? "Criando…" : "Criar campanha"}
         </Button>
         <p className="text-xs text-muted-foreground">Ao criar, os {form.number_quantity} números são gerados automaticamente.</p>

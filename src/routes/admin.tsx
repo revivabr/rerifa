@@ -43,7 +43,7 @@ function AdminLayout() {
           {links.map((l) => (
             <Link key={l.to} to={l.to} className={cn(
               "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition",
-              pathname.startsWith(l.to) ? "bg-primary text-primary-foreground shadow-soft" : "text-muted-foreground hover:bg-secondary hover:text-primary"
+              pathname.startsWith(l.to) ? "bg-primary text-white shadow-premium font-bold" : "text-muted-foreground hover:bg-secondary hover:text-primary"
             )}>
               <l.icon className="h-4 w-4" /> {l.label}
             </Link>

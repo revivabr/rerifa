@@ -206,11 +206,11 @@ function RaffleDraw() {
                 <div
                   key={n}
                   className={cn(
-                    "aspect-square rounded-md md:rounded-lg flex items-center justify-center text-[10px] md:text-xs font-bold tabular-nums transition-all duration-75 select-none",
-                    !sold && "bg-gray-100 text-gray-300",
-                    sold && !isHighlight && !isWinnerN && "bg-foreground text-white",
-                    isHighlight && !isWinnerN && "bg-gold text-white scale-125 shadow-[0_0_20px_rgba(212,175,55,0.9)] z-10",
-                    isWinnerN && "bg-success text-white scale-150 shadow-[0_0_30px_rgba(5,150,105,0.9)] ring-2 ring-white z-20 animate-pulse",
+                    "aspect-square rounded-md md:rounded-lg flex items-center justify-center text-[10px] md:text-xs font-bold tabular-nums transition-all duration-75 select-none border",
+                    !sold && "bg-gray-50 text-gray-300 border-gray-200",
+                    sold && !isHighlight && !isWinnerN && "bg-white text-black border-2 border-gold shadow-[0_0_8px_rgba(212,175,55,0.45)]",
+                    isHighlight && !isWinnerN && "bg-gold text-white border-2 border-gold-glow scale-125 shadow-[0_0_20px_rgba(212,175,55,0.9)] z-10",
+                    isWinnerN && "bg-success text-white border-2 border-white scale-150 shadow-[0_0_30px_rgba(5,150,105,0.9)] ring-2 ring-white z-20 animate-pulse",
                   )}
                 >
                   {pad(n)}
@@ -220,8 +220,8 @@ function RaffleDraw() {
           </div>
 
           <div className="mt-4 flex items-center justify-center gap-4 text-xs text-muted-foreground">
-            <span className="inline-flex items-center gap-1.5"><span className="h-3 w-3 rounded bg-foreground" /> Vendido</span>
-            <span className="inline-flex items-center gap-1.5"><span className="h-3 w-3 rounded bg-gray-200" /> Disponível</span>
+            <span className="inline-flex items-center gap-1.5"><span className="h-3 w-3 rounded border-2 border-gold bg-white" /> Vendido (ativo)</span>
+            <span className="inline-flex items-center gap-1.5"><span className="h-3 w-3 rounded border border-gray-200 bg-gray-50" /> Disponível</span>
           </div>
         </div>
       </div>

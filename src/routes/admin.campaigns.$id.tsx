@@ -313,15 +313,26 @@ function CampaignAdmin() {
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead className="bg-secondary text-left text-xs uppercase tracking-wider text-muted-foreground">
-              <tr><th className="p-3">Comprador</th><th className="p-3">Vendedor</th><th className="p-3">Contato</th><th className="p-3">Qtd</th><th className="p-3">Valor</th><th className="p-3">Status</th><th className="p-3">Data</th><th className="p-3"></th></tr>
+              <tr><th className="p-3">Comprador</th><th className="p-3">Vendedor</th><th className="p-3">Contato</th><th className="p-3">Números</th><th className="p-3">Qtd</th><th className="p-3">Valor</th><th className="p-3">Status</th><th className="p-3">Data</th><th className="p-3"></th></tr>
             </thead>
             <tbody className="divide-y divide-border">
-              {orders.length === 0 && <tr><td colSpan={7} className="p-6 text-center text-muted-foreground">Nenhum pedido ainda.</td></tr>}
-              {orders.map(o => (
+              {orders.length === 0 && <tr><td colSpan={9} className="p-6 text-center text-muted-foreground">Nenhum pedido ainda.</td></tr>}
+              {orders.map(o => {
+                const nums = (o.order_numbers ?? []).map(n => n.number).sort((a, b) => a - b);
+                return (
                 <tr key={o.id} className="hover:bg-secondary/30">
                   <td className="p-3 font-medium">{o.buyer?.name ?? "—"}</td>
                   <td className="p-3 text-xs font-semibold text-primary">{o.seller_name ?? "—"}</td>
                   <td className="p-3 text-xs text-muted-foreground">{o.buyer?.whatsapp}{o.buyer?.email ? ` · ${o.buyer.email}` : ""}</td>
+                  <td className="p-3">
+                    <div className="flex flex-wrap gap-1 max-w-[220px]">
+                      {nums.map(n => (
+                        <span key={n} className="inline-flex items-center justify-center min-w-[2rem] rounded-md bg-primary/10 px-1.5 py-0.5 text-xs font-bold text-primary tabular-nums">
+                          {String(n).padStart(3, "0")}
+                        </span>
+                      ))}
+                    </div>
+                  </td>
                   <td className="p-3 tabular-nums">{o.quantity}</td>
                   <td className="p-3 font-bold text-primary">{formatBRL(o.amount)}</td>
                   <td className="p-3"><OrderStatus status={o.status} /></td>
@@ -339,7 +350,8 @@ function CampaignAdmin() {
                     )}
                   </td>
                 </tr>
-              ))}
+                );
+              })}
             </tbody>
           </table>
         </div>

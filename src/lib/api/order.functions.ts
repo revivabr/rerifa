@@ -28,10 +28,10 @@ export const getOrderPublic = createServerFn({ method: "GET" })
     if (!order) return null;
 
     const [{ data: campaign }, { data: nums }, { data: buyer }] = await Promise.all([
-      supabase.from("campaigns").select("name,slug").eq("id", order.campaign_id).maybeSingle(),
+      supabase.from("campaigns").select("name,slug,banner_url,number_quantity").eq("id", order.campaign_id).maybeSingle(),
       supabase.from("order_numbers").select("number").eq("order_id", data.orderId).order("number"),
       order.buyer_id
-        ? supabase.from("buyers").select("name").eq("id", order.buyer_id).maybeSingle()
+        ? supabase.from("buyers").select("name,whatsapp").eq("id", order.buyer_id).maybeSingle()
         : Promise.resolve({ data: null }),
     ]);
 

@@ -143,15 +143,15 @@ function HomePage() {
                             />
                             <div className="absolute inset-0 bg-gradient-to-t from-primary/20 to-transparent" />
                         </div>
-                        <div className="flex flex-1 flex-col justify-center p-12 lg:p-20">
-                            <div className="inline-flex mb-6 text-gold font-bold text-xs uppercase tracking-widest gap-2 items-center">
+                        <div className="flex flex-1 flex-col justify-center p-8 lg:p-12">
+                            <div className="inline-flex mb-4 text-gold font-bold text-xs uppercase tracking-widest gap-2 items-center">
                                 <Trophy className="h-4 w-4" />
                                 Prêmio Principal
                             </div>
                             <h2 className="text-4xl font-black text-primary tracking-tight leading-tight">{activeCampaign.name}</h2>
-                            <p className="mt-6 text-slate-600 font-medium leading-relaxed">{activeCampaign.description}</p>
+                            <p className="mt-4 text-slate-600 font-medium leading-relaxed line-clamp-4">{activeCampaign.description}</p>
                             
-                            <div className="mt-10 p-8 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-between">
+                            <div className="mt-8 p-6 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-between">
                                 <div>
                                     <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Valor da Cota</span>
                                     <p className="text-3xl font-black text-primary mt-1">{formatBRL(activeCampaign.number_price)}</p>

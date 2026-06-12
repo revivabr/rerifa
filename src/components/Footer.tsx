@@ -69,7 +69,9 @@ export function Footer() {
         <div className="mt-20 flex flex-col items-center justify-between gap-6 border-t border-white/5 pt-10 text-[11px] font-medium text-white/40 md:flex-row">
           <p>© {new Date().getFullYear()} Associação Reviva Brasil. Todos os direitos reservados.</p>
           <div className="flex gap-4">
-            <img src="https://logodownload.org/wp-content/uploads/2019/09/mercado-pago-logo.png" alt="Mercado Pago" className="h-4 w-auto opacity-40 grayscale" />
+            <span className="h-5 w-12 rounded bg-white/10 p-1 flex items-center justify-center">
+              <img src="https://logodownload.org/wp-content/uploads/2019/09/mercado-pago-logo.png" alt="Mercado Pago" className="h-full w-full object-contain brightness-0 invert opacity-60" />
+            </span>
           </div>
         </div>
       </div>

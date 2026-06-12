@@ -2,6 +2,7 @@ import logoBranco from "@/assets/logo-reviva-branco.png.asset.json";
 import logoVirando from "@/assets/logo-virando-jogo.png.asset.json";
 import logoBazar from "@/assets/logo-bazar-solidario.png.asset.json";
 import logoMao from "@/assets/logo-mao-amiga.png.asset.json";
+import logoMercadoPago from "@/assets/mercado-pago-logo.png.asset.json";
 import { Heart, Info } from "lucide-react";
 
 export function Footer() {

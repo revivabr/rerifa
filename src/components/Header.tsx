@@ -4,10 +4,10 @@ import { Lock } from "lucide-react";
 
 export function Header() {
   return (
-    <header className="sticky top-0 z-50 w-full glass-morphism border-b border-black/[0.02]">
+    <header className="sticky top-0 z-50 w-full bg-white/80 backdrop-blur-xl border-b border-black/[0.05]">
       <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-8 md:px-12">
         <Link to="/" className="flex items-center gap-6 transition-all duration-700 hover:opacity-80 active:scale-95 group">
-          <img src={logoColor.url} alt="Associação Reviva Brasil" className="h-9 w-auto transition-transform duration-700 group-hover:scale-105" />
+          <img src={logoColor.url} alt="Associação Reviva Brasil" className="h-10 w-10 object-contain p-1 border border-primary/10 rounded-xl transition-transform duration-700 group-hover:scale-105" />
           <div className="hidden h-5 w-[1px] bg-black/[0.05] sm:block" />
           <span className="hidden text-[9px] font-bold uppercase tracking-[0.4em] text-primary/40 sm:inline transition-colors duration-700 group-hover:text-primary">
             Private Selection

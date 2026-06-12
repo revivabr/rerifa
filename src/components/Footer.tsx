@@ -5,7 +5,7 @@ import logoMao from "@/assets/logo-mao-amiga.png.asset.json";
 
 export function Footer() {
   return (
-    <footer className="mt-32 bg-[#F8FAF8] border-t border-black/[0.03] text-primary">
+    <footer className="mt-32 bg-gradient-to-b from-stone-50 to-stone-100 border-t border-black/[0.05] text-primary">
       <div className="mx-auto max-w-7xl px-6 py-20">
         <div className="grid gap-16 md:grid-cols-3">
           <div className="space-y-6">

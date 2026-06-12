@@ -144,12 +144,14 @@ function CampaignPage() {
   if (!campaign) return <div className="mx-auto max-w-6xl px-4 py-20 text-center">Campanha não encontrada</div>;
 
   return (
-    <div className="mx-auto max-w-7xl px-6 py-12 md:py-16">
+    <div className="min-h-screen bg-white selection:bg-primary/10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] bg-fixed">
+      <div className="mx-auto max-w-7xl px-6 py-12 md:py-24">
+
       <div className="grid gap-12 lg:grid-cols-3">
         <div className="lg:col-span-2 space-y-12">
           {/* Main Campaign Section */}
-          <div className="rounded-3xl border border-black/[0.03] bg-white p-2 shadow-premium">
-            <div className="relative aspect-video overflow-hidden rounded-2xl bg-secondary">
+          <div className="rounded-[2.5rem] border border-black/[0.05] bg-white p-3 shadow-2xl">
+            <div className="relative aspect-video overflow-hidden rounded-[2rem] bg-stone-100">
                <img src={campaign.banner_url || "/placeholder.svg"} className="h-full w-full object-cover" />
             </div>
             <div className="p-8 md:p-10">
@@ -191,7 +193,11 @@ function CampaignPage() {
         <h2 className="text-3xl font-bold text-primary mb-2">Escolha seus números</h2>
         <p className="text-muted-foreground mb-8">Toque para selecionar. Reserva de 3 minutos.</p>
         
-        <div className="rounded-3xl border border-black/[0.03] bg-white p-6 md:p-10 shadow-premium">
+        <div className="rounded-[2.5rem] border border-black/[0.05] bg-white p-8 md:p-16 shadow-2xl relative overflow-hidden">
+          <div className="absolute top-0 right-0 p-8 opacity-5">
+             <Ticket className="h-64 w-64 rotate-12" />
+          </div>
+
           <div className="grid gap-2" style={{ gridTemplateColumns: `repeat(auto-fill, minmax(60px, 1fr))` }}>
             {numbers.map(n => {
               const status = selected.has(n.number) ? "selected" : n.status;
@@ -230,6 +236,7 @@ function CampaignPage() {
       )}
       
       <BuyerModal open={showModal} onOpenChange={setShowModal} onSubmit={handleSubmit} submitting={submitting} total={total} count={selected.size} />
+    </div>
     </div>
   );
 }

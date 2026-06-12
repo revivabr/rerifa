@@ -21,6 +21,7 @@ const USER_BANNER = "/placeholder.svg";
 function HomePage() {
   const [activeCampaign, setActiveCampaign] = useState<Campaign | null>(null);
   const [loading, setLoading] = useState(true);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     if (!isSupabaseConfigured) { setLoading(false); return; }

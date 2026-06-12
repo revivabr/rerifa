@@ -21,7 +21,8 @@ function slugify(s: string) {
 function NewCampaign() {
   const navigate = useNavigate();
   const [form, setForm] = useState({
-    name: "", slug: "", description: "", banner_url: "",
+    name: "", slug: "", description: "", short_description: "", banner_url: "",
+    prize_description: "", prize_image_1: "", prize_image_2: "",
     number_quantity: 100, number_price: 10,
     start_date: new Date().toISOString().slice(0, 10),
     end_date: new Date(Date.now() + 30 * 86400000).toISOString().slice(0, 10),
@@ -38,7 +39,11 @@ function NewCampaign() {
       name: form.name,
       slug: form.slug || slugify(form.name),
       description: form.description || null,
+      short_description: form.short_description || null,
       banner_url: form.banner_url || null,
+      prize_description: form.prize_description || null,
+      prize_image_1: form.prize_image_1 || null,
+      prize_image_2: form.prize_image_2 || null,
       number_quantity: Number(form.number_quantity),
       number_price: Number(form.number_price),
       start_date: new Date(form.start_date).toISOString(),
@@ -81,7 +86,12 @@ function NewCampaign() {
             </select>
           </div>
           <div className="md:col-span-2">
-            <Label>Descrição</Label>
+            <Label>Descrição curta (card lateral)</Label>
+            <Textarea rows={2} maxLength={280} value={form.short_description} onChange={e => set("short_description", e.target.value)} placeholder="Resumo objetivo da campanha — aparece no card 'Descrição da campanha'." />
+            <p className="mt-1 text-[11px] text-muted-foreground">Até ~280 caracteres. Se vazio, usa a Descrição completa.</p>
+          </div>
+          <div className="md:col-span-2">
+            <Label>Descrição completa (Markdown)</Label>
             <Textarea rows={3} value={form.description} onChange={e => set("description", e.target.value)} />
           </div>
           <div className="md:col-span-2">
@@ -91,6 +101,26 @@ function NewCampaign() {
               onChange={v => set("banner_url", v)} 
             />
           </div>
+          <div className="md:col-span-2 pt-2 border-t border-border">
+            <h3 className="text-sm font-bold text-primary mb-3">Prêmio</h3>
+            <Label>Descrição do prêmio</Label>
+            <Textarea rows={3} value={form.prize_description} onChange={e => set("prize_description", e.target.value)} placeholder="Descreva o prêmio principal." />
+          </div>
+          <div>
+            <ImageUpload 
+              label="Foto 1 do prêmio (1:1)" 
+              value={form.prize_image_1} 
+              onChange={v => set("prize_image_1", v)} 
+            />
+          </div>
+          <div>
+            <ImageUpload 
+              label="Foto 2 do prêmio (1:1)" 
+              value={form.prize_image_2} 
+              onChange={v => set("prize_image_2", v)} 
+            />
+          </div>
+
           <div className="md:col-span-2">
             <Label>Pasta do Google Drive (Opcional)</Label>
             <Input 

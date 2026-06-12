@@ -157,8 +157,12 @@ export type Database = {
           number_price: number
           number_quantity: number
           pix_key: string | null
+          prize_description: string | null
+          prize_image_1: string | null
+          prize_image_2: string | null
           regulation_text: string | null
           regulation_url: string | null
+          short_description: string | null
           slug: string
           start_date: string
           status: string
@@ -179,8 +183,12 @@ export type Database = {
           number_price: number
           number_quantity: number
           pix_key?: string | null
+          prize_description?: string | null
+          prize_image_1?: string | null
+          prize_image_2?: string | null
           regulation_text?: string | null
           regulation_url?: string | null
+          short_description?: string | null
           slug: string
           start_date: string
           status?: string
@@ -201,8 +209,12 @@ export type Database = {
           number_price?: number
           number_quantity?: number
           pix_key?: string | null
+          prize_description?: string | null
+          prize_image_1?: string | null
+          prize_image_2?: string | null
           regulation_text?: string | null
           regulation_url?: string | null
+          short_description?: string | null
           slug?: string
           start_date?: string
           status?: string

@@ -67,7 +67,7 @@ function AdminDashboard() {
                     <StatusBadge status={c.status} />
                   </div>
                   <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-secondary">
-                    <div className="h-full bg-gradient-primary" style={{ width: `${pct}%` }} />
+                    <div className="h-full bg-primary" style={{ width: `${pct}%` }} />
                   </div>
                   <p className="mt-1 text-xs text-muted-foreground">{c.sold}/{c.total} vendidos · {pct}%</p>
                 </div>

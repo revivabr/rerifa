@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import confetti from "canvas-confetti";
 import { formatBRL, padNumber } from "@/lib/format";
-import { CheckCircle2, Heart, ArrowLeft, Sparkles, Share2 } from "lucide-react";
+import { CheckCircle2, Heart, ArrowLeft, Sparkles } from "lucide-react";
 import { getOrderPublic } from "@/lib/api/order.functions";
 
 export const Route = createFileRoute("/confirmacao/$orderId")({

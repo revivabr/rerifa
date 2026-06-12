@@ -2,7 +2,7 @@ import { createFileRoute, Outlet, Link, useNavigate, useRouterState } from "@tan
 import { useEffect } from "react";
 import { useAdminSession } from "@/hooks/useAdminSession";
 import { supabase } from "@/lib/supabase";
-import { LayoutDashboard, Ticket, LogOut, Loader2 } from "lucide-react";
+import { LayoutDashboard, Ticket, Trophy, LogOut, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/admin")({
@@ -34,6 +34,7 @@ function AdminLayout() {
   const links = [
     { to: "/admin/dashboard", icon: LayoutDashboard, label: "Dashboard" },
     { to: "/admin/campaigns", icon: Ticket, label: "Campanhas" },
+    { to: "/admin/draw", icon: Trophy, label: "Sorteador" },
   ];
 
   return (

@@ -2,322 +2,282 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState, useRef } from "react";
 import { supabase } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Trophy, Play, RefreshCw, Star, Share2, Download, Calendar, Clock, User } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { ArrowLeft, Trophy, Play, RefreshCw, Sparkles, Gift } from "lucide-react";
+import { motion } from "framer-motion";
 import confetti from "canvas-confetti";
-import { formatDateBR, padNumber } from "@/lib/format";
+import { padNumber } from "@/lib/format";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/admin/draw/$id")({
   component: RaffleDraw,
 });
 
-type SoldNumber = {
-  number: number;
-  buyer_id: string;
-  buyer_name: string;
-};
+type SoldNumber = { number: number; buyer_id: string; buyer_name: string; buyer_whatsapp: string | null };
+type Prize = { title: string; description: string | null; image_url: string | null; position: number };
 
 function RaffleDraw() {
   const { id } = Route.useParams();
   const [campaign, setCampaign] = useState<any>(null);
+  const [prize, setPrize] = useState<Prize | null>(null);
   const [soldNumbers, setSoldNumbers] = useState<SoldNumber[]>([]);
+  const [allNumbers, setAllNumbers] = useState<number[]>([]);
   const [isDrawing, setIsDrawing] = useState(false);
-  const [displayNumber, setDisplayNumber] = useState<string | null>(null);
-  const [winner, setWinner] = useState<{ number: number; name: string; date: Date } | null>(null);
+  const [highlight, setHighlight] = useState<number | null>(null);
+  const [winner, setWinner] = useState<SoldNumber | null>(null);
+  const [showModal, setShowModal] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  
-  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const [adminId, setAdminId] = useState<string | null>(null);
+  const [saved, setSaved] = useState(false);
+
+  const drawIntervalRef = useRef<number | null>(null);
+  const drawTimeoutRef = useRef<number | null>(null);
 
   useEffect(() => {
-    async function load() {
+    (async () => {
       setIsLoading(true);
-      const { data: camp } = await supabase.from("campaigns").select("*").eq("id", id).maybeSingle();
-      if (!camp) return;
-      setCampaign(camp);
+      const [{ data: camp }, { data: nums }, { data: prizes }, { data: sessionData }] = await Promise.all([
+        supabase.from("campaigns").select("*").eq("id", id).maybeSingle(),
+        supabase.from("raffle_numbers").select("number, buyer_id, status, buyers(name, whatsapp)").eq("campaign_id", id),
+        supabase.from("campaign_prizes").select("title, description, image_url, position").eq("campaign_id", id).order("position"),
+        supabase.auth.getSession(),
+      ]);
 
-      const { data: nums, error } = await supabase
-        .from("raffle_numbers")
-        .select("number, buyer_id, buyers(name)")
-        .eq("campaign_id", id)
-        .eq("status", "sold");
-
-      if (error) {
-        toast.error("Erro ao carregar números vendidos");
-      } else {
-        const mapped = (nums || []).map((n: any) => ({
-          number: n.number,
-          buyer_id: n.buyer_id,
-          buyer_name: n.buyers?.name || "Comprador Desconhecido"
-        }));
-        setSoldNumbers(mapped);
+      if (camp) {
+        setCampaign(camp);
+        const total = camp.number_quantity as number;
+        setAllNumbers(Array.from({ length: total }, (_, i) => i + 1));
       }
 
-      // Fetch admin user id for the draw record
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session) {
+      const sold = (nums ?? [])
+        .filter((n: any) => n.status === "sold")
+        .map((n: any) => ({
+          number: n.number,
+          buyer_id: n.buyer_id,
+          buyer_name: n.buyers?.name || "Comprador",
+          buyer_whatsapp: n.buyers?.whatsapp ?? null,
+        }));
+      setSoldNumbers(sold);
+
+      if (prizes && prizes.length > 0) setPrize(prizes[0] as Prize);
+
+      if (sessionData?.session) {
         const { data: admin } = await supabase
-          .from("admin_users")
-          .select("id")
-          .eq("auth_user_id", session.user.id)
-          .maybeSingle();
+          .from("admin_users").select("id").eq("auth_user_id", sessionData.session.user.id).maybeSingle();
         if (admin) setAdminId(admin.id);
       }
 
       setIsLoading(false);
-    }
-    load();
+    })();
+
+    return () => {
+      if (drawIntervalRef.current) clearInterval(drawIntervalRef.current);
+      if (drawTimeoutRef.current) clearTimeout(drawTimeoutRef.current);
+    };
   }, [id]);
 
-  const [adminId, setAdminId] = useState<string | null>(null);
+  const soldSet = new Set(soldNumbers.map((s) => s.number));
 
   const startDraw = () => {
     if (soldNumbers.length === 0) {
       toast.error("Não há números vendidos para sortear.");
       return;
     }
-
-    setIsDrawing(true);
     setWinner(null);
-    
-    // Animação caça-níquel (acelera e depois desacelera)
-    let currentInterval = 30;
-    const minInterval = 20;
-    const maxInterval = 300;
-    const totalDuration = 6000; // 6 segundos de emoção
-    const startTime = Date.now();
+    setSaved(false);
+    setShowModal(false);
+    setIsDrawing(true);
 
-    const drawLoop = () => {
-      const elapsed = Date.now() - startTime;
-      
-      // Escolher número visual aleatório
-      const randomIndex = Math.floor(Math.random() * soldNumbers.length);
-      const randomNum = soldNumbers[randomIndex].number;
-      setDisplayNumber(padNumber(randomNum, campaign.number_quantity));
+    // Pré-decide o vencedor (justo: random uniforme sobre vendidos)
+    const winnerIndex = Math.floor(Math.random() * soldNumbers.length);
+    const finalWinner = soldNumbers[winnerIndex];
 
-      if (elapsed < totalDuration) {
-        // Calcular próximo intervalo (acelera no começo, desacelera no final)
-        const progress = elapsed / totalDuration;
-        if (progress < 0.2) {
-          currentInterval = Math.max(minInterval, currentInterval - 5);
-        } else if (progress > 0.6) {
-          currentInterval = Math.min(maxInterval, currentInterval + (progress * 15));
-        }
-        
-        setTimeout(drawLoop, currentInterval);
-      } else {
-        finalizeDraw();
-      }
-    };
+    // 30s a 100ms = 300 flashes
+    drawIntervalRef.current = window.setInterval(() => {
+      const r = Math.floor(Math.random() * soldNumbers.length);
+      setHighlight(soldNumbers[r].number);
+    }, 100);
 
-    drawLoop();
+    drawTimeoutRef.current = window.setTimeout(() => {
+      if (drawIntervalRef.current) clearInterval(drawIntervalRef.current);
+      drawIntervalRef.current = null;
+      setHighlight(finalWinner.number);
+      setWinner(finalWinner);
+      setIsDrawing(false);
+      setShowModal(true);
+      fireConfetti();
+    }, 30000);
   };
 
-  const finalizeDraw = () => {
-    const winnerIndex = Math.floor(Math.random() * soldNumbers.length);
-    const winningData = soldNumbers[winnerIndex];
-    
-    const winDate = new Date();
-    setDisplayNumber(padNumber(winningData.number, campaign.number_quantity));
-    setWinner({
-      number: winningData.number,
-      name: winningData.buyer_name,
-      date: winDate
-    });
-    setIsDrawing(false);
-
-    // Explosão de confetes festiva
-    const duration = 5 * 1000;
-    const animationEnd = Date.now() + duration;
-    const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
-
-    function randomInRange(min: number, max: number) {
-      return Math.random() * (max - min) + min;
-    }
-
-    const interval: any = setInterval(function() {
-      const timeLeft = animationEnd - Date.now();
-
-      if (timeLeft <= 0) {
-        return clearInterval(interval);
-      }
-
-      const particleCount = 50 * (timeLeft / duration);
-      confetti({ ...defaults, particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } });
-      confetti({ ...defaults, particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } });
-    }, 250);
-
-    toast.success("Temos um ganhador!", { icon: "🎉" });
+  const fireConfetti = () => {
+    const duration = 6000;
+    const end = Date.now() + duration;
+    (function frame() {
+      confetti({ particleCount: 4, angle: 60, spread: 70, origin: { x: 0 }, colors: ["#1A3C23", "#C5A059", "#D4AF37", "#2D5F3A"] });
+      confetti({ particleCount: 4, angle: 120, spread: 70, origin: { x: 1 }, colors: ["#1A3C23", "#C5A059", "#D4AF37", "#2D5F3A"] });
+      if (Date.now() < end) requestAnimationFrame(frame);
+    })();
   };
 
   const saveResult = async () => {
-    if (!winner || !campaign) return;
-
+    if (!winner || saved) return;
     const { error } = await supabase.from("draws").insert({
       campaign_id: id,
       winner_number: winner.number,
-      winner_buyer_id: soldNumbers.find(s => s.number === winner.number)?.buyer_id,
+      winner_buyer_id: winner.buyer_id,
       eligible_numbers_count: soldNumbers.length,
       draw_method: "Sistema Aleatório",
-      drawn_at: winner.date.toISOString(),
-      drawn_by: adminId
+      drawn_at: new Date().toISOString(),
+      drawn_by: adminId,
     });
-
-    if (error) {
-      toast.error("Erro ao salvar resultado: " + error.message);
-    } else {
-      toast.success("Resultado salvo com sucesso!");
-    }
+    if (error) toast.error("Erro: " + error.message);
+    else { setSaved(true); toast.success("Resultado salvo!"); }
   };
 
-  const shareResult = async () => {
-    if (!winner || !campaign) return;
-    
-    const text = `🎉 GANHADOR DO SORTEIO! 🎉\n\nCampanha: ${campaign.name}\nNúmero: ${padNumber(winner.number, campaign.number_quantity)}\nGanhador: ${winner.name}\nData: ${formatDateBR(winner.date)}\n\nParabéns! 🏆`;
-    
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: 'Ganhador do Sorteio',
-          text: text,
-        });
-      } catch (err) {
-        console.error("Error sharing:", err);
-      }
-    } else {
-      await navigator.clipboard.writeText(text);
-      toast.success("Resultado copiado para a área de transferência!");
-    }
-  };
+  if (isLoading) {
+    return <div className="flex h-screen items-center justify-center bg-sand"><RefreshCw className="h-8 w-8 animate-spin text-primary" /></div>;
+  }
 
-  if (isLoading) return <div className="flex h-screen items-center justify-center"><RefreshCw className="h-8 w-8 animate-spin text-primary" /></div>;
+  const total = campaign?.number_quantity ?? 0;
+  const pad = (n: number) => padNumber(n, total);
 
   return (
-    <div className="min-h-screen bg-sand bg-pattern-cubes text-foreground p-4 md:p-8 flex flex-col items-center justify-center overflow-hidden">
-      <Link 
-        to="/admin/campaigns/$id" 
-        params={{ id }} 
-        className="absolute top-8 left-8 text-muted-foreground hover:text-primary flex items-center gap-2 transition-colors font-bold"
-      >
-        <ArrowLeft className="h-5 w-5" /> Voltar ao Painel
+    <div className="min-h-screen bg-gradient-to-br from-primary via-primary-glow to-primary text-white relative overflow-hidden">
+      {/* Decoração festiva */}
+      <div className="pointer-events-none absolute inset-0 opacity-20">
+        <div className="absolute top-10 left-10 h-32 w-32 rounded-full bg-gold blur-3xl animate-pulse" />
+        <div className="absolute bottom-20 right-10 h-40 w-40 rounded-full bg-gold-glow blur-3xl animate-pulse" style={{ animationDelay: "1s" }} />
+        <div className="absolute top-1/2 left-1/3 h-24 w-24 rounded-full bg-white blur-3xl animate-pulse" style={{ animationDelay: "2s" }} />
+      </div>
+
+      <Link to="/admin/draw" className="absolute top-6 left-6 z-20 inline-flex items-center gap-2 text-white/80 hover:text-white font-bold text-sm">
+        <ArrowLeft className="h-4 w-4" /> Voltar
       </Link>
 
-      <div className="max-w-4xl w-full space-y-12 text-center relative z-10">
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="space-y-4"
-        >
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-gold/10 border border-gold/20 text-gold text-sm font-bold uppercase tracking-widest shadow-sm">
-            <Star className="h-4 w-4 fill-current" /> Sorteio Oficial <Star className="h-4 w-4 fill-current" />
+      <div className="relative z-10 max-w-6xl mx-auto px-4 py-12 md:py-16 space-y-8">
+        {/* Header festivo */}
+        <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="text-center space-y-3">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-gold/20 border border-gold/40 backdrop-blur text-gold-glow text-xs font-bold uppercase tracking-widest">
+            <Sparkles className="h-3.5 w-3.5" /> Sorteio Oficial <Sparkles className="h-3.5 w-3.5" />
           </div>
-          <h1 className="text-4xl md:text-6xl font-black tracking-tight text-primary drop-shadow-sm">
-            {campaign?.name}
-          </h1>
-          <p className="text-muted-foreground font-medium">
-            Sorteando entre <span className="text-primary font-bold">{soldNumbers.length}</span> números vendidos
+          <h1 className="text-3xl md:text-5xl font-black tracking-tight drop-shadow-lg">{campaign?.name}</h1>
+          <p className="text-white/80 text-sm md:text-base">
+            <strong className="text-gold-glow">{soldNumbers.length}</strong> de {total} números vendidos
           </p>
         </motion.div>
 
-        <div className="relative py-12 flex justify-center">
-          {/* Slot Machine Container */}
-          <div className="relative bg-white border-8 border-primary/10 rounded-3xl p-6 shadow-elegant flex items-center justify-center overflow-hidden min-w-[200px] md:min-w-[400px] h-32 md:h-48">
-            <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-primary/5 pointer-events-none" />
-            
-            <AnimatePresence mode="wait">
-              {!winner && !isDrawing ? (
-                <motion.div
-                  key="idle"
-                  initial={{ scale: 0.8, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  exit={{ scale: 1.2, opacity: 0 }}
-                  className="relative z-10"
+        {/* Botão de iniciar — chamativo, com borda animada */}
+        {!winner && (
+          <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="flex justify-center">
+            <div className="relative group">
+              <span className="absolute -inset-1 rounded-2xl bg-gradient-to-r from-gold via-gold-glow to-gold opacity-80 blur-md animate-pulse" />
+              <span className="absolute -inset-0.5 rounded-2xl bg-gradient-to-r from-success via-gold-glow to-success animate-[spin_3s_linear_infinite]" style={{ backgroundSize: "200% 200%" }} />
+              <Button
+                onClick={startDraw}
+                disabled={isDrawing || soldNumbers.length === 0}
+                className="relative h-16 md:h-20 px-10 md:px-14 rounded-2xl bg-success hover:bg-success/90 text-white text-lg md:text-2xl font-black gap-3 shadow-2xl border-2 border-white/20 disabled:opacity-70"
+              >
+                <Play className="h-6 w-6 md:h-7 md:w-7 fill-current" />
+                {isDrawing ? "Sorteando..." : "Iniciar o Sorteio"}
+              </Button>
+            </div>
+          </motion.div>
+        )}
+
+        {/* Número em destaque durante o sorteio */}
+        {isDrawing && highlight !== null && (
+          <motion.div initial={{ scale: 0.5 }} animate={{ scale: 1 }} className="flex justify-center">
+            <div className="px-8 py-4 rounded-2xl bg-white/10 backdrop-blur border-2 border-gold-glow shadow-2xl">
+              <div className="text-6xl md:text-8xl font-black tabular-nums text-gold-glow drop-shadow-[0_0_20px_rgba(212,175,55,0.6)]">
+                {pad(highlight)}
+              </div>
+            </div>
+          </motion.div>
+        )}
+
+        {/* Tabela de números */}
+        <div className="bg-white/95 backdrop-blur rounded-3xl p-4 md:p-6 shadow-2xl">
+          <div className="grid grid-cols-10 sm:grid-cols-12 md:grid-cols-[repeat(15,minmax(0,1fr))] lg:grid-cols-[repeat(20,minmax(0,1fr))] gap-1.5 md:gap-2">
+            {allNumbers.map((n) => {
+              const sold = soldSet.has(n);
+              const isHighlight = highlight === n && isDrawing;
+              const isWinnerN = winner?.number === n;
+              return (
+                <div
+                  key={n}
+                  className={cn(
+                    "aspect-square rounded-md md:rounded-lg flex items-center justify-center text-[10px] md:text-xs font-bold tabular-nums transition-all duration-75 select-none",
+                    !sold && "bg-gray-100 text-gray-300",
+                    sold && !isHighlight && !isWinnerN && "bg-foreground text-white",
+                    isHighlight && !isWinnerN && "bg-gold text-white scale-125 shadow-[0_0_20px_rgba(212,175,55,0.9)] z-10",
+                    isWinnerN && "bg-success text-white scale-150 shadow-[0_0_30px_rgba(5,150,105,0.9)] ring-2 ring-white z-20 animate-pulse",
+                  )}
                 >
-                  <Button 
-                    onClick={startDraw}
-                    className="h-24 w-24 md:h-32 md:w-32 rounded-full bg-primary text-white font-black shadow-lg hover:scale-105 transition-transform group"
-                  >
-                    <Play className="h-10 w-10 md:h-12 md:w-12 fill-current" />
-                  </Button>
-                </motion.div>
-              ) : (
-                <motion.div
-                  key="drawing"
-                  className="text-6xl md:text-8xl font-black tabular-nums text-primary drop-shadow-[0_2px_4px_rgba(45,95,58,0.2)]"
-                >
-                  {displayNumber || "000"}
-                </motion.div>
-              )}
-            </AnimatePresence>
+                  {pad(n)}
+                </div>
+              );
+            })}
+          </div>
+
+          <div className="mt-4 flex items-center justify-center gap-4 text-xs text-muted-foreground">
+            <span className="inline-flex items-center gap-1.5"><span className="h-3 w-3 rounded bg-foreground" /> Vendido</span>
+            <span className="inline-flex items-center gap-1.5"><span className="h-3 w-3 rounded bg-gray-200" /> Disponível</span>
           </div>
         </div>
+      </div>
 
-        <AnimatePresence>
-          {winner && (
-            <motion.div
-              initial={{ opacity: 0, y: 100 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="bg-white border-2 border-gold/20 rounded-3xl p-8 md:p-12 shadow-gold relative overflow-hidden"
-            >
-              {/* Detalhe festivo */}
-              <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-gold" />
-              
-              <div className="space-y-6">
-                <div className="flex justify-center">
-                  <div className="h-20 w-20 rounded-2xl bg-gradient-gold flex items-center justify-center rotate-3 shadow-lg">
-                    <Trophy className="h-10 w-10 text-white" />
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <h2 className="text-3xl md:text-5xl font-black text-primary">
-                    {winner.name}
-                  </h2>
-                  <p className="text-gold font-bold text-xl uppercase tracking-widest">
-                    Vencedor Oficial
-                  </p>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4 py-8 border-y border-border">
-                  <div className="text-left space-y-1">
-                    <div className="flex items-center gap-1.5 text-muted-foreground text-xs font-bold uppercase">
-                      <Calendar className="h-3 w-3" /> Data
-                    </div>
-                    <div className="text-foreground font-bold">{formatDateBR(winner.date)}</div>
-                  </div>
-                  <div className="text-left space-y-1">
-                    <div className="flex items-center gap-1.5 text-muted-foreground text-xs font-bold uppercase">
-                      <Clock className="h-3 w-3" /> Hora
-                    </div>
-                    <div className="text-foreground font-bold">
-                      {winner.date.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit", second: "2-digit" })}
-                    </div>
-                  </div>
-                </div>
-
-                <div className="flex flex-wrap gap-3 justify-center pt-4">
-                  <Button onClick={saveResult} className="bg-primary hover:bg-primary/90 text-white font-bold px-8 h-12 rounded-xl gap-2">
-                    <Download className="h-5 w-5" /> Salvar Resultado
-                  </Button>
-                  <Button onClick={shareResult} variant="outline" className="border-border hover:bg-muted text-foreground font-bold px-8 h-12 rounded-xl gap-2">
-                    <Share2 className="h-5 w-5" /> Compartilhar
-                  </Button>
-                  <Button onClick={startDraw} variant="ghost" className="text-muted-foreground hover:text-primary h-12 rounded-xl gap-2 font-bold">
-                    <RefreshCw className="h-5 w-5" /> Refazer Sorteio
-                  </Button>
-                </div>
-              </div>
+      {/* Modal do ganhador */}
+      <Dialog open={showModal} onOpenChange={setShowModal}>
+        <DialogContent className="max-w-lg bg-gradient-to-br from-white to-secondary border-4 border-gold p-0 overflow-hidden">
+          <div className="bg-gradient-to-r from-gold to-gold-glow p-1.5" />
+          <div className="p-6 md:p-8 space-y-5 text-center">
+            <motion.div initial={{ scale: 0, rotate: -180 }} animate={{ scale: 1, rotate: 0 }} transition={{ type: "spring", stiffness: 200 }} className="mx-auto h-20 w-20 rounded-full bg-gradient-to-br from-gold to-gold-glow flex items-center justify-center shadow-xl">
+              <Trophy className="h-10 w-10 text-white" />
             </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
 
-      {/* Partículas de fundo (opcional, para mais clima) */}
-      <div className="fixed inset-0 pointer-events-none opacity-30">
-        <div className="absolute top-1/4 left-1/4 h-2 w-2 bg-primary rounded-full animate-ping" />
-        <div className="absolute bottom-1/4 right-1/4 h-2 w-2 bg-gold rounded-full animate-ping delay-700" />
-        <div className="absolute top-1/2 right-1/3 h-1 w-1 bg-primary rounded-full animate-ping delay-1000" />
-      </div>
+            <div className="space-y-2">
+              <p className="text-gold font-bold uppercase tracking-widest text-xs">🎉 Temos um vencedor! 🎉</p>
+              <h2 className="text-2xl md:text-3xl font-black text-primary leading-tight">
+                Parabéns, {winner?.buyer_name}!
+              </h2>
+              <p className="text-foreground/80 text-sm md:text-base">Seu número foi sorteado:</p>
+            </div>
+
+            {winner && (
+              <motion.div initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ delay: 0.3, type: "spring" }} className="flex justify-center">
+                <div className="px-8 py-4 rounded-2xl bg-success text-white text-5xl md:text-6xl font-black tabular-nums shadow-xl border-4 border-white">
+                  {pad(winner.number)}
+                </div>
+              </motion.div>
+            )}
+
+            <p className="text-lg font-bold text-primary">O prêmio é todo seu! 🏆</p>
+
+            {prize && (
+              <div className="rounded-2xl border border-border bg-white p-4 space-y-3">
+                {prize.image_url && (
+                  <img src={prize.image_url} alt={prize.title} className="w-full h-48 object-cover rounded-xl" />
+                )}
+                <div className="flex items-center justify-center gap-2 text-primary">
+                  <Gift className="h-5 w-5" />
+                  <span className="font-bold">{prize.title}</span>
+                </div>
+                {prize.description && <p className="text-xs text-muted-foreground">{prize.description}</p>}
+              </div>
+            )}
+
+            <div className="flex flex-col sm:flex-row gap-2 pt-2">
+              <Button onClick={saveResult} disabled={saved} className="flex-1 bg-primary hover:bg-primary/90 text-white font-bold h-12 rounded-xl">
+                {saved ? "✓ Salvo" : "Salvar Resultado"}
+              </Button>
+              <Button onClick={() => { setShowModal(false); setWinner(null); setHighlight(null); }} variant="outline" className="flex-1 font-bold h-12 rounded-xl">
+                Fechar
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

@@ -205,13 +205,10 @@ function RankingPage() {
               className="rounded-[1.35rem] bg-gradient-to-br from-primary via-primary to-primary-glow p-8 text-center text-white"
             >
 
-              <motion.div
-                animate={{ rotate: [0, -10, 10, -10, 10, 0], scale: [1, 1.1, 1] }}
-                transition={{ duration: 1.2, repeat: Infinity, repeatDelay: 0.5 }}
-                className="mx-auto mb-4 inline-flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-yellow-300 to-orange-500 shadow-2xl"
-              >
+              <div className="mx-auto mb-4 inline-flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-yellow-300 to-orange-500 shadow-2xl">
                 <Crown className="h-10 w-10 text-white" />
-              </motion.div>
+              </div>
+
 
               <h2 className="text-3xl font-black tracking-tight">🎉 PARABÉNS! 🎉</h2>
               <p className="mt-2 text-sm uppercase tracking-widest text-white/70">Melhor vendedor da campanha</p>

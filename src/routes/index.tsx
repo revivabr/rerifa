@@ -50,6 +50,17 @@ function HomePage() {
 
   return (
     <div className="min-h-screen bg-white">
+      {/* Banner Rifa Solidária */}
+      <section className="px-4 pt-6 sm:px-6 sm:pt-8">
+        <div className="mx-auto max-w-6xl overflow-hidden rounded-2xl shadow-xl ring-1 ring-black/5">
+          <img
+            src={bannerRifa.url}
+            alt="Rifa Solidária - Associação Reviva Brasil"
+            className="block h-auto w-full"
+          />
+        </div>
+      </section>
+
       {/* Hero Section with Dynamic Background */}
       <section className="relative flex min-h-[85vh] items-center justify-center overflow-hidden px-6 pb-12 pt-20">
         <div className="absolute inset-0 bg-mesh opacity-50" />

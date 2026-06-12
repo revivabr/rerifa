@@ -16,9 +16,11 @@ import { Route as CheckoutOrderIdRouteImport } from './routes/checkout.$orderId'
 import { Route as CampanhaSlugRouteImport } from './routes/campanha.$slug'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
 import { Route as AdminDashboardRouteImport } from './routes/admin.dashboard'
+import { Route as AdminRankingIndexRouteImport } from './routes/admin.ranking.index'
 import { Route as AdminDrawIndexRouteImport } from './routes/admin.draw.index'
 import { Route as AdminCampaignsIndexRouteImport } from './routes/admin.campaigns.index'
 import { Route as ApiWebhooksMercadopagoRouteImport } from './routes/api.webhooks.mercadopago'
+import { Route as AdminRankingIdRouteImport } from './routes/admin.ranking.$id'
 import { Route as AdminDrawIdRouteImport } from './routes/admin.draw.$id'
 import { Route as AdminCampaignsNewRouteImport } from './routes/admin.campaigns.new'
 import { Route as AdminCampaignsIdRouteImport } from './routes/admin.campaigns.$id'
@@ -58,6 +60,11 @@ const AdminDashboardRoute = AdminDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminRankingIndexRoute = AdminRankingIndexRouteImport.update({
+  id: '/ranking/',
+  path: '/ranking/',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminDrawIndexRoute = AdminDrawIndexRouteImport.update({
   id: '/draw/',
   path: '/draw/',
@@ -72,6 +79,11 @@ const ApiWebhooksMercadopagoRoute = ApiWebhooksMercadopagoRouteImport.update({
   id: '/api/webhooks/mercadopago',
   path: '/api/webhooks/mercadopago',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRankingIdRoute = AdminRankingIdRouteImport.update({
+  id: '/ranking/$id',
+  path: '/ranking/$id',
+  getParentRoute: () => AdminRoute,
 } as any)
 const AdminDrawIdRoute = AdminDrawIdRouteImport.update({
   id: '/draw/$id',
@@ -100,9 +112,11 @@ export interface FileRoutesByFullPath {
   '/admin/campaigns/$id': typeof AdminCampaignsIdRoute
   '/admin/campaigns/new': typeof AdminCampaignsNewRoute
   '/admin/draw/$id': typeof AdminDrawIdRoute
+  '/admin/ranking/$id': typeof AdminRankingIdRoute
   '/api/webhooks/mercadopago': typeof ApiWebhooksMercadopagoRoute
   '/admin/campaigns/': typeof AdminCampaignsIndexRoute
   '/admin/draw/': typeof AdminDrawIndexRoute
+  '/admin/ranking/': typeof AdminRankingIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -115,9 +129,11 @@ export interface FileRoutesByTo {
   '/admin/campaigns/$id': typeof AdminCampaignsIdRoute
   '/admin/campaigns/new': typeof AdminCampaignsNewRoute
   '/admin/draw/$id': typeof AdminDrawIdRoute
+  '/admin/ranking/$id': typeof AdminRankingIdRoute
   '/api/webhooks/mercadopago': typeof ApiWebhooksMercadopagoRoute
   '/admin/campaigns': typeof AdminCampaignsIndexRoute
   '/admin/draw': typeof AdminDrawIndexRoute
+  '/admin/ranking': typeof AdminRankingIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -131,9 +147,11 @@ export interface FileRoutesById {
   '/admin/campaigns/$id': typeof AdminCampaignsIdRoute
   '/admin/campaigns/new': typeof AdminCampaignsNewRoute
   '/admin/draw/$id': typeof AdminDrawIdRoute
+  '/admin/ranking/$id': typeof AdminRankingIdRoute
   '/api/webhooks/mercadopago': typeof ApiWebhooksMercadopagoRoute
   '/admin/campaigns/': typeof AdminCampaignsIndexRoute
   '/admin/draw/': typeof AdminDrawIndexRoute
+  '/admin/ranking/': typeof AdminRankingIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -148,9 +166,11 @@ export interface FileRouteTypes {
     | '/admin/campaigns/$id'
     | '/admin/campaigns/new'
     | '/admin/draw/$id'
+    | '/admin/ranking/$id'
     | '/api/webhooks/mercadopago'
     | '/admin/campaigns/'
     | '/admin/draw/'
+    | '/admin/ranking/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -163,9 +183,11 @@ export interface FileRouteTypes {
     | '/admin/campaigns/$id'
     | '/admin/campaigns/new'
     | '/admin/draw/$id'
+    | '/admin/ranking/$id'
     | '/api/webhooks/mercadopago'
     | '/admin/campaigns'
     | '/admin/draw'
+    | '/admin/ranking'
   id:
     | '__root__'
     | '/'
@@ -178,9 +200,11 @@ export interface FileRouteTypes {
     | '/admin/campaigns/$id'
     | '/admin/campaigns/new'
     | '/admin/draw/$id'
+    | '/admin/ranking/$id'
     | '/api/webhooks/mercadopago'
     | '/admin/campaigns/'
     | '/admin/draw/'
+    | '/admin/ranking/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -243,6 +267,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminDashboardRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/ranking/': {
+      id: '/admin/ranking/'
+      path: '/ranking'
+      fullPath: '/admin/ranking/'
+      preLoaderRoute: typeof AdminRankingIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/draw/': {
       id: '/admin/draw/'
       path: '/draw'
@@ -263,6 +294,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/api/webhooks/mercadopago'
       preLoaderRoute: typeof ApiWebhooksMercadopagoRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/admin/ranking/$id': {
+      id: '/admin/ranking/$id'
+      path: '/ranking/$id'
+      fullPath: '/admin/ranking/$id'
+      preLoaderRoute: typeof AdminRankingIdRouteImport
+      parentRoute: typeof AdminRoute
     }
     '/admin/draw/$id': {
       id: '/admin/draw/$id'
@@ -294,8 +332,10 @@ interface AdminRouteChildren {
   AdminCampaignsIdRoute: typeof AdminCampaignsIdRoute
   AdminCampaignsNewRoute: typeof AdminCampaignsNewRoute
   AdminDrawIdRoute: typeof AdminDrawIdRoute
+  AdminRankingIdRoute: typeof AdminRankingIdRoute
   AdminCampaignsIndexRoute: typeof AdminCampaignsIndexRoute
   AdminDrawIndexRoute: typeof AdminDrawIndexRoute
+  AdminRankingIndexRoute: typeof AdminRankingIndexRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
@@ -304,8 +344,10 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminCampaignsIdRoute: AdminCampaignsIdRoute,
   AdminCampaignsNewRoute: AdminCampaignsNewRoute,
   AdminDrawIdRoute: AdminDrawIdRoute,
+  AdminRankingIdRoute: AdminRankingIdRoute,
   AdminCampaignsIndexRoute: AdminCampaignsIndexRoute,
   AdminDrawIndexRoute: AdminDrawIndexRoute,
+  AdminRankingIndexRoute: AdminRankingIndexRoute,
 }
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)

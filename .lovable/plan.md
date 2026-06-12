@@ -1,23 +1,22 @@
-I will now proceed with the database migration and the integration of the Mercado Pago payment gateway (via server functions) as requested.
+The current homepage and components are too generic, and lack the visual impact and "premium" feel requested. I will implement a modern, high-conversion UI with distinct sections, subtle gradients, textures, and micro-animations.
 
-### 1. Database Setup
-Since you provided the Supabase credentials in `.env.example`, I will ensure the application is configured to use them.
-**Action required from you:** As per our previous communication, please copy the content of `db/migrations/001_init.sql` and run it in your **Supabase SQL Editor** to create the necessary tables and the `reserve_numbers` function.
+### Visual Improvements
 
-### 2. Mercado Pago Integration
-I will implement the backend logic to generate real PIX payments using the Mercado Pago credentials you provided.
-- **Backend Service:** Create a server-side function using `@tanstack/react-start` to communicate with the Mercado Pago API securely.
-- **Checkout Page:** Update `src/routes/checkout.$orderId.tsx` to call this backend function instead of using mock data.
-- **Webhook (Future):** I will add a placeholder for a webhook to receive payment notifications automatically.
+*   **Header:** Fixed logo styling, consistent spacing, and a "square" fixed logo as requested.
+*   **Hero Section:** High-impact banner with a sophisticated gradient overlay, better typography (Outfit font), and a floating effect.
+*   **Backgrounds:** Use a mix of subtle textures (cubes, paper) and soft gradients (primary to transparent) for each section to create depth and separation.
+*   **Footer:** Differentiate from the rest of the page with a deeper, more elegant color palette and improved layout.
+*   **Animations:** Staggered entry animations and smooth hover transitions on all interactive elements.
 
-### 3. Implementation Plan
-- **File Edits:**
-    - `src/lib/mercadopago.server.ts`: New file to handle Mercado Pago SDK/API calls.
-    - `src/lib/api/payment.functions.ts`: New server function `createPixPayment`.
-    - `src/routes/checkout.$orderId.tsx`: Update to fetch the real PIX QR code and copy-paste string from the backend.
-    - `src/routes/admin.campaigns.$id.tsx`: Ensure admin can see real payment details if needed.
+### Technical Details
 
-Technical Details:
-- Uses `ACCESS_TOKEN` and `PUBLIC_KEY` for Mercado Pago.
-- Implements PIX (Instant payment) with 15-minute expiration matching the reservation.
-- Environment variables are read safely on the server.
+*   **Tailwind CSS:** Leverage modern Tailwind 4 features (as seen in `src/styles.css`) for utility-based styling and custom animations.
+*   **Lucide Icons:** Use consistent iconography for features.
+*   **Responsive Design:** Ensure the layout is perfectly balanced on both desktop and mobile.
+
+### Components to Update
+
+1.  **`src/components/Header.tsx`**: Update layout, add a dedicated logo container, and refine navigation.
+2.  **`src/components/Footer.tsx`**: Completely redesign with better contrast and spacing.
+3.  **`src/routes/index.tsx`**: Rebuild the sections with specific background styles, improved typography, and better content flow.
+4.  **`src/styles.css`**: Add keyframe animations and global utility classes for the new design.

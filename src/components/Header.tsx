@@ -1,38 +1,52 @@
 import { Link } from "@tanstack/react-router";
 import logoColor from "@/assets/logo-reviva-color.png.asset.json";
-import { Lock } from "lucide-react";
+import { Lock, Menu } from "lucide-react";
 
 export function Header() {
   return (
-    <header className="sticky top-0 z-50 w-full bg-white/80 backdrop-blur-xl border-b border-black/[0.05]">
-      <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-8 md:px-12">
-        <Link to="/" className="flex items-center gap-6 transition-all duration-700 hover:opacity-80 active:scale-95 group">
-          <img src={logoColor.url} alt="Associação Reviva Brasil" className="h-10 w-10 object-contain p-1 border border-primary/10 rounded-xl transition-transform duration-700 group-hover:scale-105" />
-          <div className="hidden h-5 w-[1px] bg-black/[0.05] sm:block" />
-          <span className="hidden text-[10px] font-black uppercase tracking-[0.3em] text-primary sm:inline transition-colors duration-700 group-hover:text-primary">
-            Private Selection
-          </span>
+    <header className="sticky top-0 z-50 w-full bg-white/90 backdrop-blur-md border-b border-primary/5">
+      <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6 md:px-8">
+        <Link to="/" className="flex items-center gap-4 transition-all duration-300 hover:opacity-90 active:scale-95 group">
+          <div className="relative h-12 w-12 overflow-hidden rounded-xl bg-primary flex items-center justify-center p-1.5 shadow-lg shadow-primary/10">
+            <img 
+              src={logoColor.url} 
+              alt="Associação Reviva Brasil" 
+              className="h-full w-full object-contain brightness-0 invert" 
+            />
+          </div>
+          <div className="flex flex-col">
+            <span className="text-sm font-bold tracking-tight text-primary leading-none">Reviva Brasil</span>
+            <span className="text-[10px] font-medium uppercase tracking-[0.2em] text-primary/60">Show de Prêmios</span>
+          </div>
         </Link>
         
-        <nav className="flex items-center gap-12">
+        <nav className="hidden items-center gap-8 md:flex">
           <Link 
             to="/" 
-            className="text-[10px] font-bold uppercase tracking-[0.2em] text-foreground/50 hover:text-primary transition-all duration-500"
+            className="text-xs font-semibold text-foreground/70 hover:text-primary transition-colors"
           >
-            Coleções
+            Início
           </Link>
-          <div className="flex items-center gap-4">
-            <Link 
-              to="/admin/login" 
-              className="flex h-12 w-12 items-center justify-center rounded-full border border-black/[0.03] bg-white/50 text-muted-foreground/40 transition-all duration-700 hover:border-primary/20 hover:text-primary hover:shadow-premium hover:bg-white active:scale-90"
-              title="Acesso Administrativo"
-            >
-              <Lock className="h-3.5 w-3.5" />
-            </Link>
-          </div>
+          <a 
+            href="#campanhas" 
+            className="text-xs font-semibold text-foreground/70 hover:text-primary transition-colors"
+          >
+            Campanhas
+          </a>
+          <div className="h-4 w-px bg-primary/10" />
+          <Link 
+            to="/admin/login" 
+            className="flex items-center gap-2 rounded-full bg-primary/5 px-4 py-2 text-xs font-bold text-primary transition-all hover:bg-primary hover:text-white"
+          >
+            <Lock className="h-3 w-3" />
+            Entrar
+          </Link>
         </nav>
+
+        <button className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/5 text-primary md:hidden">
+          <Menu className="h-5 w-5" />
+        </button>
       </div>
     </header>
   );
 }
-

@@ -44,11 +44,11 @@ Para nos conhecer melhor acesse: https://revivabrasil.com.br
               Informações
             </h4>
             <ul className="space-y-1 text-xs text-white/60">
-              <li><a href="#" className="hover:text-white transition-colors">Quem Somos</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Como Funciona</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Termos de Uso</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Privacidade</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Segurança</a></li>
+              <li><a href="/informacoes#quem-somos" className="hover:text-white transition-colors">Quem Somos</a></li>
+              <li><a href="/informacoes#como-funciona" className="hover:text-white transition-colors">Como Funciona</a></li>
+              <li><a href="/informacoes#termos-de-uso" className="hover:text-white transition-colors">Termos de Uso</a></li>
+              <li><a href="/informacoes#privacidade" className="hover:text-white transition-colors">Privacidade</a></li>
+              <li><a href="/informacoes#seguranca" className="hover:text-white transition-colors">Segurança</a></li>
             </ul>
           </div>
         </div>

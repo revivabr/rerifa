@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as InformacoesRouteImport } from './routes/informacoes'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ConfirmacaoOrderIdRouteImport } from './routes/confirmacao.$orderId'
@@ -25,6 +26,11 @@ import { Route as AdminDrawIdRouteImport } from './routes/admin.draw.$id'
 import { Route as AdminCampaignsNewRouteImport } from './routes/admin.campaigns.new'
 import { Route as AdminCampaignsIdRouteImport } from './routes/admin.campaigns.$id'
 
+const InformacoesRoute = InformacoesRouteImport.update({
+  id: '/informacoes',
+  path: '/informacoes',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminRoute = AdminRouteImport.update({
   id: '/admin',
   path: '/admin',
@@ -104,6 +110,7 @@ const AdminCampaignsIdRoute = AdminCampaignsIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
+  '/informacoes': typeof InformacoesRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/login': typeof AdminLoginRoute
   '/campanha/$slug': typeof CampanhaSlugRoute
@@ -121,6 +128,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
+  '/informacoes': typeof InformacoesRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/login': typeof AdminLoginRoute
   '/campanha/$slug': typeof CampanhaSlugRoute
@@ -139,6 +147,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
+  '/informacoes': typeof InformacoesRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/login': typeof AdminLoginRoute
   '/campanha/$slug': typeof CampanhaSlugRoute
@@ -158,6 +167,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/admin'
+    | '/informacoes'
     | '/admin/dashboard'
     | '/admin/login'
     | '/campanha/$slug'
@@ -175,6 +185,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/admin'
+    | '/informacoes'
     | '/admin/dashboard'
     | '/admin/login'
     | '/campanha/$slug'
@@ -192,6 +203,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/admin'
+    | '/informacoes'
     | '/admin/dashboard'
     | '/admin/login'
     | '/campanha/$slug'
@@ -210,6 +222,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRoute: typeof AdminRouteWithChildren
+  InformacoesRoute: typeof InformacoesRoute
   CampanhaSlugRoute: typeof CampanhaSlugRoute
   CheckoutOrderIdRoute: typeof CheckoutOrderIdRoute
   ConfirmacaoOrderIdRoute: typeof ConfirmacaoOrderIdRoute
@@ -218,6 +231,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/informacoes': {
+      id: '/informacoes'
+      path: '/informacoes'
+      fullPath: '/informacoes'
+      preLoaderRoute: typeof InformacoesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin': {
       id: '/admin'
       path: '/admin'
@@ -355,6 +375,7 @@ const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRouteWithChildren,
+  InformacoesRoute: InformacoesRoute,
   CampanhaSlugRoute: CampanhaSlugRoute,
   CheckoutOrderIdRoute: CheckoutOrderIdRoute,
   ConfirmacaoOrderIdRoute: ConfirmacaoOrderIdRoute,
@@ -363,3 +384,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

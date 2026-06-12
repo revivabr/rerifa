@@ -9,7 +9,7 @@ export function Header() {
         <Link to="/" className="flex items-center gap-6 transition-all duration-700 hover:opacity-80 active:scale-95 group">
           <img src={logoColor.url} alt="Associação Reviva Brasil" className="h-10 w-10 object-contain p-1 border border-primary/10 rounded-xl transition-transform duration-700 group-hover:scale-105" />
           <div className="hidden h-5 w-[1px] bg-black/[0.05] sm:block" />
-          <span className="hidden text-[9px] font-bold uppercase tracking-[0.4em] text-primary/40 sm:inline transition-colors duration-700 group-hover:text-primary">
+          <span className="hidden text-[10px] font-black uppercase tracking-[0.3em] text-primary sm:inline transition-colors duration-700 group-hover:text-primary">
             Private Selection
           </span>
         </Link>

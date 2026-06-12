@@ -106,7 +106,7 @@ function HomePage() {
                             
                             <div className="mt-12 flex gap-8">
                                 <div className="p-6 bg-stone-100 rounded-2xl w-full">
-                                    <span className="text-[10px] font-bold uppercase tracking-widest text-primary/50">Valor da Cota</span>
+                                    <span className="text-[10px] font-black uppercase tracking-widest text-primary">Valor da Cota</span>
                                     <p className="text-2xl font-black text-primary mt-1">{formatBRL(activeCampaign.number_price)}</p>
                                 </div>
                             </div>

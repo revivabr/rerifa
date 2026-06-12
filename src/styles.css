@@ -15,7 +15,7 @@
 }
 
 :root {
-  --background: 0 0% 99%;
+  --background: 0 0% 100%;
   --foreground: 145 30% 10%;
   --card: 0 0% 100%;
   --card-foreground: 145 30% 10%;
@@ -25,6 +25,7 @@
   --secondary-foreground: 145 30% 10%;
   --muted: 145 10% 96%;
   --muted-foreground: 145 10% 45%;
+  --accent: 145 10% 96%;
   --accent-foreground: 145 30% 10%;
   --destructive: 0 84% 60%;
   --destructive-foreground: 0 0% 98%;
@@ -33,7 +34,7 @@
   --border: 145 10% 92%;
   --input: 145 10% 92%;
   --ring: 145 40% 15%;
-  --radius: 0.75rem;
+  --radius: 1rem;
 }
 
 @theme inline {

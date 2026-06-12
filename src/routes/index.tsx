@@ -231,7 +231,7 @@ function HomePage() {
 }
 
 function CompactShareButtons({ campaign, copied, setCopied }: { campaign: Campaign; copied: boolean; setCopied: (v: boolean) => void }) {
-  const url = typeof window !== "undefined" ? `${window.location.origin}/campanha/${campaign.slug}` : `https://rifa.revivabrasil.com.br/campanha/${campaign.slug}`;
+  const url = `https://rifa.revivabrasil.com.br/campanha/${campaign.slug}`;
   const message = `🎟️ Rifa Solidária - ${campaign.name}\n💰 Cota: ${formatBRL(campaign.number_price)}\n\nGaranta seus números:\n${url}`;
 
   async function copyToClipboard() {

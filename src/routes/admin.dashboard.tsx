@@ -41,7 +41,7 @@ function AdminDashboard() {
           <h1 className="text-3xl font-black text-primary">Dashboard</h1>
           <p className="text-sm text-muted-foreground">Visão geral das campanhas</p>
         </div>
-        <Link to="/admin/campaigns/new" className="inline-flex items-center gap-2 rounded-xl bg-gradient-primary px-4 py-2.5 text-sm font-bold text-primary-foreground shadow-soft hover:scale-[1.02] transition">
+        <Link to="/admin/campaigns/new" className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-bold text-white shadow-premium hover:scale-[1.02] transition">
           <Plus className="h-4 w-4" /> Nova campanha
         </Link>
       </div>

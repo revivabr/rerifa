@@ -1,9 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import confetti from "canvas-confetti";
+import { toPng } from "html-to-image";
+import { toast } from "sonner";
 import { formatBRL, padNumber } from "@/lib/format";
-import { CheckCircle2, Heart, ArrowLeft, Sparkles } from "lucide-react";
+import { CheckCircle2, Heart, ArrowLeft, Sparkles, Download, Share2, Ticket } from "lucide-react";
 import { getOrderPublic } from "@/lib/api/order.functions";
+import { ReceiptTicket, type ReceiptData } from "@/components/ReceiptTicket";
 
 export const Route = createFileRoute("/confirmacao/$orderId")({
   component: ConfirmationPage,
@@ -22,34 +25,97 @@ function fireConfetti() {
 
 function ConfirmationPage() {
   const { orderId } = Route.useParams();
-  const [data, setData] = useState<{ campaign: string; slug: string; amount: number; numbers: number[]; buyer: string } | null>(null);
+  const [receipt, setReceipt] = useState<ReceiptData | null>(null);
+  const [slug, setSlug] = useState<string>("");
+  const [generating, setGenerating] = useState(false);
   const fired = useRef(false);
+  const ticketRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     (async () => {
       const o = await getOrderPublic({ data: { orderId } });
       if (!o) return;
-      setData({
-        campaign: o.campaign_name,
-        slug: o.campaign_slug,
-        amount: o.amount,
+      setSlug(o.campaign_slug);
+      setReceipt({
+        orderId: o.id,
+        campaignName: o.campaign_name,
+        bannerUrl: o.campaign_banner,
+        buyerName: o.buyer_name,
+        buyerWhatsapp: o.buyer_whatsapp,
         numbers: o.numbers,
-        buyer: o.buyer_name,
+        numberTotal: o.campaign_number_quantity,
+        amount: o.amount,
+        paidAt: o.paid_at,
       });
     })();
   }, [orderId]);
 
   useEffect(() => {
-    if (data && !fired.current) {
+    if (receipt && !fired.current) {
       fired.current = true;
       fireConfetti();
       setTimeout(fireConfetti, 600);
     }
-  }, [data]);
+  }, [receipt]);
 
-  if (!data) return <div className="flex min-h-[50vh] items-center justify-center">...</div>;
+  async function renderToBlob(): Promise<{ blob: Blob; dataUrl: string } | null> {
+    if (!ticketRef.current) return null;
+    const dataUrl = await toPng(ticketRef.current, {
+      pixelRatio: 2,
+      cacheBust: true,
+      backgroundColor: "#ffffff",
+    });
+    const res = await fetch(dataUrl);
+    const blob = await res.blob();
+    return { blob, dataUrl };
+  }
 
-  const firstName = data.buyer.split(" ")[0];
+  async function handleReceipt() {
+    if (!receipt) return;
+    setGenerating(true);
+    try {
+      const result = await renderToBlob();
+      if (!result) throw new Error("Falha ao gerar o bilhete");
+      const fileName = `bilhete-${receipt.campaignName.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-${receipt.orderId.slice(0, 8)}.png`;
+      const file = new File([result.blob], fileName, { type: "image/png" });
+
+      const canShareFile =
+        typeof navigator !== "undefined" &&
+        typeof navigator.share === "function" &&
+        typeof navigator.canShare === "function" &&
+        navigator.canShare({ files: [file] });
+
+      if (canShareFile) {
+        try {
+          await navigator.share({
+            files: [file],
+            title: "Meu bilhete da sorte",
+            text: `Acabei de garantir meus números na rifa "${receipt.campaignName}"! 🍀`,
+          });
+          return;
+        } catch (err: any) {
+          if (err?.name === "AbortError") return;
+        }
+      }
+
+      const a = document.createElement("a");
+      a.href = result.dataUrl;
+      a.download = fileName;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      toast.success("Bilhete baixado!");
+    } catch (e: any) {
+      console.error(e);
+      toast.error("Não foi possível gerar o bilhete. Tente novamente.");
+    } finally {
+      setGenerating(false);
+    }
+  }
+
+  if (!receipt) return <div className="flex min-h-[50vh] items-center justify-center">...</div>;
+
+  const firstName = receipt.buyerName.split(" ")[0];
 
   return (
     <div className="min-h-screen bg-slate-50 selection:bg-primary/10 relative overflow-hidden">
@@ -77,12 +143,28 @@ function ConfirmationPage() {
             </p>
           </div>
 
-          <div className="p-8 md:p-12 space-y-8">
+          <div className="p-8 md:p-12 space-y-6">
+            {/* CTA bilhete — bem chamativo */}
+            <button
+              onClick={handleReceipt}
+              disabled={generating}
+              className="group relative w-full overflow-hidden rounded-2xl bg-gradient-to-r from-gold via-amber-400 to-gold p-[2px] shadow-[0_12px_40px_-8px_rgba(245,197,24,0.6)] transition-all hover:shadow-[0_18px_50px_-8px_rgba(245,197,24,0.8)] active:scale-[0.98] disabled:opacity-70"
+            >
+              <span className="flex h-16 w-full items-center justify-center gap-3 rounded-[14px] bg-gradient-to-r from-primary to-primary/90 px-6 text-base font-black uppercase tracking-wide text-white">
+                <Ticket className="h-5 w-5" />
+                {generating ? "Gerando seu bilhete..." : "Emitir bilhete comprovante"}
+                {!generating && <Download className="h-5 w-5 transition-transform group-hover:translate-y-0.5" />}
+              </span>
+              <span className="pointer-events-none absolute -top-1 -right-1 inline-flex items-center gap-1 rounded-full bg-success px-2 py-0.5 text-[9px] font-black uppercase tracking-widest text-white shadow-md">
+                <Share2 className="h-2.5 w-2.5" /> Baixar/Compartilhar
+              </span>
+            </button>
+
             <div className="space-y-4 rounded-2xl border border-black/[0.03] bg-secondary/30 p-6 text-sm">
-              <Row label="Campanha" value={data.campaign} />
-              <Row label="Comprador" value={data.buyer} />
-              <Row label="Números da sorte" value={<span className="font-bold text-primary">{data.numbers.map(n => padNumber(n, 1000)).join(", ")}</span>} />
-              <Row label="Valor" value={<span className="font-bold text-primary">{formatBRL(data.amount)}</span>} />
+              <Row label="Campanha" value={receipt.campaignName} />
+              <Row label="Comprador" value={receipt.buyerName} />
+              <Row label="Números da sorte" value={<span className="font-bold text-primary">{receipt.numbers.map(n => padNumber(n, receipt.numberTotal)).join(", ")}</span>} />
+              <Row label="Valor" value={<span className="font-bold text-primary">{formatBRL(receipt.amount)}</span>} />
             </div>
 
             <div className="rounded-2xl bg-gradient-to-r from-primary/5 to-gold/5 p-5 text-center">
@@ -98,16 +180,32 @@ function ConfirmationPage() {
               Guarde esta confirmação · O sorteio será transmitido em breve
             </p>
 
-            <Link
-              to="/campanha/$slug"
-              params={{ slug: data.slug }}
-              className="flex h-14 w-full items-center justify-center gap-3 rounded-2xl bg-primary text-sm font-bold text-white shadow-premium transition-all hover:bg-primary/90 active:scale-95"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              Voltar para a campanha
-            </Link>
+            {slug && (
+              <Link
+                to="/campanha/$slug"
+                params={{ slug }}
+                className="flex h-14 w-full items-center justify-center gap-3 rounded-2xl bg-primary text-sm font-bold text-white shadow-premium transition-all hover:bg-primary/90 active:scale-95"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Voltar para a campanha
+              </Link>
+            )}
           </div>
         </div>
+      </div>
+
+      {/* Off-screen ticket used for image rendering */}
+      <div
+        style={{
+          position: "fixed",
+          left: -10000,
+          top: 0,
+          pointerEvents: "none",
+          opacity: 0,
+        }}
+        aria-hidden
+      >
+        <ReceiptTicket ref={ticketRef} data={receipt} />
       </div>
     </div>
   );

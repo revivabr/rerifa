@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "./lib/error-page.ts" layer(base);
 @plugin "@tailwindcss/typography";
 
 @theme {

@@ -148,82 +148,90 @@ function CampaignPage() {
       <div className="absolute inset-0 bg-mesh opacity-30 pointer-events-none" />
       <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] bg-fixed opacity-[0.03] pointer-events-none" />
       <div className="relative z-10">
-      <div className="mx-auto max-w-7xl px-6 py-12 md:py-24">
-        <div className="grid gap-12 lg:grid-cols-3">
-          <div className="lg:col-span-2 space-y-12">
-            {/* Main Campaign Section */}
-            <div className="rounded-[2.5rem] border border-black/[0.05] bg-white p-3 shadow-2xl">
-              <div className="relative aspect-video overflow-hidden rounded-[2rem] bg-stone-100">
-                <img src={campaign.banner_url || "/placeholder.svg"} className="h-full w-full object-cover" />
-              </div>
-              <div className="p-8 md:p-10">
-                <h1 className="text-4xl font-extrabold text-primary md:text-5xl">{campaign.name}</h1>
-                <p className="mt-6 text-lg leading-relaxed text-muted-foreground">Esta Rifa tem como propósito uma causa de amor e transformação: ajudar no pagamento das despesas do poço artesiano e instalação da caixa d’água, garantindo acesso à água potável para crianças atendidas pelos nossos projetos.</p>
-                <div className="mt-8 grid grid-cols-2 gap-4">
-                  <StatCard icon={<Gift />} label="Cota" value={formatBRL(campaign.number_price)} />
-                  <StatCard icon={<Calendar />} label="Sorteio" value={formatDateBR(campaign.end_date)} />
-                </div>
-              </div>
-            </div>
-
-            {/* Prizes */}
-            {prizes.length > 0 && (
-              <section>
-                <h2 className="mb-8 text-2xl font-bold text-primary">Prêmios</h2>
-                <div className="grid gap-6 sm:grid-cols-2">
-                  {prizes.map((p, idx) => (
-                    <div key={p.id} className="overflow-hidden rounded-3xl bg-white shadow-premium">
-                      <div className="aspect-video bg-muted"><img src={p.image_url || "/placeholder.svg"} className="h-full w-full object-cover" /></div>
-                      <div className="p-6">
-                        <span className="text-[10px] font-bold uppercase tracking-widest text-gold">{idx + 1}º Prêmio</span>
-                        <h3 className="mt-2 text-lg font-bold">{p.title}</h3>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </section>
-            )}
-          </div>
-
-          {/* Sidebar */}
-          <div className="space-y-8">
-            <SellerRanking campaignId={campaign.id} />
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 py-8 md:py-16 space-y-8 md:space-y-10">
+        {/* 1) Banner 16:9 — largura total */}
+        <div className="rounded-[2rem] md:rounded-[2.5rem] border border-black/[0.05] bg-white p-2 md:p-3 shadow-2xl">
+          <div className="relative aspect-video overflow-hidden rounded-[1.5rem] md:rounded-[2rem] bg-stone-100">
+            <img src={campaign.banner_url || "/placeholder.svg"} alt={campaign.name} className="h-full w-full object-cover" />
           </div>
         </div>
 
-        <section className="mt-20" id="escolher-numeros">
-          <h2 className="text-3xl font-bold text-primary mb-2">Escolha seus números</h2>
-          <p className="text-muted-foreground mb-8">Toque para selecionar. Reserva de 3 minutos.</p>
+        {/* 2) Dois cards lado a lado: Descrição da campanha | Descrição do prêmio */}
+        <div className="grid gap-6 md:gap-8 md:grid-cols-2">
+          {/* Descrição da campanha */}
+          <div className="rounded-[2rem] border border-black/[0.05] bg-white p-6 md:p-8 shadow-2xl flex flex-col">
+            <span className="text-[10px] font-bold uppercase tracking-widest text-primary/50">Descrição da campanha</span>
+            <h1 className="mt-2 text-2xl md:text-3xl font-extrabold text-primary leading-tight">{campaign.name}</h1>
+            <p className="mt-4 text-base leading-relaxed text-muted-foreground flex-1">
+              {campaign.short_description || campaign.description || ""}
+            </p>
+            <div className="mt-6 grid grid-cols-2 gap-3">
+              <StatCard icon={<Gift className="h-4 w-4" />} label="Cota" value={formatBRL(campaign.number_price)} />
+              <StatCard icon={<Calendar className="h-4 w-4" />} label="Sorteio" value={formatDateBR(campaign.end_date)} />
+            </div>
+          </div>
 
-          <div className="rounded-[2.5rem] border border-black/[0.05] bg-white p-8 md:p-16 shadow-2xl relative overflow-hidden">
-            <div className="absolute top-0 right-0 p-8 opacity-5">
+          {/* Descrição do prêmio */}
+          <div className="rounded-[2rem] border border-black/[0.05] bg-white p-6 md:p-8 shadow-2xl flex flex-col">
+            <span className="text-[10px] font-bold uppercase tracking-widest text-gold">Descrição do prêmio</span>
+            <h2 className="mt-2 text-2xl md:text-3xl font-extrabold text-primary leading-tight">Prêmio</h2>
+            <p className="mt-4 text-base leading-relaxed text-muted-foreground flex-1">
+              {campaign.prize_description || "Detalhes do prêmio em breve."}
+            </p>
+            {(campaign.prize_image_1 || campaign.prize_image_2) && (
+              <div className="mt-6 grid grid-cols-2 gap-3">
+                {[campaign.prize_image_1, campaign.prize_image_2].map((src, i) => (
+                  <div key={i} className="relative aspect-square overflow-hidden rounded-2xl bg-stone-100 border border-black/[0.04]">
+                    {src ? (
+                      <img src={src} alt={`Foto ${i + 1} do prêmio`} className="h-full w-full object-cover" />
+                    ) : (
+                      <div className="flex h-full w-full items-center justify-center text-xs text-muted-foreground/50">Foto {i + 1}</div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* 3) Escolha seus números — largura total */}
+        <section id="escolher-numeros">
+          <div className="rounded-[2rem] md:rounded-[2.5rem] border border-black/[0.05] bg-white p-6 md:p-12 shadow-2xl relative overflow-hidden">
+            <div className="absolute top-0 right-0 p-8 opacity-5 pointer-events-none">
               <Ticket className="h-64 w-64 rotate-12" />
             </div>
+            <div className="relative">
+              <h2 className="text-2xl md:text-3xl font-bold text-primary mb-1">Escolha seus números</h2>
+              <p className="text-sm text-muted-foreground mb-6">Toque para selecionar. Reserva de 3 minutos.</p>
 
-            <div className="grid gap-2" style={{ gridTemplateColumns: `repeat(auto-fill, minmax(60px, 1fr))` }}>
-              {numbers.map(n => {
-                const status = selected.has(n.number) ? "selected" : n.status;
-                return (
-                  <button
-                    key={n.number}
-                    onClick={() => toggle(n.number, n.status)}
-                    disabled={n.status !== "available"}
-                    className={cn(
-                      "relative aspect-square rounded-xl font-bold tabular-nums transition-all duration-300",
-                      "border border-black/[0.05]",
-                      status === "available" && "bg-secondary text-primary hover:bg-primary/10",
-                      status === "selected" && "bg-primary text-white scale-105 shadow-lg",
-                      status === "reserved" && "bg-black/[0.03] text-black/20 cursor-not-allowed",
-                      status === "sold" && "bg-black/[0.05] text-black/20 cursor-not-allowed",
-                    )}
-                  >
-                    {padNumber(n.number, campaign.number_quantity)}
-                  </button>
-                );
-              })}
+              <div className="grid gap-2" style={{ gridTemplateColumns: `repeat(auto-fill, minmax(56px, 1fr))` }}>
+                {numbers.map(n => {
+                  const status = selected.has(n.number) ? "selected" : n.status;
+                  return (
+                    <button
+                      key={n.number}
+                      onClick={() => toggle(n.number, n.status)}
+                      disabled={n.status !== "available"}
+                      className={cn(
+                        "relative aspect-square rounded-xl font-bold tabular-nums transition-all duration-300 text-sm",
+                        "border border-black/[0.05]",
+                        status === "available" && "bg-secondary text-primary hover:bg-primary/10",
+                        status === "selected" && "bg-primary text-white scale-105 shadow-lg",
+                        status === "reserved" && "bg-black/[0.03] text-black/20 cursor-not-allowed",
+                        status === "sold" && "bg-black/[0.05] text-black/20 cursor-not-allowed",
+                      )}
+                    >
+                      {padNumber(n.number, campaign.number_quantity)}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
           </div>
         </section>
+
+        {/* 4) Ranking de vendedores abaixo do grid */}
+        <SellerRanking campaignId={campaign.id} />
 
         {selected.size > 0 && (
           <div className="fixed bottom-6 left-6 right-6 z-50 flex items-center justify-center">

@@ -1,4 +1,4 @@
-import logoBranco from "@/assets/logo-reviva-branco.png.asset.json";
+import logoBranco from "@/assets/logo-reviva-quadrado.png.asset.json";
 import logoVirando from "@/assets/logo-virando-jogo.png.asset.json";
 import logoBazar from "@/assets/logo-bazar-solidario.png.asset.json";
 import logoMao from "@/assets/logo-mao-amiga.png.asset.json";
@@ -12,7 +12,7 @@ export function Footer() {
         <div className="grid gap-12 lg:grid-cols-3">
           <div className="space-y-8">
             <div className="flex items-center gap-3">
-              <div className="h-10 w-10 rounded-lg bg-white/10 p-2">
+              <div className="h-10 w-10 rounded-lg bg-[#faf7f0] p-1 flex items-center justify-center">
                 <img src={logoBranco.url} alt="Reviva Brasil" className="h-full w-full object-contain" />
               </div>
               <span className="text-xl font-bold tracking-tight">Reviva Brasil</span>

@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import logoColor from "@/assets/logo-reviva-color.png.asset.json";
+import logoColor from "@/assets/logo-reviva-quadrado.png.asset.json";
 import { Lock, Menu } from "lucide-react";
 
 export function Header() {
@@ -7,11 +7,11 @@ export function Header() {
     <header className="sticky top-0 z-50 w-full bg-white/95 backdrop-blur-md border-b border-primary/5">
       <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6 md:px-8">
         <Link to="/" className="flex items-center gap-3 transition-all duration-300 hover:opacity-90 active:scale-95 group">
-          <div className="relative h-12 w-12 overflow-hidden rounded-xl bg-primary flex items-center justify-center p-1.5 shadow-lg shadow-primary/10">
+          <div className="relative h-12 w-12 overflow-hidden rounded-xl bg-[#faf7f0] flex items-center justify-center p-1 shadow-lg shadow-primary/10 border border-primary/5">
             <img 
               src={logoColor.url} 
               alt="Associação Reviva Brasil" 
-              className="h-full w-full object-contain brightness-0 invert" 
+              className="h-full w-full object-contain" 
             />
           </div>
           <div className="flex flex-col">

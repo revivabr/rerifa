@@ -220,8 +220,8 @@ function RaffleDraw() {
           </div>
 
           <div className="mt-4 flex items-center justify-center gap-4 text-xs text-muted-foreground">
-            <span className="inline-flex items-center gap-1.5"><span className="h-3 w-3 rounded bg-foreground" /> Vendido</span>
-            <span className="inline-flex items-center gap-1.5"><span className="h-3 w-3 rounded bg-gray-200" /> Disponível</span>
+            <span className="inline-flex items-center gap-1.5"><span className="h-3 w-3 rounded border-2 border-gold bg-white" /> Vendido (ativo)</span>
+            <span className="inline-flex items-center gap-1.5"><span className="h-3 w-3 rounded border border-gray-200 bg-gray-50" /> Disponível</span>
           </div>
         </div>
       </div>

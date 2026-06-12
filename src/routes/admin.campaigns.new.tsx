@@ -21,7 +21,8 @@ function slugify(s: string) {
 function NewCampaign() {
   const navigate = useNavigate();
   const [form, setForm] = useState({
-    name: "", slug: "", description: "", banner_url: "",
+    name: "", slug: "", description: "", short_description: "", banner_url: "",
+    prize_description: "", prize_image_1: "", prize_image_2: "",
     number_quantity: 100, number_price: 10,
     start_date: new Date().toISOString().slice(0, 10),
     end_date: new Date(Date.now() + 30 * 86400000).toISOString().slice(0, 10),

@@ -144,7 +144,10 @@ function CampaignPage() {
   if (!campaign) return <div className="mx-auto max-w-6xl px-4 py-20 text-center">Campanha não encontrada</div>;
 
   return (
-    <div className="min-h-screen bg-white selection:bg-primary/10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] bg-fixed">
+    <div className="min-h-screen bg-white selection:bg-primary/10">
+      <div className="absolute inset-0 bg-mesh opacity-30 pointer-events-none" />
+      <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] bg-fixed opacity-[0.03] pointer-events-none" />
+      <div className="relative z-10">
       <div className="mx-auto max-w-7xl px-6 py-12 md:py-24">
         <div className="grid gap-12 lg:grid-cols-3">
           <div className="lg:col-span-2 space-y-12">
@@ -235,6 +238,7 @@ function CampaignPage() {
         )}
 
         <BuyerModal open={showModal} onOpenChange={setShowModal} onSubmit={handleSubmit} submitting={submitting} total={total} count={selected.size} />
+      </div>
       </div>
     </div>
   );

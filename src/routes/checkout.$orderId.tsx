@@ -127,7 +127,9 @@ function CheckoutPage() {
   }
 
   return (
-    <div className="mx-auto max-w-xl px-6 py-12">
+    <div className="min-h-screen bg-slate-50 selection:bg-primary/10 relative overflow-hidden">
+      <div className="absolute inset-0 bg-mesh opacity-20 pointer-events-none" />
+      <div className="mx-auto max-w-xl px-6 py-12 relative z-10">
       <div className="overflow-hidden rounded-3xl bg-white shadow-premium">
         <div className="bg-primary p-8 text-white relative">
           <button 
@@ -194,6 +196,7 @@ function CheckoutPage() {
             <p className="text-[11px] font-bold uppercase tracking-widest text-success animate-pulse">Aguardando confirmação de pagamento...</p>
           </div>
         </div>
+      </div>
       </div>
     </div>
   );

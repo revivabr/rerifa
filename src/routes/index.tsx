@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 import { formatBRL } from "@/lib/format";
-import { Ticket, Sparkles, Zap, ArrowRight, Trophy, Star, ShieldCheck } from "lucide-react";
+import { Ticket, Sparkles, Zap, ArrowRight, Trophy, ShieldCheck, Heart } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/")({
@@ -33,7 +33,6 @@ function HomePage() {
       
       if (data) {
         let campaignData = data as Campaign;
-        // Handle banner_url with signed URL as fallback
         if (campaignData.banner_url && campaignData.banner_url.includes('/storage/v1/object/public/')) {
           const path = campaignData.banner_url.split('/public/')[1].split('/').slice(1).join('/');
           const bucket = campaignData.banner_url.split('/public/')[1].split('/')[0];
@@ -44,109 +43,160 @@ function HomePage() {
         }
         setActiveCampaign(campaignData);
       }
-      
       setLoading(false);
     })();
   }, []);
 
   return (
-    <div className="min-h-screen bg-white selection:bg-primary/10">
-      {/* Cinematic Hero - Texture & Gradient */}
-      <section className="relative flex min-h-[90vh] items-center justify-center overflow-hidden px-6 pt-20 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] bg-fixed">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-gold/5" />
+    <div className="min-h-screen bg-white">
+      {/* Hero Section with Dynamic Background */}
+      <section className="relative flex min-h-[85vh] items-center justify-center overflow-hidden px-6 pb-12 pt-20">
+        <div className="absolute inset-0 bg-mesh opacity-50" />
+        <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/clean-gray-paper.png')] opacity-20" />
         
-        <div className="relative mx-auto max-w-6xl text-center stagger-in">
-          <div className="mb-12 inline-flex items-center gap-3 rounded-full border border-primary/10 bg-white/60 px-6 py-3 text-[10px] font-bold uppercase tracking-[0.3em] text-primary backdrop-blur-md shadow-sm">
-            <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
-            </span>
-            <span>Show de Prêmios Reviva Brasil</span>
-          </div>
-          
-          <h1 className="text-7xl font-extrabold tracking-tighter text-primary md:text-[120px] lg:leading-[0.9]">
-            Sua Sorte <br/>
-            <span className="font-light italic text-primary/30">Transforma</span> Vidas
-          </h1>
-          
-          <p className="mx-auto mt-12 max-w-2xl text-lg font-medium leading-relaxed text-slate-600 md:text-xl">
-            Sua jornada solidária começa aqui. Participe de nossas rifas exclusivas e ajude projetos sociais que mudam realidades.
-          </p>
+        <div className="relative mx-auto max-w-7xl grid lg:grid-cols-2 gap-12 items-center">
+          <div className="stagger-in space-y-8 text-left">
+            <div className="inline-flex items-center gap-2 rounded-full bg-primary/5 px-4 py-2 text-[10px] font-bold uppercase tracking-widest text-primary border border-primary/10">
+              <Sparkles className="h-3 w-3" />
+              Institucional e Filantrópico
+            </div>
+            
+            <h1 className="text-5xl font-black tracking-tight text-primary md:text-7xl lg:text-8xl leading-[0.9]">
+              Sua Sorte <br/>
+              <span className="bg-gradient-to-r from-primary via-primary/80 to-gold bg-clip-text text-transparent italic font-serif">Transforma</span> Vidas.
+            </h1>
+            
+            <p className="max-w-xl text-lg font-medium text-slate-600/90 leading-relaxed">
+              Participe de nossas ações entre amigos e ajude a financiar projetos sociais que mudam a realidade de milhares de brasileiros.
+            </p>
 
-          <div className="mt-16 flex flex-col items-center justify-center gap-6 sm:flex-row">
-            <a 
-              href="#campanhas"
-              className="group relative inline-flex items-center gap-4 rounded-full bg-primary px-12 py-6 text-xs font-black uppercase tracking-widest text-white transition-all duration-500 hover:bg-primary/90 hover:scale-[1.02] hover:shadow-2xl active:scale-95"
-            >
-              Ver Campanhas Ativas
-              <ArrowRight className="h-4 w-4 transition-transform duration-500 group-hover:translate-x-1.5" />
-            </a>
+            <div className="flex flex-wrap gap-4 pt-4">
+              <a 
+                href="#campanhas"
+                className="group inline-flex items-center gap-3 rounded-2xl bg-primary px-8 py-5 text-sm font-bold text-white transition-all hover:bg-primary/90 hover:shadow-xl hover:shadow-primary/20 active:scale-95"
+              >
+                Explorar Campanhas
+                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+              </a>
+              <div className="flex -space-x-3 items-center ml-4">
+                {[1,2,3,4].map(i => (
+                    <div key={i} className="h-10 w-10 rounded-full border-2 border-white bg-slate-100 overflow-hidden shadow-sm">
+                        <img src={`https://i.pravatar.cc/150?u=${i}`} alt="user" className="h-full w-full object-cover" />
+                    </div>
+                ))}
+                <span className="ml-6 text-xs font-bold text-slate-400">+5k participando</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="relative hidden lg:block stagger-in" style={{ animationDelay: '0.4s' }}>
+            <div className="relative z-10 animate-float">
+                <div className="overflow-hidden rounded-[2.5rem] bg-white p-4 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.1)] border border-black/[0.03]">
+                    <img 
+                        src="https://storage.googleapis.com/gpt-engineer-file-uploads/IcY9jDHnjbOIMxxCXj63oYoUfo13/social-images/social-1781186933088-banner1.webp" 
+                        alt="Reviva Banner" 
+                        className="rounded-[2rem] h-[500px] w-full object-cover"
+                    />
+                </div>
+                {/* Floating Elements */}
+                <div className="absolute -right-8 -top-8 bg-gold p-6 rounded-3xl shadow-xl animate-float" style={{ animationDelay: '-1s' }}>
+                    <Ticket className="h-8 w-8 text-white" />
+                </div>
+                <div className="absolute -left-12 bottom-12 bg-white p-6 rounded-3xl shadow-xl border border-black/[0.03] animate-float" style={{ animationDelay: '-2s' }}>
+                    <div className="flex items-center gap-3">
+                        <div className="h-10 w-10 rounded-full bg-green-100 flex items-center justify-center">
+                            <Zap className="h-5 w-5 text-green-600" />
+                        </div>
+                        <div>
+                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Ganhador</p>
+                            <p className="text-sm font-bold text-primary">Joaquim Silva</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Featured Campaign - Different Background Section */}
-      <section id="campanhas" className="relative mx-auto max-w-7xl px-6 py-24 bg-stone-50 rounded-[3rem] my-12 border border-black/[0.03]">
-        <div className="stagger-in">
+      {/* Campaign Section - Textured Background */}
+      <section id="campanhas" className="py-24 bg-slate-50 relative overflow-hidden">
+        <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-[0.03]" />
+        <div className="max-w-7xl mx-auto px-6 relative z-10">
+            <div className="mb-16 text-center">
+                <h2 className="text-4xl font-black text-primary tracking-tight">Campanhas em Destaque</h2>
+                <div className="mt-4 h-1.5 w-24 bg-gold mx-auto rounded-full" />
+            </div>
+
             {loading ? (
-                <div className="h-[600px] w-full animate-pulse rounded-[2.5rem] bg-white shadow-xl" />
+                <div className="grid md:grid-cols-2 gap-8">
+                    <div className="h-[400px] animate-pulse rounded-3xl bg-white shadow-sm" />
+                    <div className="h-[400px] animate-pulse rounded-3xl bg-white shadow-sm" />
+                </div>
             ) : activeCampaign ? (
-                <div className="group relative overflow-hidden rounded-[2.5rem] bg-white shadow-2xl">
+                <div className="group relative overflow-hidden rounded-[2.5rem] bg-white shadow-2xl transition-all duration-700 hover:shadow-primary/5">
                     <div className="flex flex-col lg:flex-row">
-                        <div className="relative aspect-[16/10] w-full lg:w-[55%]">
+                        <div className="relative aspect-[16/10] w-full lg:w-1/2 overflow-hidden">
                             <img 
                                 src={activeCampaign.banner_url || USER_BANNER} 
                                 alt={activeCampaign.name} 
-                                className="h-full w-full object-cover transition-transform duration-[2000ms] group-hover:scale-105"
+                                className="h-full w-full object-cover transition-transform duration-[3s] group-hover:scale-110"
                             />
+                            <div className="absolute inset-0 bg-gradient-to-t from-primary/20 to-transparent" />
                         </div>
-                        <div className="flex flex-1 flex-col justify-center p-16">
-                            <h2 className="text-5xl font-bold text-primary tracking-tighter">{activeCampaign.name}</h2>
-                            <p className="mt-8 text-slate-600 font-medium leading-relaxed">{activeCampaign.description}</p>
-                            
-                            <div className="mt-12 flex gap-8">
-                                <div className="p-6 bg-stone-100 rounded-2xl w-full">
-                                    <span className="text-[10px] font-black uppercase tracking-widest text-primary">Valor da Cota</span>
-                                    <p className="text-2xl font-black text-primary mt-1">{formatBRL(activeCampaign.number_price)}</p>
-                                </div>
+                        <div className="flex flex-1 flex-col justify-center p-8 lg:p-12">
+                            <div className="inline-flex mb-4 text-gold font-bold text-xs uppercase tracking-widest gap-2 items-center">
+                                <Trophy className="h-4 w-4" />
+                                Prêmio Principal
                             </div>
-
-                            <Link 
-                                to="/campanha/$slug" 
-                                params={{ slug: activeCampaign.slug }} 
-                                className="mt-10 flex w-full items-center justify-center gap-3 rounded-2xl bg-gold py-6 text-xs font-black uppercase tracking-widest text-white hover:bg-gold-glow transition-all hover:shadow-lg active:scale-[0.98]"
-                            >
-                                <Ticket className="h-4 w-4" />
-                                Participar Agora
-                            </Link>
+                            <h2 className="text-4xl font-black text-primary tracking-tight leading-tight">{activeCampaign.name}</h2>
+                            <p className="mt-4 text-slate-600 font-medium leading-relaxed line-clamp-4">{activeCampaign.description}</p>
+                            
+                            <div className="mt-8 p-6 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-between">
+                                <div>
+                                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Valor da Cota</span>
+                                    <p className="text-3xl font-black text-primary mt-1">{formatBRL(activeCampaign.number_price)}</p>
+                                </div>
+                                <Link 
+                                    to="/campanha/$slug" 
+                                    params={{ slug: activeCampaign.slug }} 
+                                    className="rounded-xl bg-gold px-8 py-4 text-xs font-black uppercase tracking-widest text-white shadow-lg shadow-gold/20 transition-all hover:bg-gold-glow active:scale-95"
+                                >
+                                    Participar
+                                </Link>
+                            </div>
                         </div>
                     </div>
                 </div>
             ) : (
-                <div className="flex flex-col items-center justify-center rounded-[2.5rem] bg-white p-24 text-center shadow-premium">
-                    <div className="mb-12 flex h-24 w-24 items-center justify-center rounded-full bg-primary/[0.02] text-primary/20">
-                        <Sparkles className="h-10 w-10" />
+                <div className="rounded-[2.5rem] bg-white p-20 text-center shadow-xl border border-black/[0.02]">
+                    <div className="mx-auto mb-8 flex h-20 w-20 items-center justify-center rounded-full bg-slate-50 text-slate-200">
+                        <Heart className="h-10 w-10" />
                     </div>
-                    <h2 className="text-3xl font-bold text-primary tracking-tight">Novos Lançamentos em Breve</h2>
+                    <h2 className="text-2xl font-bold text-primary">Nenhuma campanha ativa no momento.</h2>
+                    <p className="mt-2 text-slate-500 font-medium">Fique atento para nossos próximos lançamentos!</p>
                 </div>
             )}
         </div>
       </section>
 
-      {/* Features Grid - Clean white section */}
+      {/* Features - White Background with Cards */}
       <section className="py-24 bg-white">
-        <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-3 gap-8">
-             {[
-                { icon: Zap, label: "Rapidez", desc: "Processamento via PIX instantâneo." },
-                { icon: Trophy, label: "Segurança", desc: "Sorteios auditáveis e seguros via Loteria Federal." },
-                { icon: Sparkles, label: "Legado", desc: "Recursos 100% voltados a projetos que transformam vidas." },
-            ].map((item, i) => (
-                <div key={i} className="p-10 rounded-[2rem] bg-gradient-to-br from-white to-stone-50 border border-black/[0.05] hover:border-primary/20 transition-all duration-500 hover:shadow-lg">
-                    <item.icon className="h-8 w-8 text-primary mb-6" />
-                    <h3 className="text-xl font-bold text-primary mb-3">{item.label}</h3>
-                    <p className="text-sm text-slate-600">{item.desc}</p>
-                </div>
-            ))}
+        <div className="max-w-7xl mx-auto px-6">
+            <div className="grid md:grid-cols-3 gap-8">
+                {[
+                    { icon: Zap, label: "Rapidez", desc: "Pagamento e liberação automática via PIX. Sem burocracia.", color: "text-blue-500", bg: "bg-blue-50" },
+                    { icon: ShieldCheck, label: "Segurança", desc: "Resultados baseados na Loteria Federal brasileira.", color: "text-green-500", bg: "bg-green-50" },
+                    { icon: Trophy, label: "Transparência", desc: "Auditoria completa e destinação social garantida.", color: "text-gold", bg: "bg-amber-50" },
+                ].map((item, i) => (
+                    <div key={i} className="group p-10 rounded-[2.5rem] border border-slate-100 bg-white transition-all duration-500 hover:border-primary/10 hover:shadow-2xl hover:shadow-primary/5">
+                        <div className={cn("mb-8 flex h-16 w-16 items-center justify-center rounded-2xl transition-all duration-500 group-hover:scale-110 group-hover:rotate-3", item.bg)}>
+                            <item.icon className={cn("h-8 w-8", item.color)} />
+                        </div>
+                        <h3 className="text-xl font-bold text-primary mb-4">{item.label}</h3>
+                        <p className="text-slate-500 font-medium leading-relaxed">{item.desc}</p>
+                    </div>
+                ))}
+            </div>
         </div>
       </section>
     </div>

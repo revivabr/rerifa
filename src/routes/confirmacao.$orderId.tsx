@@ -29,7 +29,9 @@ function ConfirmationPage() {
   if (!data) return <div className="flex min-h-[50vh] items-center justify-center">...</div>;
 
   return (
-    <div className="mx-auto max-w-xl px-6 py-16">
+    <div className="min-h-screen bg-slate-50 selection:bg-primary/10 relative overflow-hidden">
+      <div className="absolute inset-0 bg-mesh opacity-20 pointer-events-none" />
+      <div className="mx-auto max-w-xl px-6 py-16 relative z-10">
       <div className="overflow-hidden rounded-3xl bg-white shadow-premium">
         <div className="bg-success/5 p-12 text-center">
             <div className="mx-auto flex h-24 w-24 items-center justify-center rounded-full bg-white shadow-sm border border-success/10">
@@ -62,6 +64,7 @@ function ConfirmationPage() {
                 Voltar para Campanha
             </Link>
         </div>
+      </div>
       </div>
     </div>
   );

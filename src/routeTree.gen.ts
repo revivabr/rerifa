@@ -20,6 +20,7 @@ import { Route as AdminRankingIndexRouteImport } from './routes/admin.ranking.in
 import { Route as AdminDrawIndexRouteImport } from './routes/admin.draw.index'
 import { Route as AdminCampaignsIndexRouteImport } from './routes/admin.campaigns.index'
 import { Route as ApiWebhooksMercadopagoRouteImport } from './routes/api.webhooks.mercadopago'
+import { Route as AdminRankingIdRouteImport } from './routes/admin.ranking.$id'
 import { Route as AdminDrawIdRouteImport } from './routes/admin.draw.$id'
 import { Route as AdminCampaignsNewRouteImport } from './routes/admin.campaigns.new'
 import { Route as AdminCampaignsIdRouteImport } from './routes/admin.campaigns.$id'
@@ -79,6 +80,11 @@ const ApiWebhooksMercadopagoRoute = ApiWebhooksMercadopagoRouteImport.update({
   path: '/api/webhooks/mercadopago',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminRankingIdRoute = AdminRankingIdRouteImport.update({
+  id: '/ranking/$id',
+  path: '/ranking/$id',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminDrawIdRoute = AdminDrawIdRouteImport.update({
   id: '/draw/$id',
   path: '/draw/$id',
@@ -106,6 +112,7 @@ export interface FileRoutesByFullPath {
   '/admin/campaigns/$id': typeof AdminCampaignsIdRoute
   '/admin/campaigns/new': typeof AdminCampaignsNewRoute
   '/admin/draw/$id': typeof AdminDrawIdRoute
+  '/admin/ranking/$id': typeof AdminRankingIdRoute
   '/api/webhooks/mercadopago': typeof ApiWebhooksMercadopagoRoute
   '/admin/campaigns/': typeof AdminCampaignsIndexRoute
   '/admin/draw/': typeof AdminDrawIndexRoute
@@ -122,6 +129,7 @@ export interface FileRoutesByTo {
   '/admin/campaigns/$id': typeof AdminCampaignsIdRoute
   '/admin/campaigns/new': typeof AdminCampaignsNewRoute
   '/admin/draw/$id': typeof AdminDrawIdRoute
+  '/admin/ranking/$id': typeof AdminRankingIdRoute
   '/api/webhooks/mercadopago': typeof ApiWebhooksMercadopagoRoute
   '/admin/campaigns': typeof AdminCampaignsIndexRoute
   '/admin/draw': typeof AdminDrawIndexRoute
@@ -139,6 +147,7 @@ export interface FileRoutesById {
   '/admin/campaigns/$id': typeof AdminCampaignsIdRoute
   '/admin/campaigns/new': typeof AdminCampaignsNewRoute
   '/admin/draw/$id': typeof AdminDrawIdRoute
+  '/admin/ranking/$id': typeof AdminRankingIdRoute
   '/api/webhooks/mercadopago': typeof ApiWebhooksMercadopagoRoute
   '/admin/campaigns/': typeof AdminCampaignsIndexRoute
   '/admin/draw/': typeof AdminDrawIndexRoute
@@ -157,6 +166,7 @@ export interface FileRouteTypes {
     | '/admin/campaigns/$id'
     | '/admin/campaigns/new'
     | '/admin/draw/$id'
+    | '/admin/ranking/$id'
     | '/api/webhooks/mercadopago'
     | '/admin/campaigns/'
     | '/admin/draw/'
@@ -173,6 +183,7 @@ export interface FileRouteTypes {
     | '/admin/campaigns/$id'
     | '/admin/campaigns/new'
     | '/admin/draw/$id'
+    | '/admin/ranking/$id'
     | '/api/webhooks/mercadopago'
     | '/admin/campaigns'
     | '/admin/draw'
@@ -189,6 +200,7 @@ export interface FileRouteTypes {
     | '/admin/campaigns/$id'
     | '/admin/campaigns/new'
     | '/admin/draw/$id'
+    | '/admin/ranking/$id'
     | '/api/webhooks/mercadopago'
     | '/admin/campaigns/'
     | '/admin/draw/'
@@ -283,6 +295,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiWebhooksMercadopagoRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/ranking/$id': {
+      id: '/admin/ranking/$id'
+      path: '/ranking/$id'
+      fullPath: '/admin/ranking/$id'
+      preLoaderRoute: typeof AdminRankingIdRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/draw/$id': {
       id: '/admin/draw/$id'
       path: '/draw/$id'
@@ -313,6 +332,7 @@ interface AdminRouteChildren {
   AdminCampaignsIdRoute: typeof AdminCampaignsIdRoute
   AdminCampaignsNewRoute: typeof AdminCampaignsNewRoute
   AdminDrawIdRoute: typeof AdminDrawIdRoute
+  AdminRankingIdRoute: typeof AdminRankingIdRoute
   AdminCampaignsIndexRoute: typeof AdminCampaignsIndexRoute
   AdminDrawIndexRoute: typeof AdminDrawIndexRoute
   AdminRankingIndexRoute: typeof AdminRankingIndexRoute
@@ -324,6 +344,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminCampaignsIdRoute: AdminCampaignsIdRoute,
   AdminCampaignsNewRoute: AdminCampaignsNewRoute,
   AdminDrawIdRoute: AdminDrawIdRoute,
+  AdminRankingIdRoute: AdminRankingIdRoute,
   AdminCampaignsIndexRoute: AdminCampaignsIndexRoute,
   AdminDrawIndexRoute: AdminDrawIndexRoute,
   AdminRankingIndexRoute: AdminRankingIndexRoute,
@@ -342,3 +363,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

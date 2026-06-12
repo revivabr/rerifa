@@ -71,11 +71,6 @@ export function Footer() {
                 </a>
               </p>
             </div>
-            <div className="flex gap-4">
-              <span className="h-6 w-14 rounded bg-white/10 p-1 flex items-center justify-center">
-                <img src="https://logodownload.org/wp-content/uploads/2019/09/mercado-pago-logo.png" alt="Mercado Pago" className="h-full w-full object-contain brightness-0 invert opacity-60" />
-              </span>
-            </div>
           </div>
         </div>
       </div>

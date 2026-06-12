@@ -161,5 +161,23 @@
   50% { transform: scale(1.03); box-shadow: 0 18px 40px -10px rgba(0,0,0,0.4); }
 }
 
+/* Gold-themed animated border for CTA buttons */
+.animated-border-gold {
+  position: relative;
+  border-radius: 1rem;
+  padding: 3px;
+  overflow: hidden;
+  isolation: isolate;
+}
+.animated-border-gold::before {
+  content: "";
+  position: absolute;
+  inset: -100%;
+  background: conic-gradient(from 0deg, #C5A059, #D4AF37, #FFD700, #E8C547, #C5A059);
+  animation: ab-spin 3s linear infinite;
+  z-index: -1;
+}
+@keyframes ab-spin { to { transform: rotate(360deg); } }
+
 
 

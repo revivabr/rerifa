@@ -145,20 +145,16 @@ function RankingPage() {
         <button
           onClick={reveal}
           disabled={!topSeller}
-          className="group relative rounded-2xl p-[3px] disabled:opacity-50 disabled:cursor-not-allowed"
-          style={{
-            background: "conic-gradient(from 0deg, #FFD700, #FF6B6B, #4ECDC4, #A78BFA, #FFD700)",
-            animation: "spin 4s linear infinite",
-          }}
+          className="animated-border disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          <span className="flex items-center gap-3 rounded-2xl bg-gradient-to-br from-primary to-primary-glow px-8 py-4 text-lg font-black text-white shadow-premium transition group-hover:scale-105">
-            <Trophy className="h-6 w-6 text-yellow-300 animate-pulse" />
+          <span className="slow-pulse flex items-center gap-3 rounded-[0.85rem] bg-gradient-to-br from-primary to-primary-glow px-8 py-4 text-lg font-black text-white">
+            <Trophy className="h-6 w-6 text-yellow-300" />
             Melhor Vendedor
-            <Sparkles className="h-5 w-5 text-yellow-300 animate-pulse" />
+            <Sparkles className="h-5 w-5 text-yellow-300" />
           </span>
         </button>
       </div>
-      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+
 
       {loading ? (
         <p className="text-muted-foreground text-sm">Carregando ranking...</p>

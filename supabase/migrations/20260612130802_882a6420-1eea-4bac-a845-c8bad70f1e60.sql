@@ -1,0 +1,1 @@
+DROP POLICY IF EXISTS "Admin Upload Banners-Reviva" ON storage.objects;

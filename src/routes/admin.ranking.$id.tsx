@@ -197,19 +197,14 @@ function RankingPage() {
 
       <Dialog open={showModal} onOpenChange={setShowModal}>
         <DialogContent className="max-w-lg p-0 border-0 bg-transparent shadow-none">
-          <div
-            className="rounded-3xl p-[4px]"
-            style={{
-              background: "conic-gradient(from 0deg, #FFD700, #FF6B6B, #4ECDC4, #A78BFA, #FFD700)",
-              animation: "spin 3s linear infinite",
-            }}
-          >
+          <div className="animated-border rounded-3xl">
             <motion.div
               initial={{ scale: 0.7, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               transition={{ type: "spring", damping: 14 }}
-              className="rounded-3xl bg-gradient-to-br from-primary via-primary to-primary-glow p-8 text-center text-white"
+              className="rounded-[1.35rem] bg-gradient-to-br from-primary via-primary to-primary-glow p-8 text-center text-white"
             >
+
               <motion.div
                 animate={{ rotate: [0, -10, 10, -10, 10, 0], scale: [1, 1.1, 1] }}
                 transition={{ duration: 1.2, repeat: Infinity, repeatDelay: 0.5 }}

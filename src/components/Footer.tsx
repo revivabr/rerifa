@@ -12,8 +12,9 @@ export function Footer() {
         <div className="grid gap-6 lg:grid-cols-3">
           <div className="space-y-4">
             <img src={logoBranco.url} alt="Associação Reviva Brasil" className="h-24 w-auto object-contain" />
-            <p className="text-xs leading-snug text-white/60">
+            <p className="text-xs leading-snug text-white/60 whitespace-pre-line">
               Restaurando vidas e valores através da solidariedade. Junte-se a nós e transforme o futuro de milhares de famílias.
+Para nos conhecer melhor acesse: https://revivabrasil.com.br
             </p>
           </div>
 

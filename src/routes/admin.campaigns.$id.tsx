@@ -273,6 +273,36 @@ function CampaignAdmin() {
               onChange={e => setForm(f => ({ ...f, drive_folder_url: e.target.value }))} 
             />
           </div>
+          <div className="md:col-span-2 pt-3 border-t border-border">
+            <h3 className="text-sm font-bold text-primary mb-3">Configuração da Rifa</h3>
+          </div>
+          <div>
+            <Label>Quantidade de números *</Label>
+            <select
+              className="flex h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+              value={Number(form.number_quantity ?? c.number_quantity)}
+              onChange={e => setForm(f => ({ ...f, number_quantity: Number(e.target.value) }))}
+            >
+              {[100,200,300,400,500,600,700,800,900,1000].map(n => <option key={n} value={n}>{n} números</option>)}
+            </select>
+            <p className="mt-1 text-[11px] text-muted-foreground">Aumentar gera novos números. Reduzir só é possível se os números acima estiverem disponíveis.</p>
+          </div>
+          <div>
+            <Label>Valor por número (R$) *</Label>
+            <Input type="number" min={1} step="0.01" value={form.number_price ?? c.number_price} onChange={e => setForm(f => ({ ...f, number_price: Number(e.target.value) as unknown as number }))} />
+          </div>
+          <div>
+            <Label>Data inicial *</Label>
+            <Input type="date" value={(form.start_date ?? c.start_date).slice(0,10)} onChange={e => setForm(f => ({ ...f, start_date: e.target.value }))} />
+          </div>
+          <div>
+            <Label>Data final *</Label>
+            <Input type="date" value={(form.end_date ?? c.end_date).slice(0,10)} onChange={e => setForm(f => ({ ...f, end_date: e.target.value }))} />
+          </div>
+          <div className="md:col-span-2">
+            <Label>Meta financeira (R$)</Label>
+            <Input type="number" min={0} step="0.01" value={form.goal_amount ?? ""} onChange={e => setForm(f => ({ ...f, goal_amount: e.target.value === "" ? null : Number(e.target.value) }))} placeholder="Deixe em branco para calcular automaticamente" />
+          </div>
           <div>
             <Label>Chave PIX</Label>
             <Input value={form.pix_key ?? ""} onChange={e => setForm(f => ({ ...f, pix_key: e.target.value }))} />

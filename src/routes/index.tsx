@@ -114,7 +114,7 @@ function HomePage() {
                             <Link 
                                 to="/campanha/$slug" 
                                 params={{ slug: activeCampaign.slug }} 
-                                className="mt-10 flex w-full items-center justify-center gap-3 rounded-2xl bg-gold py-6 text-xs font-bold uppercase tracking-widest text-white hover:bg-gold-glow transition-all hover:shadow-lg active:scale-[0.98]"
+                                className="mt-10 flex w-full items-center justify-center gap-3 rounded-2xl bg-gold py-6 text-xs font-black uppercase tracking-widest text-white hover:bg-gold-glow transition-all hover:shadow-lg active:scale-[0.98]"
                             >
                                 <Ticket className="h-4 w-4" />
                                 Participar Agora

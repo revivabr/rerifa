@@ -230,7 +230,7 @@ function CampaignPage() {
                 <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">{selected.size} selecionados</p>
                 <p className="text-2xl font-black text-primary">{formatBRL(total)}</p>
              </div>
-             <Button onClick={() => setShowModal(true)} className="h-14 px-8 rounded-2xl bg-primary font-bold shadow-premium">PAGAR AGORA</Button>
+             <Button onClick={() => setShowModal(true)} className="h-14 px-8 rounded-2xl bg-primary text-white font-black shadow-premium">PAGAR AGORA</Button>
           </div>
         </div>
       )}

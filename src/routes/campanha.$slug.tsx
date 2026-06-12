@@ -17,7 +17,8 @@ export const Route = createFileRoute("/campanha/$slug")({
 });
 
 type Campaign = {
-  id: string; name: string; slug: string; description: string | null; banner_url: string | null;
+  id: string; name: string; slug: string; description: string | null; short_description: string | null; banner_url: string | null;
+  prize_description: string | null; prize_image_1: string | null; prize_image_2: string | null;
   status: string; number_quantity: number; number_price: number;
   start_date: string; end_date: string; goal_amount: number | null;
   regulation_url: string | null;

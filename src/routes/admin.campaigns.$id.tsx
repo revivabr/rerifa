@@ -97,6 +97,32 @@ function CampaignAdmin() {
 
   async function handleSave() {
     if (!c) return;
+    const newQty = Number(form.number_quantity ?? c.number_quantity);
+    const oldQty = c.number_quantity;
+
+    // Ajustar números da rifa se quantidade mudou
+    if (newQty !== oldQty) {
+      if (newQty < 100 || newQty > 1000) { toast.error("Quantidade deve ser entre 100 e 1000"); return; }
+      if (newQty < oldQty) {
+        const { count: blocked } = await supabase.from("raffle_numbers")
+          .select("*", { head: true, count: "exact" })
+          .eq("campaign_id", id).gt("number", newQty).neq("status", "available");
+        if ((blocked ?? 0) > 0) {
+          toast.error(`Não é possível reduzir: existem ${blocked} número(s) acima de ${newQty} já vendidos/reservados.`);
+          return;
+        }
+        const { error: delErr } = await supabase.from("raffle_numbers")
+          .delete().eq("campaign_id", id).gt("number", newQty);
+        if (delErr) { toast.error(delErr.message); return; }
+      } else {
+        const rows = Array.from({ length: newQty - oldQty }, (_, i) => ({
+          campaign_id: id, number: oldQty + i + 1, status: "available",
+        }));
+        const { error: insErr } = await supabase.from("raffle_numbers").insert(rows);
+        if (insErr) { toast.error(insErr.message); return; }
+      }
+    }
+
     const { error } = await supabase.from("campaigns").update({
       name: form.name,
       description: form.description,
@@ -109,7 +135,11 @@ function CampaignAdmin() {
       regulation_text: form.regulation_text,
       regulation_url: form.regulation_url,
       drive_folder_url: form.drive_folder_url,
-
+      number_quantity: newQty,
+      number_price: Number(form.number_price ?? c.number_price),
+      start_date: form.start_date ? new Date(form.start_date).toISOString() : c.start_date,
+      end_date: form.end_date ? new Date(form.end_date).toISOString() : c.end_date,
+      goal_amount: form.goal_amount != null && form.goal_amount !== ("" as unknown) ? Number(form.goal_amount) : null,
       updated_at: new Date().toISOString()
     }).eq("id", id);
 

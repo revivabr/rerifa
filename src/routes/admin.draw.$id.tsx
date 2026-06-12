@@ -235,7 +235,7 @@ function RaffleDraw() {
                 >
                   <Button 
                     onClick={startDraw}
-                    className="h-24 w-24 md:h-32 md:w-32 rounded-full bg-gradient-primary text-white font-black shadow-lg hover:scale-105 transition-transform group"
+                    className="h-24 w-24 md:h-32 md:w-32 rounded-full bg-primary text-white font-black shadow-lg hover:scale-105 transition-transform group"
                   >
                     <Play className="h-10 w-10 md:h-12 md:w-12 fill-current" />
                   </Button>

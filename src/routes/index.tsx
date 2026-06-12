@@ -4,6 +4,7 @@ import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 import { formatBRL } from "@/lib/format";
 import { Ticket, Sparkles, Zap, ArrowRight, Trophy, ShieldCheck, Heart } from "lucide-react";
 import { cn } from "@/lib/utils";
+import bannerRifa from "@/assets/banner-rifa-solidaria.jpeg.asset.json";
 
 export const Route = createFileRoute("/")({
   component: HomePage,

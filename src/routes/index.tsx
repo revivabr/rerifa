@@ -79,7 +79,10 @@ function HomePage() {
             </h1>
             
             <p className="max-w-xl text-lg font-medium text-slate-600/90 leading-relaxed">
-              Participe de nossas ações entre amigos e ajude a financiar projetos sociais que mudam a realidade de centenas de pessoas.
+              Participe de nossas ações entre amigos e ajude a financiar projetos sociais que mudam a realidade de centenas de pessoas.{" "}
+              <a href="https://revivabrasil.com.br" target="_blank" rel="noopener noreferrer" className="underline decoration-primary/30 hover:decoration-primary text-primary hover:text-primary/80 transition-colors">
+                Para nos conhecer melhor acesse: revivabrasil.com.br
+              </a>
             </p>
 
             <div className="flex flex-wrap gap-4 pt-4">

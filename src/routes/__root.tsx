@@ -13,7 +13,7 @@ import faviconAsset from "@/assets/favicon-reviva.png.asset.json";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Toaster } from "@/components/ui/sonner";
 import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
+
 import { SetupNotice } from "@/components/SetupNotice";
 
 function NotFoundComponent() {
@@ -100,7 +100,7 @@ function RootComponent() {
         <SetupNotice />
         <Header />
         <main className="flex-1"><Outlet /></main>
-        <Footer />
+        
       </div>
       <Toaster richColors position="top-center" />
     </QueryClientProvider>

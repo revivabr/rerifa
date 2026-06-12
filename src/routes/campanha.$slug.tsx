@@ -146,8 +146,7 @@ function CampaignPage() {
   return (
     <div className="min-h-screen bg-white selection:bg-primary/10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] bg-fixed">
       <div className="mx-auto max-w-7xl px-6 py-12 md:py-24">
-
-      <div className="grid gap-12 lg:grid-cols-3">
+        <div className="grid gap-12 lg:grid-cols-3">
         <div className="lg:col-span-2 space-y-12">
           {/* Main Campaign Section */}
           <div className="rounded-[2.5rem] border border-black/[0.05] bg-white p-3 shadow-2xl">
@@ -236,7 +235,6 @@ function CampaignPage() {
       )}
       
       <BuyerModal open={showModal} onOpenChange={setShowModal} onSubmit={handleSubmit} submitting={submitting} total={total} count={selected.size} />
-    </div>
     </div>
   );
 }

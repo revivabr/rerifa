@@ -2,6 +2,7 @@ import logoBranco from "@/assets/logo-reviva-branco.png.asset.json";
 import logoVirando from "@/assets/logo-virando-jogo.png.asset.json";
 import logoBazar from "@/assets/logo-bazar-solidario.png.asset.json";
 import logoMao from "@/assets/logo-mao-amiga.png.asset.json";
+import logoMercadoPago from "@/assets/mercado-pago-logo.png.asset.json";
 import { Heart, Info } from "lucide-react";
 
 export function Footer() {
@@ -60,6 +61,7 @@ export function Footer() {
           <div className="flex flex-col items-center gap-3 w-full">
             <div className="flex flex-col md:flex-row items-center justify-center gap-3 w-full flex-wrap">
               <p>Sorteios auditados por IA na plataforma. Ambiente 100% seguro, pagamento via API do Mercado Pago.</p>
+              <img src={logoMercadoPago.url} alt="Mercado Pago" className="h-4 w-auto opacity-60 brightness-0 invert" />
             </div>
             <div className="flex flex-col md:flex-row items-center justify-center gap-2 md:gap-4 w-full flex-wrap">
               <p>© {new Date().getFullYear()} Associação Reviva Brasil. Todos os direitos reservados.</p>

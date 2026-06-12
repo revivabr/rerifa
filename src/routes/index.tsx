@@ -2,8 +2,9 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 import { formatBRL } from "@/lib/format";
-import { Ticket, Sparkles, Zap, ArrowRight, Trophy, ShieldCheck, Heart } from "lucide-react";
+import { Ticket, Sparkles, Zap, ArrowRight, Trophy, ShieldCheck, Heart, Share2, Copy, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 import bannerRifa from "@/assets/banner-rifa-solidaria.jpeg.asset.json";
 
 export const Route = createFileRoute("/")({
@@ -20,6 +21,7 @@ const USER_BANNER = "/placeholder.svg";
 function HomePage() {
   const [activeCampaign, setActiveCampaign] = useState<Campaign | null>(null);
   const [loading, setLoading] = useState(true);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     if (!isSupabaseConfigured) { setLoading(false); return; }
@@ -166,18 +168,28 @@ function HomePage() {
                             <h2 className="text-4xl font-black text-primary tracking-tight leading-tight">{activeCampaign.name}</h2>
                             <p className="mt-4 text-slate-600 font-medium leading-relaxed line-clamp-4">{activeCampaign.description}</p>
                             
-                            <div className="mt-8 p-6 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-between">
-                                <div>
-                                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Valor da Cota</span>
-                                    <p className="text-3xl font-black text-primary mt-1">{formatBRL(activeCampaign.number_price)}</p>
+                            <div className="mt-8 p-6 rounded-2xl bg-slate-50 border border-slate-100 flex flex-col gap-5">
+                                <div className="flex items-center justify-between">
+                                    <div>
+                                        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Valor da Cota</span>
+                                        <p className="text-3xl font-black text-primary mt-1">{formatBRL(activeCampaign.number_price)}</p>
+                                    </div>
+                                    <div className="animated-border-gold">
+                                        <Link 
+                                            to="/campanha/$slug" 
+                                            params={{ slug: activeCampaign.slug }} 
+                                            className="slow-pulse flex items-center gap-2 rounded-[0.85rem] bg-gradient-to-br from-gold to-gold-glow px-8 py-4 text-xs font-black uppercase tracking-widest text-white shadow-lg shadow-gold/20 transition-all hover:brightness-110 active:scale-95"
+                                        >
+                                            Participar
+                                            <ArrowRight className="h-4 w-4" />
+                                        </Link>
+                                    </div>
                                 </div>
-                                <Link 
-                                    to="/campanha/$slug" 
-                                    params={{ slug: activeCampaign.slug }} 
-                                    className="rounded-xl bg-gold px-8 py-4 text-xs font-black uppercase tracking-widest text-white shadow-lg shadow-gold/20 transition-all hover:bg-gold-glow active:scale-95"
-                                >
-                                    Participar
-                                </Link>
+                                
+                                <div className="flex items-center gap-3 pt-2 border-t border-slate-100">
+                                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Compartilhe:</span>
+                                    <CompactShareButtons campaign={activeCampaign} copied={copied} setCopied={setCopied} />
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -214,6 +226,46 @@ function HomePage() {
             </div>
         </div>
       </section>
+    </div>
+  );
+}
+
+function CompactShareButtons({ campaign, copied, setCopied }: { campaign: Campaign; copied: boolean; setCopied: (v: boolean) => void }) {
+  const url = typeof window !== "undefined" ? `${window.location.origin}/campanha/${campaign.slug}` : `https://rifa.revivabrasil.com.br/campanha/${campaign.slug}`;
+  const message = `🎟️ Rifa Solidária - ${campaign.name}\n💰 Cota: ${formatBRL(campaign.number_price)}\n\nGaranta seus números:\n${url}`;
+
+  async function copyToClipboard() {
+    try {
+      await navigator.clipboard.writeText(message);
+      setCopied(true);
+      toast.success("Link copiado!");
+      setTimeout(() => setCopied(false), 2500);
+    } catch {
+      toast.error("Não foi possível copiar.");
+    }
+  }
+
+  const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
+
+  return (
+    <div className="flex items-center gap-2">
+      <a
+        href={whatsappUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="flex h-8 w-8 items-center justify-center rounded-full bg-[#25D366] text-white shadow-md transition-transform hover:scale-110"
+        aria-label="WhatsApp"
+      >
+        <svg viewBox="0 0 24 24" className="h-4 w-4 fill-white"><path d="M19.05 4.91A10 10 0 0 0 4.1 18.36L3 22l3.74-1.08a10 10 0 0 0 4.78 1.22h.01a10 10 0 0 0 7.52-17.23ZM11.54 20.3h-.01a8.3 8.3 0 0 1-4.23-1.16l-.3-.18-2.22.64.66-2.17-.2-.31a8.3 8.3 0 1 1 6.3 3.18Zm4.55-6.22c-.25-.13-1.47-.73-1.7-.81-.23-.08-.4-.13-.56.13-.16.25-.64.81-.78.97-.14.16-.29.18-.54.06-.25-.13-1.05-.39-2-1.24a7.4 7.4 0 0 1-1.37-1.7c-.14-.25 0-.38.11-.5.11-.11.25-.29.37-.43.13-.14.17-.25.25-.41.08-.16.04-.31-.02-.43-.06-.13-.56-1.35-.77-1.85-.2-.49-.41-.42-.56-.43h-.48a.92.92 0 0 0-.67.31 2.8 2.8 0 0 0-.88 2.08c0 1.22.9 2.4 1.02 2.57.13.16 1.77 2.7 4.28 3.78.6.26 1.06.42 1.43.54.6.19 1.15.16 1.58.1.48-.07 1.47-.6 1.68-1.18.2-.58.2-1.07.14-1.18-.06-.11-.23-.18-.48-.31Z"/></svg>
+      </a>
+      <button
+        type="button"
+        onClick={copyToClipboard}
+        className="flex h-8 w-8 items-center justify-center rounded-full bg-gold text-white shadow-md transition-transform hover:scale-110"
+        aria-label="Copiar link"
+      >
+        {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+      </button>
     </div>
   );
 }

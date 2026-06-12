@@ -8,21 +8,21 @@ import { Heart, Info } from "lucide-react";
 export function Footer() {
   return (
     <footer className="bg-primary text-white">
-      <div className="mx-auto max-w-7xl px-6 py-20">
-        <div className="grid gap-12 lg:grid-cols-3">
-          <div className="space-y-8">
-            <img src={logoBranco.url} alt="Associação Reviva Brasil" className="h-32 w-auto object-contain" />
-            <p className="text-sm leading-relaxed text-white/60">
+      <div className="mx-auto max-w-7xl px-6 py-10">
+        <div className="grid gap-6 lg:grid-cols-3">
+          <div className="space-y-4">
+            <img src={logoBranco.url} alt="Associação Reviva Brasil" className="h-24 w-auto object-contain" />
+            <p className="text-xs leading-snug text-white/60">
               Restaurando vidas e valores através da solidariedade. Junte-se a nós e transforme o futuro de milhares de famílias.
             </p>
           </div>
 
-          <div className="space-y-6">
+          <div className="space-y-3">
             <h4 className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-white/40">
               <Heart className="h-3 w-3" />
               Projetos Sociais
             </h4>
-            <div className="flex items-center gap-6 flex-wrap">
+            <div className="flex items-center gap-4 flex-wrap">
               {[
                 { logo: logoVirando, name: "Virando o Jogo" },
                 { logo: logoBazar, name: "Bazar Solidário" },
@@ -37,12 +37,12 @@ export function Footer() {
             </div>
           </div>
 
-          <div className="space-y-6">
+          <div className="space-y-3">
             <h4 className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-white/40">
               <Info className="h-3 w-3" />
               Informações
             </h4>
-            <ul className="space-y-3 text-sm text-white/60">
+            <ul className="space-y-1 text-xs text-white/60">
               <li><a href="#" className="hover:text-white transition-colors">Quem Somos</a></li>
               <li><a href="#" className="hover:text-white transition-colors">Como Funciona</a></li>
               <li><a href="#" className="hover:text-white transition-colors">Termos de Uso</a></li>
@@ -52,7 +52,7 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-20 flex flex-col items-center gap-6 border-t border-white/5 pt-10 text-sm font-medium text-white/40">
+        <div className="mt-10 flex flex-col items-center gap-3 border-t border-white/5 pt-5 text-xs font-medium text-white/40">
           <div className="flex flex-col items-center gap-3 w-full">
             <div className="flex flex-col md:flex-row items-center justify-center gap-3 w-full flex-wrap">
               <p>Sorteios auditados por IA na plataforma. Ambiente 100% seguro, pagamento via API&nbsp;</p>

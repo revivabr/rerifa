@@ -13,26 +13,11 @@ export function SellerRanking({ campaignId }: { campaignId: string }) {
 
   useEffect(() => {
     async function fetchRanking() {
-      const { data, error } = await supabase
-        .from("orders")
-        .select("seller_name, quantity")
-        .eq("campaign_id", campaignId)
-        .eq("status", "paid")
-        .not("seller_name", "is", null);
-
-      if (error) { setLoading(false); return; }
-
-      const grouped = data.reduce((acc: Record<string, number>, curr) => {
-        const name = curr.seller_name?.trim();
-        if (name) { acc[name] = (acc[name] || 0) + (curr.quantity || 0); }
-        return acc;
-      }, {});
-
-      const sortedRanking = Object.entries(grouped)
-        .map(([seller_name, total_sales]) => ({ seller_name, total_sales }))
-        .sort((a, b) => b.total_sales - a.total_sales)
+      const { data, error } = await supabase.rpc("get_seller_ranking", { p_campaign_id: campaignId });
+      if (error || !data) { setLoading(false); return; }
+      const sortedRanking = (data as { seller_name: string; total_sales: number }[])
+        .map((r) => ({ seller_name: r.seller_name, total_sales: Number(r.total_sales) }))
         .slice(0, 5);
-
       setRanking(sortedRanking);
       setLoading(false);
     }
@@ -41,6 +26,7 @@ export function SellerRanking({ campaignId }: { campaignId: string }) {
     const channel = supabase.channel(`ranking-${campaignId}`).on("postgres_changes", { event: "*", schema: "public", table: "orders", filter: `campaign_id=eq.${campaignId}` }, () => fetchRanking()).subscribe();
     return () => { supabase.removeChannel(channel); };
   }, [campaignId]);
+
 
   if (loading || ranking.length === 0) return null;
 

@@ -145,20 +145,16 @@ function RankingPage() {
         <button
           onClick={reveal}
           disabled={!topSeller}
-          className="group relative rounded-2xl p-[3px] disabled:opacity-50 disabled:cursor-not-allowed"
-          style={{
-            background: "conic-gradient(from 0deg, #FFD700, #FF6B6B, #4ECDC4, #A78BFA, #FFD700)",
-            animation: "spin 4s linear infinite",
-          }}
+          className="animated-border disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          <span className="flex items-center gap-3 rounded-2xl bg-gradient-to-br from-primary to-primary-glow px-8 py-4 text-lg font-black text-white shadow-premium transition group-hover:scale-105">
-            <Trophy className="h-6 w-6 text-yellow-300 animate-pulse" />
+          <span className="slow-pulse flex items-center gap-3 rounded-[0.85rem] bg-gradient-to-br from-primary to-primary-glow px-8 py-4 text-lg font-black text-white">
+            <Trophy className="h-6 w-6 text-yellow-300" />
             Melhor Vendedor
-            <Sparkles className="h-5 w-5 text-yellow-300 animate-pulse" />
+            <Sparkles className="h-5 w-5 text-yellow-300" />
           </span>
         </button>
       </div>
-      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+
 
       {loading ? (
         <p className="text-muted-foreground text-sm">Carregando ranking...</p>
@@ -201,26 +197,18 @@ function RankingPage() {
 
       <Dialog open={showModal} onOpenChange={setShowModal}>
         <DialogContent className="max-w-lg p-0 border-0 bg-transparent shadow-none">
-          <div
-            className="rounded-3xl p-[4px]"
-            style={{
-              background: "conic-gradient(from 0deg, #FFD700, #FF6B6B, #4ECDC4, #A78BFA, #FFD700)",
-              animation: "spin 3s linear infinite",
-            }}
-          >
+          <div className="animated-border rounded-3xl">
             <motion.div
               initial={{ scale: 0.7, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               transition={{ type: "spring", damping: 14 }}
-              className="rounded-3xl bg-gradient-to-br from-primary via-primary to-primary-glow p-8 text-center text-white"
+              className="rounded-[1.35rem] bg-gradient-to-br from-primary via-primary to-primary-glow p-8 text-center text-white"
             >
-              <motion.div
-                animate={{ rotate: [0, -10, 10, -10, 10, 0], scale: [1, 1.1, 1] }}
-                transition={{ duration: 1.2, repeat: Infinity, repeatDelay: 0.5 }}
-                className="mx-auto mb-4 inline-flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-yellow-300 to-orange-500 shadow-2xl"
-              >
+
+              <div className="mx-auto mb-4 inline-flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-yellow-300 to-orange-500 shadow-2xl">
                 <Crown className="h-10 w-10 text-white" />
-              </motion.div>
+              </div>
+
 
               <h2 className="text-3xl font-black tracking-tight">🎉 PARABÉNS! 🎉</h2>
               <p className="mt-2 text-sm uppercase tracking-widest text-white/70">Melhor vendedor da campanha</p>

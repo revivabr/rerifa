@@ -167,23 +167,22 @@ function RaffleDraw() {
           </p>
         </motion.div>
 
-        {/* Botão de iniciar — chamativo, com borda animada */}
+        {/* Botão de iniciar — borda animada, conteúdo com pulso lento */}
         {!winner && (
           <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="flex justify-center">
-            <div className="relative group">
-              <span className="absolute -inset-1 rounded-2xl bg-gradient-to-r from-gold via-gold-glow to-gold opacity-80 blur-md animate-pulse" />
-              <span className="absolute -inset-0.5 rounded-2xl bg-gradient-to-r from-success via-gold-glow to-success animate-[spin_3s_linear_infinite]" style={{ backgroundSize: "200% 200%" }} />
-              <Button
-                onClick={startDraw}
-                disabled={isDrawing || soldNumbers.length === 0}
-                className="relative h-16 md:h-20 px-10 md:px-14 rounded-2xl bg-success hover:bg-success/90 text-white text-lg md:text-2xl font-black gap-3 shadow-2xl border-2 border-white/20 disabled:opacity-70"
-              >
+            <button
+              onClick={startDraw}
+              disabled={isDrawing || soldNumbers.length === 0}
+              className="animated-border disabled:opacity-60 disabled:cursor-not-allowed"
+            >
+              <span className="slow-pulse flex items-center gap-3 rounded-[0.85rem] bg-success px-10 md:px-14 h-16 md:h-20 text-white text-lg md:text-2xl font-black">
                 <Play className="h-6 w-6 md:h-7 md:w-7 fill-current" />
                 {isDrawing ? "Sorteando..." : "Iniciar o Sorteio"}
-              </Button>
-            </div>
+              </span>
+            </button>
           </motion.div>
         )}
+
 
         {/* Número em destaque durante o sorteio */}
         {isDrawing && highlight !== null && (

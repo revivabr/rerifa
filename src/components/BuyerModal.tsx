@@ -72,7 +72,7 @@ export function BuyerModal({
               Ao continuar, você concorda com o uso de seus dados para fins de processamento da rifa e comunicação oficial.
             </span>
           </label>
-          <Button type="submit" disabled={!canSubmit} className="h-14 w-full rounded-2xl bg-primary text-sm font-bold shadow-premium transition-all duration-500 hover:bg-primary/90" size="lg">
+          <Button type="submit" disabled={!canSubmit} className="h-14 w-full rounded-2xl bg-primary text-white text-sm font-black shadow-premium transition-all duration-500 hover:bg-primary/90" size="lg">
             {submitting ? "Gerando PIX…" : "Gerar PIX"}
           </Button>
         </form>

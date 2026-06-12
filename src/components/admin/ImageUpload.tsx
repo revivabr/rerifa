@@ -33,8 +33,8 @@ export function ImageUpload({ value, onChange, label, bucket = "banners-reviva",
 
       if (uploadError) throw uploadError;
 
-      const { data } = supabase.storage.from(bucket).getPublicUrl(filePath);
-      onChange(data.publicUrl);
+      const { data } = await supabase.storage.from(bucket).createSignedUrl(filePath, 31536000); // 1 year expiry
+      onChange(data?.signedUrl || "");
       toast.success("Imagem enviada com sucesso!");
     } catch (error: any) {
       toast.error("Erro no upload: " + error.message);

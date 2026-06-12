@@ -44,7 +44,21 @@ function CampaignPage() {
       setLoading(true);
       const { data: c } = await supabase.from("campaigns").select("*").eq("slug", slug).maybeSingle();
       if (!c) { setLoading(false); return; }
-      setCampaign(c as Campaign);
+      
+      let campaignData = c as Campaign;
+      
+      // Handle banner_url to ensure it's accessible (using signed URL if needed)
+      if (campaignData.banner_url && campaignData.banner_url.includes('/storage/v1/object/public/')) {
+        const path = campaignData.banner_url.split('/public/')[1].split('/').slice(1).join('/');
+        const bucket = campaignData.banner_url.split('/public/')[1].split('/')[0];
+        const { data: signedData } = await supabase.storage.from(bucket).createSignedUrl(path, 3600);
+        if (signedData) {
+          campaignData = { ...campaignData, banner_url: signedData.signedUrl };
+        }
+      }
+      
+      setCampaign(campaignData);
+      
       const { data: nums } = await supabase.from("raffle_numbers").select("number,status,reserved_until").eq("campaign_id", c.id).order("number");
       setNumbers((nums ?? []).map(n => ({
         ...n,
@@ -52,8 +66,21 @@ function CampaignPage() {
           ? "available" 
           : n.status
       })) as RaffleNumber[]);
+
       const { data: pz } = await supabase.from("campaign_prizes").select("*").eq("campaign_id", c.id).order("position");
-      setPrizes((pz ?? []) as Prize[]);
+      
+      // Handle prize images as well
+      const prizesWithSignedUrls = await Promise.all((pz ?? []).map(async (p) => {
+        if (p.image_url && p.image_url.includes('/storage/v1/object/public/')) {
+          const path = p.image_url.split('/public/')[1].split('/').slice(1).join('/');
+          const bucket = p.image_url.split('/public/')[1].split('/')[0];
+          const { data: signedData } = await supabase.storage.from(bucket).createSignedUrl(path, 3600);
+          if (signedData) return { ...p, image_url: signedData.signedUrl };
+        }
+        return p;
+      }));
+      
+      setPrizes(prizesWithSignedUrls as Prize[]);
       setLoading(false);
 
       channel = supabase.channel(`raffle-${c.id}`);

@@ -30,7 +30,21 @@ function HomePage() {
         .order("created_at", { ascending: false })
         .limit(1)
         .maybeSingle();
-      setActiveCampaign(data as Campaign);
+      
+      if (data) {
+        let campaignData = data as Campaign;
+        // Handle banner_url with signed URL as fallback
+        if (campaignData.banner_url && campaignData.banner_url.includes('/storage/v1/object/public/')) {
+          const path = campaignData.banner_url.split('/public/')[1].split('/').slice(1).join('/');
+          const bucket = campaignData.banner_url.split('/public/')[1].split('/')[0];
+          const { data: signedData } = await supabase.storage.from(bucket).createSignedUrl(path, 3600);
+          if (signedData) {
+            campaignData = { ...campaignData, banner_url: signedData.signedUrl };
+          }
+        }
+        setActiveCampaign(campaignData);
+      }
+      
       setLoading(false);
     })();
   }, []);

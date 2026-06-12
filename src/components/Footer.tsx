@@ -56,23 +56,26 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-20 flex flex-col items-center gap-6 border-t border-white/5 pt-10 text-[11px] font-medium text-white/40">
-          <div className="flex flex-col items-center gap-2 w-full">
-            <div className="flex flex-col md:flex-row items-center justify-between gap-4 w-full">
-              <p>© {new Date().getFullYear()} Associação Reviva Brasil. Todos os direitos reservados.</p>
-              <div className="flex gap-4">
-                <span className="h-5 w-12 rounded bg-white/10 p-1 flex items-center justify-center">
-                  <img src="https://logodownload.org/wp-content/uploads/2019/09/mercado-pago-logo.png" alt="Mercado Pago" className="h-full w-full object-contain brightness-0 invert opacity-60" />
-                </span>
-              </div>
+        <div className="mt-20 flex flex-col items-center gap-6 border-t border-white/5 pt-10 text-sm font-medium text-white/40">
+          <div className="flex flex-col items-center gap-3 w-full">
+            <div className="flex flex-col md:flex-row items-center justify-center gap-3 w-full flex-wrap">
+              <p>Sorteios auditados por IA na plataforma. Ambiente 100% seguro, pagamento via API do Mercado Pago.</p>
             </div>
-            <p className="text-center">Sorteios auditados por IA na plataforma. Ambiente 100% seguro, pagamento via API do Mercado Pago.</p>
-            <p className="text-center">
-              Feito com ❤️ por{" "}
-              <a href="https://levelupconsultor.com.br" target="_blank" rel="noopener noreferrer" className="underline hover:text-white transition-colors">
-                LevelUP Consultor
-              </a>
-            </p>
+            <div className="flex flex-col md:flex-row items-center justify-center gap-2 md:gap-4 w-full flex-wrap">
+              <p>© {new Date().getFullYear()} Associação Reviva Brasil. Todos os direitos reservados.</p>
+              <span className="hidden md:inline text-white/20">·</span>
+              <p>
+                Feito com ❤️ por{" "}
+                <a href="https://levelupconsultor.com.br" target="_blank" rel="noopener noreferrer" className="underline hover:text-white transition-colors">
+                  LevelUP Consultor
+                </a>
+              </p>
+            </div>
+            <div className="flex gap-4">
+              <span className="h-6 w-14 rounded bg-white/10 p-1 flex items-center justify-center">
+                <img src="https://logodownload.org/wp-content/uploads/2019/09/mercado-pago-logo.png" alt="Mercado Pago" className="h-full w-full object-contain brightness-0 invert opacity-60" />
+              </span>
+            </div>
           </div>
         </div>
       </div>

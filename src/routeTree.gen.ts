@@ -16,6 +16,7 @@ import { Route as CheckoutOrderIdRouteImport } from './routes/checkout.$orderId'
 import { Route as CampanhaSlugRouteImport } from './routes/campanha.$slug'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
 import { Route as AdminDashboardRouteImport } from './routes/admin.dashboard'
+import { Route as AdminDrawIndexRouteImport } from './routes/admin.draw.index'
 import { Route as AdminCampaignsIndexRouteImport } from './routes/admin.campaigns.index'
 import { Route as ApiWebhooksMercadopagoRouteImport } from './routes/api.webhooks.mercadopago'
 import { Route as AdminDrawIdRouteImport } from './routes/admin.draw.$id'
@@ -57,6 +58,11 @@ const AdminDashboardRoute = AdminDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminDrawIndexRoute = AdminDrawIndexRouteImport.update({
+  id: '/draw/',
+  path: '/draw/',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminCampaignsIndexRoute = AdminCampaignsIndexRouteImport.update({
   id: '/campaigns/',
   path: '/campaigns/',
@@ -96,6 +102,7 @@ export interface FileRoutesByFullPath {
   '/admin/draw/$id': typeof AdminDrawIdRoute
   '/api/webhooks/mercadopago': typeof ApiWebhooksMercadopagoRoute
   '/admin/campaigns/': typeof AdminCampaignsIndexRoute
+  '/admin/draw/': typeof AdminDrawIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -110,6 +117,7 @@ export interface FileRoutesByTo {
   '/admin/draw/$id': typeof AdminDrawIdRoute
   '/api/webhooks/mercadopago': typeof ApiWebhooksMercadopagoRoute
   '/admin/campaigns': typeof AdminCampaignsIndexRoute
+  '/admin/draw': typeof AdminDrawIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -125,6 +133,7 @@ export interface FileRoutesById {
   '/admin/draw/$id': typeof AdminDrawIdRoute
   '/api/webhooks/mercadopago': typeof ApiWebhooksMercadopagoRoute
   '/admin/campaigns/': typeof AdminCampaignsIndexRoute
+  '/admin/draw/': typeof AdminDrawIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -141,6 +150,7 @@ export interface FileRouteTypes {
     | '/admin/draw/$id'
     | '/api/webhooks/mercadopago'
     | '/admin/campaigns/'
+    | '/admin/draw/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -155,6 +165,7 @@ export interface FileRouteTypes {
     | '/admin/draw/$id'
     | '/api/webhooks/mercadopago'
     | '/admin/campaigns'
+    | '/admin/draw'
   id:
     | '__root__'
     | '/'
@@ -169,6 +180,7 @@ export interface FileRouteTypes {
     | '/admin/draw/$id'
     | '/api/webhooks/mercadopago'
     | '/admin/campaigns/'
+    | '/admin/draw/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -231,6 +243,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminDashboardRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/draw/': {
+      id: '/admin/draw/'
+      path: '/draw'
+      fullPath: '/admin/draw/'
+      preLoaderRoute: typeof AdminDrawIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/campaigns/': {
       id: '/admin/campaigns/'
       path: '/campaigns'
@@ -276,6 +295,7 @@ interface AdminRouteChildren {
   AdminCampaignsNewRoute: typeof AdminCampaignsNewRoute
   AdminDrawIdRoute: typeof AdminDrawIdRoute
   AdminCampaignsIndexRoute: typeof AdminCampaignsIndexRoute
+  AdminDrawIndexRoute: typeof AdminDrawIndexRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
@@ -285,6 +305,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminCampaignsNewRoute: AdminCampaignsNewRoute,
   AdminDrawIdRoute: AdminDrawIdRoute,
   AdminCampaignsIndexRoute: AdminCampaignsIndexRoute,
+  AdminDrawIndexRoute: AdminDrawIndexRoute,
 }
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
@@ -300,3 +321,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

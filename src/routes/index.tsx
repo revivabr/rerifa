@@ -168,18 +168,28 @@ function HomePage() {
                             <h2 className="text-4xl font-black text-primary tracking-tight leading-tight">{activeCampaign.name}</h2>
                             <p className="mt-4 text-slate-600 font-medium leading-relaxed line-clamp-4">{activeCampaign.description}</p>
                             
-                            <div className="mt-8 p-6 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-between">
-                                <div>
-                                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Valor da Cota</span>
-                                    <p className="text-3xl font-black text-primary mt-1">{formatBRL(activeCampaign.number_price)}</p>
+                            <div className="mt-8 p-6 rounded-2xl bg-slate-50 border border-slate-100 flex flex-col gap-5">
+                                <div className="flex items-center justify-between">
+                                    <div>
+                                        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Valor da Cota</span>
+                                        <p className="text-3xl font-black text-primary mt-1">{formatBRL(activeCampaign.number_price)}</p>
+                                    </div>
+                                    <div className="animated-border-gold">
+                                        <Link 
+                                            to="/campanha/$slug" 
+                                            params={{ slug: activeCampaign.slug }} 
+                                            className="slow-pulse flex items-center gap-2 rounded-[0.85rem] bg-gradient-to-br from-gold to-gold-glow px-8 py-4 text-xs font-black uppercase tracking-widest text-white shadow-lg shadow-gold/20 transition-all hover:brightness-110 active:scale-95"
+                                        >
+                                            Participar
+                                            <ArrowRight className="h-4 w-4" />
+                                        </Link>
+                                    </div>
                                 </div>
-                                <Link 
-                                    to="/campanha/$slug" 
-                                    params={{ slug: activeCampaign.slug }} 
-                                    className="rounded-xl bg-gold px-8 py-4 text-xs font-black uppercase tracking-widest text-white shadow-lg shadow-gold/20 transition-all hover:bg-gold-glow active:scale-95"
-                                >
-                                    Participar
-                                </Link>
+                                
+                                <div className="flex items-center gap-3 pt-2 border-t border-slate-100">
+                                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Compartilhe:</span>
+                                    <CompactShareButtons campaign={activeCampaign} copied={copied} setCopied={setCopied} />
+                                </div>
                             </div>
                         </div>
                     </div>

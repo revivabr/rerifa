@@ -1,5 +1,28 @@
 import process from "node:process";
 
+/**
+ * Formata uma data como ISO-8601 com offset de São Paulo (-03:00),
+ * que é o formato exigido pelo Mercado Pago no campo `date_of_expiration`.
+ * Enviar `.toISOString()` (com `Z` em UTC) pode fazer o pagamento nascer
+ * marcado como vencido devido à interpretação de fuso no lado do MP.
+ *
+ * Exemplo de saída: 2026-06-12T15:30:45.000-03:00
+ */
+function formatMpExpiration(date: Date): string {
+  // São Paulo não tem horário de verão desde 2019: offset fixo -03:00
+  const offsetMinutes = -180; // -03:00
+  const local = new Date(date.getTime() + offsetMinutes * 60 * 1000);
+  const pad = (n: number, w = 2) => String(n).padStart(w, "0");
+  const yyyy = local.getUTCFullYear();
+  const mm = pad(local.getUTCMonth() + 1);
+  const dd = pad(local.getUTCDate());
+  const hh = pad(local.getUTCHours());
+  const mi = pad(local.getUTCMinutes());
+  const ss = pad(local.getUTCSeconds());
+  const ms = pad(local.getUTCMilliseconds(), 3);
+  return `${yyyy}-${mm}-${dd}T${hh}:${mi}:${ss}.${ms}-03:00`;
+}
+
 export async function createPixPaymentRecord({
   id,
   amount,
@@ -20,6 +43,13 @@ export async function createPixPaymentRecord({
     throw new Error("Mercado Pago ACCESS_TOKEN não configurado no servidor.");
   }
 
+  // Validade do QR no Mercado Pago: 30 minutos.
+  // A reserva interna do pedido (3 min) é controlada à parte —
+  // quando o pedido expira, o app gera um novo QR via getOrGeneratePix.
+  // Manter a janela do MP folgada evita o erro "negado pela instituição
+  // financeira" causado por QR nascendo já vencido por latência/fuso.
+  const expiration = new Date(Date.now() + 30 * 60 * 1000);
+
   const body = {
     transaction_amount: Number(amount.toFixed(2)),
     description: description.substring(0, 60),
@@ -34,8 +64,7 @@ export async function createPixPaymentRecord({
       first_name: firstName?.trim() || "Comprador",
       last_name: lastName?.trim() || "Silva",
     },
-    // Expira em 3 minutos (ajustado para dar uma margem segura)
-    date_of_expiration: new Date(Date.now() + 3 * 60 * 1000).toISOString(),
+    date_of_expiration: formatMpExpiration(expiration),
   };
   
   console.log("Iniciando requisição direta ao Mercado Pago para o pedido:", id);

@@ -15,8 +15,8 @@ export function Header() {
             />
           </div>
           <div className="flex flex-col">
-            <span className="text-base font-black tracking-tighter text-primary leading-none">REVIVA BRASIL</span>
-            <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary/40">Show de Prêmios</span>
+            <span className="text-base font-black tracking-tighter text-primary leading-none">Rifa Solidária</span>
+            <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary/40">SORTE É SER GENEROSO</span>
           </div>
         </Link>
         

@@ -47,7 +47,10 @@ export const getOrderPublic = createServerFn({ method: "GET" })
       campaign_id: order.campaign_id as string,
       campaign_name: (campaign?.name as string) ?? "",
       campaign_slug: (campaign?.slug as string) ?? "",
+      campaign_banner: (campaign?.banner_url as string | null) ?? null,
+      campaign_number_quantity: (campaign?.number_quantity as number) ?? 1000,
       buyer_name: (buyer?.name as string) ?? "",
+      buyer_whatsapp: (buyer?.whatsapp as string | null) ?? null,
       seller_name: order.seller_name as string | null,
       numbers: (nums ?? []).map((n: { number: number }) => n.number),
     };

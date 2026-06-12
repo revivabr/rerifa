@@ -60,7 +60,7 @@ export function Footer() {
         <div className="mt-20 flex flex-col items-center gap-6 border-t border-white/5 pt-10 text-sm font-medium text-white/40">
           <div className="flex flex-col items-center gap-3 w-full">
             <div className="flex flex-col md:flex-row items-center justify-center gap-3 w-full flex-wrap">
-              <p>Sorteios auditados por IA na plataforma. Ambiente 100% seguro, pagamento via API do Mercado Pago.</p>
+              <p>Sorteios auditados por IA na plataforma. Ambiente 100% seguro, pagamento via API&nbsp;</p>
               <img src={logoMercadoPago.url} alt="Mercado Pago" className="h-4 w-auto opacity-60 brightness-0 invert" />
             </div>
             <div className="flex flex-col md:flex-row items-center justify-center gap-2 md:gap-4 w-full flex-wrap">

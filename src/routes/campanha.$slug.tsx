@@ -158,7 +158,7 @@ function CampaignPage() {
               </div>
               <div className="p-8 md:p-10">
                 <h1 className="text-4xl font-extrabold text-primary md:text-5xl">{campaign.name}</h1>
-                <p className="mt-6 text-lg leading-relaxed text-muted-foreground">{campaign.description}</p>
+                <p className="mt-6 text-lg leading-relaxed text-muted-foreground">Esta Rifa tem como propósito uma causa de amor e transformação: ajudar no pagamento das despesas do poço artesiano e instalação da caixa d’água, garantindo acesso à água potável para crianças atendidas pelos nossos projetos.</p>
                 <div className="mt-8 grid grid-cols-2 gap-4">
                   <StatCard icon={<Gift />} label="Cota" value={formatBRL(campaign.number_price)} />
                   <StatCard icon={<Calendar />} label="Sorteio" value={formatDateBR(campaign.end_date)} />

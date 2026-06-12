@@ -62,12 +62,12 @@ function HomePage() {
             </div>
             
             <h1 className="text-5xl font-black tracking-tight text-primary md:text-7xl lg:text-8xl leading-[0.9]">
-              Sua Sorte <br/>
-              <span className="bg-gradient-to-r from-primary via-primary/80 to-gold bg-clip-text text-transparent italic font-serif">Transforma</span> Vidas.
+              Sorte é poder <br/>
+              <span className="bg-gradient-to-r from-primary via-primary/80 to-gold bg-clip-text text-transparent italic font-serif">Transformar</span>&nbsp;Vidas.
             </h1>
             
             <p className="max-w-xl text-lg font-medium text-slate-600/90 leading-relaxed">
-              Participe de nossas ações entre amigos e ajude a financiar projetos sociais que mudam a realidade de milhares de brasileiros.
+              Participe de nossas ações entre amigos e ajude a financiar projetos sociais que mudam a realidade de centenas de pessoas.
             </p>
 
             <div className="flex flex-wrap gap-4 pt-4">

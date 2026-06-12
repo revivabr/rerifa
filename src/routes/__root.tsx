@@ -101,7 +101,7 @@ function RootComponent() {
         <SetupNotice />
         <Header />
         <main className="flex-1"><Outlet /></main>
-        
+        <Footer />
       </div>
       <Toaster richColors position="top-center" />
     </QueryClientProvider>

@@ -14,7 +14,7 @@ function AdminLayout() {
   const navigate = useNavigate();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const isLogin = pathname === "/admin/login";
-  const isDraw = pathname.startsWith("/admin/draw/");
+  const isDraw = pathname.startsWith("/admin/draw/") || pathname.startsWith("/admin/ranking/");
 
   useEffect(() => {
     // console.log("[AdminLayout] Session state:", { session, isLogin });

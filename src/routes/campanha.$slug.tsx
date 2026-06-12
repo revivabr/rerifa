@@ -94,10 +94,9 @@ function CampaignPage() {
               const idx = next.findIndex(n => n.number === row.number);
               if (idx >= 0 && payload.new) {
                 const newRow = payload.new as any;
-                const isExpired = newRow.status === "reserved" && newRow.reserved_until && new Date(newRow.reserved_until).getTime() < Date.now();
                 next[idx] = { 
                   number: row.number, 
-                  status: isExpired ? "available" : newRow.status 
+                  status: newRow.status 
                 };
               }
               return next;

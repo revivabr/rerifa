@@ -76,7 +76,7 @@ function HomePage() {
           <div className="mt-16 flex flex-col items-center justify-center gap-6 sm:flex-row">
             <a 
               href="#campanhas"
-              className="group relative inline-flex items-center gap-4 rounded-full bg-primary px-12 py-6 text-xs font-bold uppercase tracking-widest text-white transition-all duration-500 hover:bg-primary/90 hover:scale-[1.02] hover:shadow-2xl active:scale-95"
+              className="group relative inline-flex items-center gap-4 rounded-full bg-primary px-12 py-6 text-xs font-black uppercase tracking-widest text-white transition-all duration-500 hover:bg-primary/90 hover:scale-[1.02] hover:shadow-2xl active:scale-95"
             >
               Ver Campanhas Ativas
               <ArrowRight className="h-4 w-4 transition-transform duration-500 group-hover:translate-x-1.5" />

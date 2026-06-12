@@ -14,10 +14,7 @@ type Props = {
 export function ShareCampaign({ campaignName, slug, price, endDate, shortDescription }: Props) {
   const [copied, setCopied] = useState(false);
 
-  const url =
-    typeof window !== "undefined"
-      ? `${window.location.origin}/campanha/${slug}`
-      : `https://rifa.revivabrasil.com.br/campanha/${slug}`;
+  const url = `https://rifa.revivabrasil.com.br/campanha/${slug}`;
 
   const message =
     `🎟️ *Rifa Solidaria - Sistema de Água Reviva*\n\n` +

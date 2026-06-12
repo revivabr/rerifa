@@ -35,6 +35,7 @@ function AdminLayout() {
     { to: "/admin/dashboard", icon: LayoutDashboard, label: "Dashboard" },
     { to: "/admin/campaigns", icon: Ticket, label: "Campanhas" },
     { to: "/admin/draw", icon: Trophy, label: "Sorteador" },
+    { to: "/admin/ranking", icon: Crown, label: "Ranking" },
   ];
 
   return (

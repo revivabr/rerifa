@@ -399,16 +399,35 @@ function CampaignAdmin() {
                   <td className="p-3"><OrderStatus status={o.status} /></td>
                   <td className="p-3 text-xs text-muted-foreground">{formatDateBR(o.created_at)}</td>
                   <td className="p-3 text-right">
-                    {o.status === "pending" && (
-                      <div className="flex justify-end gap-1">
-                        <Button size="sm" variant="outline" className="h-8 px-2" onClick={() => confirmPayment(o.id)} title="Confirmar pagamento">
-                          <Check className="h-4 w-4 text-success" />
-                        </Button>
-                        <Button size="sm" variant="outline" className="h-8 px-2" onClick={() => cancelOrder(o.id)} title="Cancelar">
-                          <X className="h-4 w-4 text-destructive" />
-                        </Button>
-                      </div>
-                    )}
+                    <div className="flex justify-end gap-1">
+                      {o.status === "paid" && o.buyer && (
+                        <ReceiptDownloadButton
+                          data={{
+                            orderId: o.id,
+                            campaignName: c.name,
+                            bannerUrl: c.banner_url,
+                            buyerName: o.buyer.name,
+                            buyerWhatsapp: o.buyer.whatsapp,
+                            numbers: nums,
+                            numberTotal: c.number_quantity,
+                            amount: Number(o.amount),
+                            paidAt: o.paid_at,
+                          }}
+                          iconOnly
+                          title="Baixar 2ª via do comprovante"
+                        />
+                      )}
+                      {o.status === "pending" && (
+                        <>
+                          <Button size="sm" variant="outline" className="h-8 px-2" onClick={() => confirmPayment(o.id)} title="Confirmar pagamento">
+                            <Check className="h-4 w-4 text-success" />
+                          </Button>
+                          <Button size="sm" variant="outline" className="h-8 px-2" onClick={() => cancelOrder(o.id)} title="Cancelar">
+                            <X className="h-4 w-4 text-destructive" />
+                          </Button>
+                        </>
+                      )}
+                    </div>
                   </td>
                 </tr>
                 );

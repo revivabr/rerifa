@@ -46,7 +46,7 @@ function CampaignAdmin() {
     setStats({ sold: sold ?? 0, reserved: reserved ?? 0, available: available ?? 0, raised, buyers });
 
     const { data: ords } = await supabase.from("orders")
-      .select("id,status,amount,quantity,seller_name,created_at,buyer:buyers(name,whatsapp,email),order_numbers(number)")
+      .select("id,status,amount,quantity,seller_name,created_at,paid_at,buyer:buyers(name,whatsapp,email),order_numbers(number)")
       .eq("campaign_id", id).order("created_at", { ascending: false });
     const allOrders = (ords ?? []) as unknown as OrderRow[];
     setOrders(allOrders.slice(0, 50)); // Display only 50 latest

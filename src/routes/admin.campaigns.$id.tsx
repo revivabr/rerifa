@@ -12,13 +12,14 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { ImageUpload } from "@/components/admin/ImageUpload";
 import { toast } from "sonner";
+import { ReceiptDownloadButton } from "@/components/ReceiptDownloadButton";
 
 export const Route = createFileRoute("/admin/campaigns/$id")({
   component: CampaignAdmin,
 });
 
 type Campaign = { id: string; name: string; slug: string; status: string; banner_url: string | null; number_quantity: number; number_price: number; goal_amount: number | null; start_date: string; end_date: string; description: string | null; short_description: string | null; prize_description: string | null; prize_image_1: string | null; prize_image_2: string | null; regulation_text: string | null; regulation_url: string | null; pix_key: string | null; drive_folder_url: string | null };
-type OrderRow = { id: string; status: string; amount: number; quantity: number; seller_name: string | null; created_at: string; buyer: { name: string; whatsapp: string; email: string | null } | null; order_numbers: { number: number }[] };
+type OrderRow = { id: string; status: string; amount: number; quantity: number; seller_name: string | null; created_at: string; paid_at: string | null; buyer: { name: string; whatsapp: string; email: string | null } | null; order_numbers: { number: number }[] };
 type SellerRank = { name: string; sales: number; total_amount: number };
 
 function CampaignAdmin() {
@@ -46,7 +47,7 @@ function CampaignAdmin() {
     setStats({ sold: sold ?? 0, reserved: reserved ?? 0, available: available ?? 0, raised, buyers });
 
     const { data: ords } = await supabase.from("orders")
-      .select("id,status,amount,quantity,seller_name,created_at,buyer:buyers(name,whatsapp,email),order_numbers(number)")
+      .select("id,status,amount,quantity,seller_name,created_at,paid_at,buyer:buyers(name,whatsapp,email),order_numbers(number)")
       .eq("campaign_id", id).order("created_at", { ascending: false });
     const allOrders = (ords ?? []) as unknown as OrderRow[];
     setOrders(allOrders.slice(0, 50)); // Display only 50 latest
@@ -398,16 +399,35 @@ function CampaignAdmin() {
                   <td className="p-3"><OrderStatus status={o.status} /></td>
                   <td className="p-3 text-xs text-muted-foreground">{formatDateBR(o.created_at)}</td>
                   <td className="p-3 text-right">
-                    {o.status === "pending" && (
-                      <div className="flex justify-end gap-1">
-                        <Button size="sm" variant="outline" className="h-8 px-2" onClick={() => confirmPayment(o.id)} title="Confirmar pagamento">
-                          <Check className="h-4 w-4 text-success" />
-                        </Button>
-                        <Button size="sm" variant="outline" className="h-8 px-2" onClick={() => cancelOrder(o.id)} title="Cancelar">
-                          <X className="h-4 w-4 text-destructive" />
-                        </Button>
-                      </div>
-                    )}
+                    <div className="flex justify-end gap-1">
+                      {o.status === "paid" && o.buyer && (
+                        <ReceiptDownloadButton
+                          data={{
+                            orderId: o.id,
+                            campaignName: c.name,
+                            bannerUrl: c.banner_url,
+                            buyerName: o.buyer.name,
+                            buyerWhatsapp: o.buyer.whatsapp,
+                            numbers: nums,
+                            numberTotal: c.number_quantity,
+                            amount: Number(o.amount),
+                            paidAt: o.paid_at,
+                          }}
+                          iconOnly
+                          title="Baixar 2ª via do comprovante"
+                        />
+                      )}
+                      {o.status === "pending" && (
+                        <>
+                          <Button size="sm" variant="outline" className="h-8 px-2" onClick={() => confirmPayment(o.id)} title="Confirmar pagamento">
+                            <Check className="h-4 w-4 text-success" />
+                          </Button>
+                          <Button size="sm" variant="outline" className="h-8 px-2" onClick={() => cancelOrder(o.id)} title="Cancelar">
+                            <X className="h-4 w-4 text-destructive" />
+                          </Button>
+                        </>
+                      )}
+                    </div>
                   </td>
                 </tr>
                 );

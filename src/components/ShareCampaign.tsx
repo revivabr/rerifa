@@ -40,7 +40,7 @@ export function ShareCampaign({ campaignName, slug, price, endDate, shortDescrip
             shortDescription={shortDescription}
             promotions={promotions}
             bannerUrl={bannerUrl}
-            showDeviceShareLink
+            size="compact"
           />
         </div>
 

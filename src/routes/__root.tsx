@@ -64,8 +64,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:type", content: "website" },
       { name: "twitter:title", content: "Reviva Brasil — Rifa Solidária" },
       { name: "twitter:description", content: "Participe das rifas solidárias da Associação Reviva Brasil e ajude nossos projetos sociais." },
-      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/IcY9jDHnjbOIMxxCXj63oYoUfo13/social-images/social-1781186933088-banner1.webp" },
-      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/IcY9jDHnjbOIMxxCXj63oYoUfo13/social-images/social-1781186933088-banner1.webp" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [

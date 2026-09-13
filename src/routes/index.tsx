@@ -9,6 +9,16 @@ import type { PromotionTier } from "@/lib/promotions";
 import { ShareButtons } from "@/components/ShareButtons";
 
 export const Route = createFileRoute("/")({
+  head: () => ({
+    meta: [
+      { title: "Rifa Solidária | Associação Reviva Brasil" },
+      { name: "description", content: "Participe das campanhas solidárias da Associação Reviva Brasil e ajude a transformar vidas." },
+      { property: "og:title", content: "Rifa Solidária | Associação Reviva Brasil" },
+      { property: "og:description", content: "Participe das campanhas solidárias da Associação Reviva Brasil e ajude a transformar vidas." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
   component: HomePage,
 });
 
@@ -176,6 +186,24 @@ function HomePage() {
                             </div>
                              <h2 className="text-2xl font-black text-primary sm:text-4xl leading-tight">{activeCampaign.name}</h2>
                             <p className="mt-4 text-slate-600 font-medium leading-relaxed line-clamp-4">{activeCampaign.description}</p>
+
+                             {promotions.length > 0 && (
+                                 <div className="mt-6" aria-label="Promoções da campanha">
+                                     <p className="mb-2 text-[10px] font-black uppercase tracking-widest text-slate-400">Ofertas por quantidade</p>
+                                     <div className="flex flex-wrap gap-2">
+                                         {promotions.map((promotion) => {
+                                             const regularTotal = Number(activeCampaign.number_price) * promotion.quantity;
+                                             const savings = regularTotal - Number(promotion.promotional_price);
+                                             return (
+                                                 <div key={promotion.id ?? promotion.quantity} className="rounded-xl border border-gold/30 bg-gold/10 px-3 py-2 text-primary">
+                                                     <p className="text-sm font-black">{promotion.quantity} números por {formatBRL(promotion.promotional_price)}</p>
+                                                     {savings > 0 && <p className="mt-0.5 text-[10px] font-bold text-success">Economize {formatBRL(savings)}</p>}
+                                                 </div>
+                                             );
+                                         })}
+                                     </div>
+                                 </div>
+                             )}
                             
                              <div className="mt-8 flex flex-col gap-5 rounded-2xl border border-slate-100 bg-slate-50 p-4 sm:p-6">
                                  <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -195,7 +223,7 @@ function HomePage() {
                                     </div>
                                 </div>
                                 
-                                <div className="flex items-center gap-3 pt-2 border-t border-slate-100">
+                                <div className="flex flex-col items-start gap-3 pt-2 border-t border-slate-100 sm:flex-row sm:items-center">
                                     <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Compartilhe:</span>
                                     <ShareButtons
                                         campaignName={activeCampaign.name}

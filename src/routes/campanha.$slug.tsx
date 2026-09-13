@@ -31,13 +31,7 @@ export const Route = createFileRoute("/campanha/$slug")({
       .maybeSingle();
     if (!c) return null;
 
-    let bannerUrl = c.banner_url as string | null;
-    if (bannerUrl && bannerUrl.includes("/storage/v1/object/public/")) {
-      const path = bannerUrl.split("/public/")[1].split("/").slice(1).join("/");
-      const bucket = bannerUrl.split("/public/")[1].split("/")[0];
-      const { data: signedData } = await supabase.storage.from(bucket).createSignedUrl(path, 60 * 60 * 24);
-      if (signedData) bannerUrl = signedData.signedUrl;
-    }
+    const bannerUrl = c.banner_url as string | null;
 
     const { data: promotionRows } = await supabase
       .from("campaign_promotions")

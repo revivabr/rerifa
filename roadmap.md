@@ -6,4 +6,4 @@
 - [x] Adicionar cadastro e edição de faixas promocionais
 - [x] Exibir ofertas e preço promocional na página pública
 - [x] Exibir desconto no checkout
-- [ ] Validar regra, interface e segurança
+- [x] Validar regra, interface e segurança

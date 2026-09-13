@@ -31,12 +31,17 @@ function CheckoutPage() {
   const [loadingPix, setLoadingPix] = useState(true);
   const [pixError, setPixError] = useState<string | null>(null);
   const [realPixData, setRealPixData] = useState<{ qr_code: string; qr_code_base64: string } | null>(null);
+  const [expirationHandled, setExpirationHandled] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
     const fetchOrder = async () => {
       const o = await getOrderPublic({ data: { orderId } });
       if (cancelled || !o) return;
+      if (o.expires_at) {
+        const seconds = Math.max(0, Math.floor((new Date(o.expires_at).getTime() - Date.now()) / 1000));
+        setRemaining(seconds);
+      }
       setOrder({
         id: o.id, campaign_id: o.campaign_id, status: o.status,
         amount: o.amount, list_amount: o.list_amount, promotion_applied: o.promotion_applied, quantity: o.quantity,
@@ -64,6 +69,9 @@ function CheckoutPage() {
         const result = await getOrGeneratePix({ data: { orderId } });
         if (result.qr_code && result.qr_code_base64) {
           setRealPixData({ qr_code: result.qr_code, qr_code_base64: result.qr_code_base64 });
+          if (result.expires_at) {
+            setOrder((current) => current ? { ...current, expires_at: result.expires_at } : current);
+          }
         }
         setLoadingPix(false);
       } catch (err: any) {
@@ -85,6 +93,23 @@ function CheckoutPage() {
     const i = setInterval(tick, 1000);
     return () => clearInterval(i);
   }, [order?.expires_at]);
+
+  useEffect(() => {
+    if (!order?.expires_at || order.status !== "pending" || expirationHandled) return;
+    if (new Date(order.expires_at).getTime() > Date.now()) return;
+
+    setExpirationHandled(true);
+    cancelOrder({ data: { orderId } })
+      .then((result) => {
+        if (result.ok) {
+          setOrder((current) => current ? { ...current, status: "cancelled" } : current);
+          setRealPixData(null);
+        }
+      })
+      .catch(() => {
+        setExpirationHandled(false);
+      });
+  }, [expirationHandled, order?.expires_at, order?.status, orderId, remaining]);
 
   const mm = String(Math.floor(remaining / 60)).padStart(2, "0");
   const ss = String(remaining % 60).padStart(2, "0");
@@ -115,12 +140,14 @@ function CheckoutPage() {
   if (!order) return <div className="flex min-h-[50vh] items-center justify-center"><Loader2 className="h-6 w-6 animate-spin text-primary/30" /></div>;
 
 
-  if (remaining === 0 && order.status === "pending") {
+  const reservationExpired = Boolean(order.expires_at && new Date(order.expires_at).getTime() <= Date.now());
+
+  if ((reservationExpired && order.status === "pending") || order.status === "cancelled") {
     return (
       <div className="mx-auto max-w-md px-6 py-20 text-center">
         <AlertCircle className="mx-auto h-12 w-12 text-destructive opacity-50" />
         <h1 className="mt-6 text-2xl font-bold text-primary">Reserva expirada</h1>
-        <p className="mt-2 text-muted-foreground text-sm">O tempo para pagamento acabou e os números foram liberados.</p>
+        <p className="mt-2 text-muted-foreground text-sm">Os 90 segundos terminaram. O PIX foi descartado e os números já estão disponíveis novamente.</p>
         <Link to="/campanha/$slug" params={{ slug: campaignSlug }} className="mt-8 inline-flex h-12 items-center rounded-xl bg-primary px-8 font-black text-white shadow-premium transition-all hover:bg-primary/90 active:scale-95">
           Tentar novamente
         </Link>

@@ -627,6 +627,7 @@ export type Database = {
             }
             Returns: Json
           }
+      start_pix_payment_window: { Args: { p_order_id: string }; Returns: Json }
     }
     Enums: {
       [_ in never]: never

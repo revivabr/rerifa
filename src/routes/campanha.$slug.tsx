@@ -2,8 +2,8 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { formatBRL, padNumber, formatCalendarDateBR } from "@/lib/format";
-import { ShieldCheck, FileText, Calendar, Gift, Info, Sparkles, ArrowRight, Ticket, Star } from "lucide-react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { ShieldCheck, FileText, Calendar, Gift, Info, Sparkles, ArrowRight, Ticket, Star, X } from "lucide-react";
+import { Dialog, DialogContent, DialogClose, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import ReactMarkdown from "react-markdown";
 import { BuyerModal } from "@/components/BuyerModal";
@@ -119,6 +119,7 @@ function CampaignPage() {
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [showBanner, setShowBanner] = useState(false);
 
   useEffect(() => {
     let channel: ReturnType<typeof supabase.channel> | null = null;
@@ -237,10 +238,33 @@ function CampaignPage() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 py-8 md:py-16 space-y-8 md:space-y-10">
         {/* 1) Banner 16:9 — largura total */}
         <div className="rounded-[2rem] md:rounded-[2.5rem] border border-black/[0.05] bg-white p-2 md:p-3 shadow-2xl">
-          <div className="relative aspect-video overflow-hidden rounded-[1.5rem] md:rounded-[2rem] bg-stone-100">
-            <img src={campaign.banner_url || "/placeholder.svg"} alt={campaign.name} className="h-full w-full object-cover" />
-          </div>
+          <button
+            type="button"
+            onClick={() => setShowBanner(true)}
+            className="relative block aspect-video w-full overflow-hidden rounded-[1.5rem] bg-stone-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 md:rounded-[2rem]"
+            aria-label="Ampliar imagem da campanha"
+          >
+            <img src={campaign.banner_url || "/placeholder.svg"} alt={campaign.name} className="h-full w-full object-contain" />
+          </button>
         </div>
+
+        <Dialog open={showBanner} onOpenChange={setShowBanner}>
+          <DialogContent
+            showCloseButton={false}
+            className="w-[96vw] max-w-5xl border-none bg-transparent p-0 shadow-none sm:rounded-2xl"
+          >
+            <DialogTitle className="sr-only">{campaign.name}</DialogTitle>
+            <img
+              src={campaign.banner_url || "/placeholder.svg"}
+              alt={campaign.name}
+              className="max-h-[85vh] w-full rounded-2xl object-contain"
+            />
+            <DialogClose className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-full bg-black/60 text-white transition-colors hover:bg-black/80 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/60">
+              <X className="h-5 w-5" />
+              <span className="sr-only">Fechar</span>
+            </DialogClose>
+          </DialogContent>
+        </Dialog>
 
         {/* 2) Dois cards lado a lado: Descrição da campanha | Descrição do prêmio */}
         <div className="grid gap-6 md:gap-8 md:grid-cols-2">

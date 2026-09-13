@@ -141,6 +141,44 @@ export type Database = {
           },
         ]
       }
+      campaign_promotions: {
+        Row: {
+          active: boolean
+          campaign_id: string
+          created_at: string
+          id: string
+          promotional_price: number
+          quantity: number
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          campaign_id: string
+          created_at?: string
+          id?: string
+          promotional_price: number
+          quantity: number
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          campaign_id?: string
+          created_at?: string
+          id?: string
+          promotional_price?: number
+          quantity?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "campaign_promotions_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       campaigns: {
         Row: {
           authorization_url: string | null
@@ -358,9 +396,11 @@ export type Database = {
           amount: number
           buyer_id: string | null
           campaign_id: string | null
+          campaign_promotion_id: string | null
           created_at: string | null
           expires_at: string | null
           id: string
+          list_amount: number
           paid_at: string | null
           payment_provider: string | null
           payment_provider_id: string | null
@@ -375,9 +415,11 @@ export type Database = {
           amount: number
           buyer_id?: string | null
           campaign_id?: string | null
+          campaign_promotion_id?: string | null
           created_at?: string | null
           expires_at?: string | null
           id?: string
+          list_amount: number
           paid_at?: string | null
           payment_provider?: string | null
           payment_provider_id?: string | null
@@ -392,9 +434,11 @@ export type Database = {
           amount?: number
           buyer_id?: string | null
           campaign_id?: string | null
+          campaign_promotion_id?: string | null
           created_at?: string | null
           expires_at?: string | null
           id?: string
+          list_amount?: number
           paid_at?: string | null
           payment_provider?: string | null
           payment_provider_id?: string | null
@@ -418,6 +462,13 @@ export type Database = {
             columns: ["campaign_id"]
             isOneToOne: false
             referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_campaign_promotion_id_fkey"
+            columns: ["campaign_promotion_id"]
+            isOneToOne: false
+            referencedRelation: "campaign_promotions"
             referencedColumns: ["id"]
           },
         ]

@@ -7,13 +7,14 @@ import { Button } from "@/components/ui/button";
 import { formatBRL, formatWhatsapp } from "@/lib/format";
 
 export function BuyerModal({
-  open, onOpenChange, onSubmit, submitting, total, count,
+  open, onOpenChange, onSubmit, submitting, total, count, listTotal,
 }: {
   open: boolean;
   onOpenChange: (v: boolean) => void;
   onSubmit: (data: { name: string; email: string; whatsapp: string; sellerName: string }) => void;
   submitting: boolean;
   total: number;
+  listTotal?: number;
   count: number;
 }) {
   const [name, setName] = useState("");
@@ -30,7 +31,7 @@ export function BuyerModal({
         <DialogHeader className="space-y-2">
           <DialogTitle className="text-2xl font-bold text-primary sm:text-3xl">Seus Dados</DialogTitle>
           <DialogDescription className="text-sm">
-            {count} {count === 1 ? "número" : "números"} · Total <strong className="text-primary">{formatBRL(total)}</strong>
+            {count} {count === 1 ? "número" : "números"} · Total {listTotal && listTotal > total ? <><span className="line-through">{formatBRL(listTotal)}</span> <strong className="text-success">{formatBRL(total)}</strong></> : <strong className="text-primary">{formatBRL(total)}</strong>}
           </DialogDescription>
         </DialogHeader>
         <form

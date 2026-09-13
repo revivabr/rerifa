@@ -6,6 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { ImageUpload } from "@/components/admin/ImageUpload";
+import { PromotionEditor } from "@/components/admin/PromotionEditor";
+import type { PromotionTier } from "@/lib/promotions";
 import { toast } from "sonner";
 import { ArrowLeft, Info } from "lucide-react";
 
@@ -29,11 +31,16 @@ function NewCampaign() {
     goal_amount: "", pix_key: "", regulation_url: "", regulation_text: "", status: "draft", drive_folder_url: "",
   });
   const [loading, setLoading] = useState(false);
+  const [promotions, setPromotions] = useState<PromotionTier[]>([]);
 
   function set<K extends keyof typeof form>(k: K, v: (typeof form)[K]) { setForm(f => ({ ...f, [k]: v })); }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    const quantities = promotions.map(p => p.quantity);
+    const invalidPromotion = promotions.some(p => !Number.isInteger(p.quantity) || p.quantity < 2 || p.promotional_price <= 0 || p.promotional_price >= p.quantity * Number(form.number_price));
+    if (new Set(quantities).size !== quantities.length) { toast.error("Não repita a mesma quantidade nas promoções."); return; }
+    if (invalidPromotion) { toast.error("Confira as promoções: o preço promocional deve ser menor que o valor normal."); return; }
     setLoading(true);
     const qty = Number(form.number_quantity);
     const price = Number(form.number_price);
@@ -59,10 +66,20 @@ function NewCampaign() {
 
       status: form.status,
     }).select().single();
+    if (error) { setLoading(false); toast.error(error.message); return; }
+    const campaignId = (data as { id: string }).id;
+    if (promotions.length > 0) {
+      const { error: promotionError } = await supabase.from("campaign_promotions").insert(promotions.map(p => ({
+        campaign_id: campaignId,
+        quantity: p.quantity,
+        promotional_price: p.promotional_price,
+        active: true,
+      })));
+      if (promotionError) { setLoading(false); toast.error(`Campanha criada, mas não foi possível salvar as promoções: ${promotionError.message}`); return; }
+    }
     setLoading(false);
-    if (error) { toast.error(error.message); return; }
     toast.success("Campanha criada!");
-    navigate({ to: "/admin/campaigns/$id", params: { id: (data as { id: string }).id } });
+    navigate({ to: "/admin/campaigns/$id", params: { id: campaignId } });
   }
 
   return (
@@ -157,6 +174,7 @@ function NewCampaign() {
             </p>
             <p className="mt-1 text-[11px] text-muted-foreground">{form.number_quantity} números × R$ {Number(form.number_price || 0).toFixed(2)}</p>
           </div>
+          <PromotionEditor promotions={promotions} unitPrice={Number(form.number_price)} onChange={setPromotions} />
           <div>
             <Label>Chave PIX</Label>
             <Input value={form.pix_key} onChange={e => set("pix_key", e.target.value)} placeholder="CNPJ ou e-mail" />

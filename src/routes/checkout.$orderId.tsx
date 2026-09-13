@@ -14,7 +14,7 @@ export const Route = createFileRoute("/checkout/$orderId")({
 });
 
 type Order = {
-  id: string; campaign_id: string; status: string; amount: number; quantity: number;
+  id: string; campaign_id: string; status: string; amount: number; list_amount: number; promotion_applied: boolean; quantity: number;
   pix_qr_code: string | null; pix_copy_paste: string | null; expires_at: string | null;
   seller_name: string | null;
 };
@@ -39,7 +39,7 @@ function CheckoutPage() {
       if (cancelled || !o) return;
       setOrder({
         id: o.id, campaign_id: o.campaign_id, status: o.status,
-        amount: o.amount, quantity: o.quantity,
+        amount: o.amount, list_amount: o.list_amount, promotion_applied: o.promotion_applied, quantity: o.quantity,
         pix_qr_code: o.pix_qr_code, pix_copy_paste: o.pix_copy_paste, expires_at: o.expires_at,
         seller_name: o.seller_name,
       });
@@ -76,8 +76,9 @@ function CheckoutPage() {
 
   useEffect(() => {
     if (!order?.expires_at) return;
+    const expiresAt = order.expires_at;
     const tick = () => {
-      const ms = new Date(order.expires_at!).getTime() - Date.now();
+      const ms = new Date(expiresAt).getTime() - Date.now();
       setRemaining(Math.max(0, Math.floor(ms / 1000)));
     };
     tick();
@@ -142,6 +143,9 @@ function CheckoutPage() {
           </button>
           <p className="text-[10px] font-bold uppercase tracking-[0.2em] opacity-60">Checkout Seguro</p>
           <h1 className="mt-2 text-4xl font-black">{formatBRL(order.amount)}</h1>
+          {order.promotion_applied && order.list_amount > order.amount && (
+            <p className="mt-1 text-sm"><span className="line-through opacity-60">{formatBRL(order.list_amount)}</span> <span className="ml-2 font-bold text-gold">Você economizou {formatBRL(order.list_amount - order.amount)}</span></p>
+          )}
           <p className="mt-1 text-sm font-medium opacity-80">{campaignName}</p>
         </div>
 
@@ -190,6 +194,7 @@ function CheckoutPage() {
           <div className="rounded-2xl border border-black/[0.03] bg-white p-6 space-y-3 text-sm">
             <Row label="Comprador" value={buyerName} />
             <Row label="Quantidade" value={order.quantity} />
+            {order.promotion_applied && order.list_amount > order.amount && <Row label="Valor normal" value={<span className="line-through text-muted-foreground">{formatBRL(order.list_amount)}</span>} />}
             <Row label="Total" value={<span className="font-bold text-primary">{formatBRL(order.amount)}</span>} />
           </div>
 

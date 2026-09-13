@@ -25,6 +25,7 @@ import { Route as AdminRankingIdRouteImport } from './routes/admin.ranking.$id'
 import { Route as AdminDrawIdRouteImport } from './routes/admin.draw.$id'
 import { Route as AdminCampaignsNewRouteImport } from './routes/admin.campaigns.new'
 import { Route as AdminCampaignsIdRouteImport } from './routes/admin.campaigns.$id'
+import { Route as ApiPublicCampaignImageSlugRouteImport } from './routes/api.public.campaign-image.$slug'
 
 const InformacoesRoute = InformacoesRouteImport.update({
   id: '/informacoes',
@@ -106,6 +107,12 @@ const AdminCampaignsIdRoute = AdminCampaignsIdRouteImport.update({
   path: '/campaigns/$id',
   getParentRoute: () => AdminRoute,
 } as any)
+const ApiPublicCampaignImageSlugRoute =
+  ApiPublicCampaignImageSlugRouteImport.update({
+    id: '/api/public/campaign-image/$slug',
+    path: '/api/public/campaign-image/$slug',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -124,6 +131,7 @@ export interface FileRoutesByFullPath {
   '/admin/campaigns/': typeof AdminCampaignsIndexRoute
   '/admin/draw/': typeof AdminDrawIndexRoute
   '/admin/ranking/': typeof AdminRankingIndexRoute
+  '/api/public/campaign-image/$slug': typeof ApiPublicCampaignImageSlugRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -142,6 +150,7 @@ export interface FileRoutesByTo {
   '/admin/campaigns': typeof AdminCampaignsIndexRoute
   '/admin/draw': typeof AdminDrawIndexRoute
   '/admin/ranking': typeof AdminRankingIndexRoute
+  '/api/public/campaign-image/$slug': typeof ApiPublicCampaignImageSlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -161,6 +170,7 @@ export interface FileRoutesById {
   '/admin/campaigns/': typeof AdminCampaignsIndexRoute
   '/admin/draw/': typeof AdminDrawIndexRoute
   '/admin/ranking/': typeof AdminRankingIndexRoute
+  '/api/public/campaign-image/$slug': typeof ApiPublicCampaignImageSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -181,6 +191,7 @@ export interface FileRouteTypes {
     | '/admin/campaigns/'
     | '/admin/draw/'
     | '/admin/ranking/'
+    | '/api/public/campaign-image/$slug'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -199,6 +210,7 @@ export interface FileRouteTypes {
     | '/admin/campaigns'
     | '/admin/draw'
     | '/admin/ranking'
+    | '/api/public/campaign-image/$slug'
   id:
     | '__root__'
     | '/'
@@ -217,6 +229,7 @@ export interface FileRouteTypes {
     | '/admin/campaigns/'
     | '/admin/draw/'
     | '/admin/ranking/'
+    | '/api/public/campaign-image/$slug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -227,6 +240,7 @@ export interface RootRouteChildren {
   CheckoutOrderIdRoute: typeof CheckoutOrderIdRoute
   ConfirmacaoOrderIdRoute: typeof ConfirmacaoOrderIdRoute
   ApiWebhooksMercadopagoRoute: typeof ApiWebhooksMercadopagoRoute
+  ApiPublicCampaignImageSlugRoute: typeof ApiPublicCampaignImageSlugRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -343,6 +357,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminCampaignsIdRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/api/public/campaign-image/$slug': {
+      id: '/api/public/campaign-image/$slug'
+      path: '/api/public/campaign-image/$slug'
+      fullPath: '/api/public/campaign-image/$slug'
+      preLoaderRoute: typeof ApiPublicCampaignImageSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -380,6 +401,7 @@ const rootRouteChildren: RootRouteChildren = {
   CheckoutOrderIdRoute: CheckoutOrderIdRoute,
   ConfirmacaoOrderIdRoute: ConfirmacaoOrderIdRoute,
   ApiWebhooksMercadopagoRoute: ApiWebhooksMercadopagoRoute,
+  ApiPublicCampaignImageSlugRoute: ApiPublicCampaignImageSlugRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

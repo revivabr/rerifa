@@ -13,6 +13,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { ImageUpload } from "@/components/admin/ImageUpload";
 import { toast } from "sonner";
 import { ReceiptDownloadButton } from "@/components/ReceiptDownloadButton";
+import { PromotionEditor } from "@/components/admin/PromotionEditor";
+import type { PromotionTier } from "@/lib/promotions";
 
 export const Route = createFileRoute("/admin/campaigns/$id")({
   component: CampaignAdmin,
@@ -30,17 +32,20 @@ function CampaignAdmin() {
   const [isEditing, setIsEditing] = useState(false);
   const [form, setForm] = useState<Partial<Campaign>>({});
   const [ranking, setRanking] = useState<SellerRank[]>([]);
+  const [promotions, setPromotions] = useState<PromotionTier[]>([]);
 
   async function load() {
     const { data: camp } = await supabase.from("campaigns").select("*").eq("id", id).maybeSingle();
     if (!camp) return;
     setC(camp as Campaign);
     setForm(camp as Campaign);
-    const [{ count: sold }, { count: reserved }, { count: available }] = await Promise.all([
+    const [{ count: sold }, { count: reserved }, { count: available }, { data: promotionRows }] = await Promise.all([
       supabase.from("raffle_numbers").select("*", { head: true, count: "exact" }).eq("campaign_id", id).eq("status", "sold"),
       supabase.from("raffle_numbers").select("*", { head: true, count: "exact" }).eq("campaign_id", id).eq("status", "reserved"),
       supabase.from("raffle_numbers").select("*", { head: true, count: "exact" }).eq("campaign_id", id).eq("status", "available"),
+      supabase.from("campaign_promotions").select("id,quantity,promotional_price,active").eq("campaign_id", id).order("quantity"),
     ]);
+    setPromotions((promotionRows ?? []).map(p => ({ ...p, promotional_price: Number(p.promotional_price) })));
     const { data: paid } = await supabase.from("orders").select("amount,buyer_id").eq("campaign_id", id).eq("status", "paid");
     const raised = (paid ?? []).reduce((s: number, o: { amount: number }) => s + Number(o.amount), 0);
     const buyers = new Set((paid ?? []).map((o: { buyer_id: string }) => o.buyer_id)).size;
@@ -100,6 +105,11 @@ function CampaignAdmin() {
     if (!c) return;
     const newQty = Number(form.number_quantity ?? c.number_quantity);
     const oldQty = c.number_quantity;
+    const quantities = promotions.map(p => p.quantity);
+    const unitPrice = Number(form.number_price ?? c.number_price);
+    const invalidPromotion = promotions.some(p => !Number.isInteger(p.quantity) || p.quantity < 2 || p.promotional_price <= 0 || p.promotional_price >= p.quantity * unitPrice);
+    if (new Set(quantities).size !== quantities.length) { toast.error("Não repita a mesma quantidade nas promoções."); return; }
+    if (invalidPromotion) { toast.error("Confira as promoções: o preço promocional deve ser menor que o valor normal."); return; }
 
     // Ajustar números da rifa se quantidade mudou
     if (newQty !== oldQty) {
@@ -147,6 +157,19 @@ function CampaignAdmin() {
     if (error) {
       toast.error(error.message);
     } else {
+      const existingIds = promotions.flatMap(p => p.id ? [p.id] : []);
+      let deleteQuery = supabase.from("campaign_promotions").delete().eq("campaign_id", id);
+      if (existingIds.length > 0) deleteQuery = deleteQuery.not("id", "in", `(${existingIds.join(",")})`);
+      const { error: deleteError } = await deleteQuery;
+      if (deleteError) { toast.error(deleteError.message); return; }
+
+      if (promotions.length > 0) {
+        const { error: promotionError } = await supabase.from("campaign_promotions").upsert(promotions.map(p => ({
+          ...(p.id ? { id: p.id } : {}), campaign_id: id, quantity: p.quantity,
+          promotional_price: p.promotional_price, active: p.active !== false,
+        })), { onConflict: "campaign_id,quantity" });
+        if (promotionError) { toast.error(promotionError.message); return; }
+      }
       toast.success("Campanha atualizada!");
       setIsEditing(false);
       load();
@@ -304,6 +327,7 @@ function CampaignAdmin() {
             <Label>Meta financeira (R$)</Label>
             <Input type="number" min={0} step="0.01" value={form.goal_amount ?? ""} onChange={e => setForm(f => ({ ...f, goal_amount: e.target.value === "" ? null : Number(e.target.value) }))} placeholder="Deixe em branco para calcular automaticamente" />
           </div>
+          <PromotionEditor promotions={promotions} unitPrice={Number(form.number_price ?? c.number_price)} onChange={setPromotions} />
           <div>
             <Label>Chave PIX</Label>
             <Input value={form.pix_key ?? ""} onChange={e => setForm(f => ({ ...f, pix_key: e.target.value }))} />

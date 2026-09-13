@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
-import { formatBRL, formatDateBR } from "@/lib/format";
+import { formatBRL, formatCalendarDateBR } from "@/lib/format";
 import { StatusBadge } from "./admin.dashboard";
 import { Plus, ExternalLink } from "lucide-react";
 
@@ -48,7 +48,7 @@ function CampaignsList() {
                 <td className="p-4"><StatusBadge status={c.status} /></td>
                 <td className="p-4 tabular-nums">{c.number_quantity}</td>
                 <td className="p-4 font-bold text-primary">{formatBRL(c.number_price)}</td>
-                <td className="p-4">{formatDateBR(c.end_date)}</td>
+                <td className="p-4">{formatCalendarDateBR(c.end_date)}</td>
                 <td className="p-4 text-right">
                   <Link to="/campanha/$slug" params={{ slug: c.slug }} target="_blank" className="inline-flex items-center gap-1 text-xs font-semibold text-primary hover:underline">
                     Ver <ExternalLink className="h-3 w-3" />

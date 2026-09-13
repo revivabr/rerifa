@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Mail, Copy, Check, Share2, Instagram } from "lucide-react";
 import { toast } from "sonner";
-import { formatBRL, formatDateBR } from "@/lib/format";
 import type { PromotionTier } from "@/lib/promotions";
+import { buildCampaignShareMessage, campaignPublicUrl } from "@/lib/share";
 
 type Props = {
   campaignName: string;
@@ -17,27 +17,8 @@ type Props = {
 export function ShareCampaign({ campaignName, slug, price, endDate, shortDescription, promotions = [], bannerUrl }: Props) {
   const [copied, setCopied] = useState(false);
 
-  const url = `https://rifa.revivabrasil.com.br/campanha/${slug}`;
-
-  const activePromotions = promotions.filter((promotion) => promotion.active !== false);
-  const promotionLines = activePromotions
-    .map((promotion) => {
-      const savings = Number(price) * promotion.quantity - Number(promotion.promotional_price);
-      const savingsText = savings > 0 ? ` (economize ${formatBRL(savings)})` : "";
-      return `🎁 ${promotion.quantity} números por ${formatBRL(promotion.promotional_price)}${savingsText}`;
-    })
-    .join("\n");
-
-  const message =
-    `🎟️ *${campaignName}*\n\n` +
-    `${shortDescription ? `${shortDescription}\n\n` : ""}` +
-    `Participe dessa corrente do bem! Cada número ajuda a Associação Reviva Brasil a *Restaurar Vidas e Transformar Histórias*. 💙\n\n` +
-    `💰 Número: ${formatBRL(price)}\n` +
-    `${promotionLines ? `${promotionLines}\n` : ""}` +
-    `🗓️ Sorteio: ${formatDateBR(endDate)}\n\n` +
-    `Garanta seus números agora:\n` +
-    `${url}\n\n` +
-    `#RifaSolidária #RevivaBrasil 🙏`;
+  const url = campaignPublicUrl(slug);
+  const message = buildCampaignShareMessage({ campaignName, slug, price, endDate, shortDescription, promotions });
 
   const subject = `Participe da Rifa Solidária — ${campaignName}`;
 

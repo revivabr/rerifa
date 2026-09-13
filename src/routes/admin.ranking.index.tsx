@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { Crown, ChevronRight, Calendar } from "lucide-react";
-import { formatDateBR } from "@/lib/format";
+import { formatCalendarDateBR } from "@/lib/format";
 
 export const Route = createFileRoute("/admin/ranking/")({
   component: RankingCampaignList,
@@ -73,7 +73,7 @@ function RankingCampaignList() {
               <div className="p-4 space-y-2">
                 <h3 className="font-bold text-foreground line-clamp-1">{c.name}</h3>
                 <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                  <Calendar className="h-3.5 w-3.5" /> Encerra {formatDateBR(c.end_date)}
+                  <Calendar className="h-3.5 w-3.5" /> Encerra {formatCalendarDateBR(c.end_date)}
                 </div>
                 <div className="flex items-center justify-between pt-2">
                   <span className="text-xs font-semibold text-muted-foreground">{c.number_quantity} números</span>

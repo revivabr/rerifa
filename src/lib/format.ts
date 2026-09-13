@@ -14,6 +14,15 @@ export function formatDateBR(d: string | Date | null | undefined): string {
   return date.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric" });
 }
 
+// Para datas de calendário puras (start_date, end_date, draw_date), armazenadas como
+// meia-noite UTC sem horário relevante. Formatar em UTC evita que o fuso do navegador
+// jogue a data um dia para trás (ex.: 2026-10-10T00:00:00Z virando 09/10 no Brasil).
+export function formatCalendarDateBR(d: string | Date | null | undefined): string {
+  if (!d) return "—";
+  const date = typeof d === "string" ? new Date(d) : d;
+  return date.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric", timeZone: "UTC" });
+}
+
 export function formatWhatsapp(raw: string): string {
   const digits = raw.replace(/\D/g, "").slice(0, 11);
   if (digits.length <= 2) return digits;

@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/lib/supabase";
-import { formatBRL, padNumber, formatDateBR } from "@/lib/format";
+import { formatBRL, padNumber, formatCalendarDateBR } from "@/lib/format";
 import { ShieldCheck, FileText, Calendar, Gift, Info, Sparkles, ArrowRight, Ticket, Star } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -253,7 +253,7 @@ function CampaignPage() {
             </p>
             <div className="mt-6 grid grid-cols-2 gap-3">
               <StatCard icon={<Gift className="h-4 w-4" />} label="Cota" value={formatBRL(campaign.number_price)} />
-              <StatCard icon={<Calendar className="h-4 w-4" />} label="Sorteio" value={formatDateBR(campaign.end_date)} />
+              <StatCard icon={<Calendar className="h-4 w-4" />} label="Sorteio" value={formatCalendarDateBR(campaign.end_date)} />
             </div>
           </div>
 

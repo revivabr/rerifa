@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
-import { formatBRL, formatDateBR } from "@/lib/format";
+import { formatBRL, formatDateBR, formatCalendarDateBR } from "@/lib/format";
 import { StatusBadge } from "./admin.dashboard";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, ExternalLink, Check, X, Pencil, Save, Info, Trophy, FileDown, Share2 } from "lucide-react";
@@ -218,7 +218,7 @@ function CampaignAdmin() {
             <h1 className="text-3xl font-black text-primary">{c.name}</h1>
             <StatusBadge status={c.status} />
           </div>
-          <p className="text-sm text-muted-foreground">/{c.slug} · {formatDateBR(c.start_date)} → {formatDateBR(c.end_date)}</p>
+          <p className="text-sm text-muted-foreground">/{c.slug} · {formatCalendarDateBR(c.start_date)} → {formatCalendarDateBR(c.end_date)}</p>
         </div>
         <div className="flex flex-wrap gap-2">
           <Link to="/campanha/$slug" params={{ slug: c.slug }} target="_blank" className="inline-flex items-center gap-1.5 rounded-xl border border-border px-3 py-2 text-sm hover:bg-secondary">

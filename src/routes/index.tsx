@@ -6,6 +6,8 @@ import { Ticket, Sparkles, Zap, ArrowRight, Trophy, ShieldCheck, Heart, Share2, 
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import bannerRifa from "@/assets/banner-rifa-solidaria.jpeg.asset.json";
+import type { PromotionTier } from "@/lib/promotions";
+import { buildCampaignShareMessage, campaignPublicUrl } from "@/lib/share";
 
 export const Route = createFileRoute("/")({
   component: HomePage,
@@ -13,13 +15,14 @@ export const Route = createFileRoute("/")({
 
 type Campaign = {
   id: string; name: string; slug: string; description: string | null; banner_url: string | null;
-  status: string; number_quantity: number; number_price: number;
+  status: string; number_quantity: number; number_price: number; end_date: string;
 };
 
 const USER_BANNER = "/placeholder.svg";
 
 function HomePage() {
   const [activeCampaign, setActiveCampaign] = useState<Campaign | null>(null);
+  const [promotions, setPromotions] = useState<PromotionTier[]>([]);
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
 
@@ -33,7 +36,7 @@ function HomePage() {
         .order("created_at", { ascending: false })
         .limit(1)
         .maybeSingle();
-      
+
       if (data) {
         let campaignData = data as Campaign;
         if (campaignData.banner_url && campaignData.banner_url.includes('/storage/v1/object/public/')) {
@@ -45,6 +48,14 @@ function HomePage() {
           }
         }
         setActiveCampaign(campaignData);
+
+        const { data: promotionRows } = await supabase
+          .from("campaign_promotions")
+          .select("id,quantity,promotional_price,active")
+          .eq("campaign_id", campaignData.id)
+          .eq("active", true)
+          .order("quantity");
+        setPromotions((promotionRows ?? []).map((p) => ({ ...p, promotional_price: Number(p.promotional_price) })));
       }
       setLoading(false);
     })();
@@ -188,7 +199,7 @@ function HomePage() {
                                 
                                 <div className="flex items-center gap-3 pt-2 border-t border-slate-100">
                                     <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Compartilhe:</span>
-                                    <CompactShareButtons campaign={activeCampaign} copied={copied} setCopied={setCopied} />
+                                    <CompactShareButtons campaign={activeCampaign} promotions={promotions} copied={copied} setCopied={setCopied} />
                                 </div>
                             </div>
                         </div>
@@ -230,9 +241,16 @@ function HomePage() {
   );
 }
 
-function CompactShareButtons({ campaign, copied, setCopied }: { campaign: Campaign; copied: boolean; setCopied: (v: boolean) => void }) {
-  const url = `https://rifa.revivabrasil.com.br/campanha/${campaign.slug}`;
-  const message = `🎟️ Rifa Solidária - ${campaign.name}\n💰 Cota: ${formatBRL(campaign.number_price)}\n\nGaranta seus números:\n${url}`;
+function CompactShareButtons({ campaign, promotions, copied, setCopied }: { campaign: Campaign; promotions: PromotionTier[]; copied: boolean; setCopied: (v: boolean) => void }) {
+  const url = campaignPublicUrl(campaign.slug);
+  const message = buildCampaignShareMessage({
+    campaignName: campaign.name,
+    slug: campaign.slug,
+    price: Number(campaign.number_price),
+    endDate: campaign.end_date,
+    shortDescription: campaign.description,
+    promotions,
+  });
 
   async function copyToClipboard() {
     try {

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Mail, Copy, Check, Instagram } from "lucide-react";
+import { Mail, Copy, Check, Instagram, Share2 } from "lucide-react";
 import { toast } from "sonner";
 import type { PromotionTier } from "@/lib/promotions";
 import { buildCampaignShareMessage, campaignPublicUrl } from "@/lib/share";
@@ -14,7 +14,6 @@ type Props = {
   promotions?: PromotionTier[];
   bannerUrl?: string | null;
   size?: "default" | "compact";
-  showDeviceShareLink?: boolean;
 };
 
 export function ShareButtons({
@@ -26,7 +25,6 @@ export function ShareButtons({
   promotions = [],
   bannerUrl,
   size = "default",
-  showDeviceShareLink = false,
 }: Props) {
   const [copied, setCopied] = useState(false);
 
@@ -123,17 +121,16 @@ export function ShareButtons({
             <Copy className={compact ? "h-3.5 w-3.5 text-white" : "h-6 w-6 text-white"} strokeWidth={2.2} />
           )}
         </ShareBubble>
-      </div>
 
-      {showDeviceShareLink && (
-        <button
-          type="button"
+        <ShareBubble
+          label="Compartilhar"
+          size={size}
           onClick={nativeShare}
-          className="mt-4 text-xs font-bold uppercase tracking-widest text-primary/70 hover:text-primary transition-colors"
+          className="bg-gold hover:bg-gold-glow shadow-[0_10px_30px_-10px_rgba(197,160,89,0.55)]"
         >
-          Ou use o compartilhamento do seu dispositivo →
-        </button>
-      )}
+          <Share2 className={compact ? "h-4 w-4 text-primary-foreground" : "h-7 w-7 text-primary-foreground"} strokeWidth={2.2} />
+        </ShareBubble>
+      </div>
     </div>
   );
 }

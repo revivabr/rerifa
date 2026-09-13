@@ -14,15 +14,85 @@ import { cn } from "@/lib/utils";
 import { calculateCampaignPrice, type PromotionTier } from "@/lib/promotions";
 
 
+type CampaignMeta = {
+  name: string;
+  shortDescription: string | null;
+  bannerUrl: string | null;
+  price: number;
+  promotions: { quantity: number; promotional_price: number }[];
+};
+
 export const Route = createFileRoute("/campanha/$slug")({
-  head: () => ({ meta: [
-    { title: "Rifa Solidária | Associação Reviva Brasil" },
-    { name: "description", content: "Escolha seus números, participe da Rifa Solidária e ajude a transformar vidas." },
-    { property: "og:title", content: "Rifa Solidária | Associação Reviva Brasil" },
-    { property: "og:description", content: "Participe da campanha, concorra a prêmios e ajude os projetos da Associação Reviva Brasil." },
-    { property: "og:type", content: "website" },
-    { name: "twitter:card", content: "summary_large_image" },
-  ] }),
+  loader: async ({ params }): Promise<CampaignMeta | null> => {
+    const { data: c } = await supabase
+      .from("campaigns")
+      .select("id,name,short_description,banner_url,number_price")
+      .eq("slug", params.slug)
+      .maybeSingle();
+    if (!c) return null;
+
+    let bannerUrl = c.banner_url as string | null;
+    if (bannerUrl && bannerUrl.includes("/storage/v1/object/public/")) {
+      const path = bannerUrl.split("/public/")[1].split("/").slice(1).join("/");
+      const bucket = bannerUrl.split("/public/")[1].split("/")[0];
+      const { data: signedData } = await supabase.storage.from(bucket).createSignedUrl(path, 60 * 60 * 24);
+      if (signedData) bannerUrl = signedData.signedUrl;
+    }
+
+    const { data: promotionRows } = await supabase
+      .from("campaign_promotions")
+      .select("quantity,promotional_price")
+      .eq("campaign_id", c.id)
+      .eq("active", true)
+      .order("quantity");
+
+    return {
+      name: c.name,
+      shortDescription: c.short_description,
+      bannerUrl,
+      price: Number(c.number_price),
+      promotions: (promotionRows ?? []).map((p) => ({ quantity: p.quantity, promotional_price: Number(p.promotional_price) })),
+    };
+  },
+  head: ({ loaderData }) => {
+    const fallbackTitle = "Rifa Solidária | Associação Reviva Brasil";
+    const fallbackDescription = "Escolha seus números, participe da Rifa Solidária e ajude a transformar vidas.";
+
+    if (!loaderData) {
+      return { meta: [
+        { title: fallbackTitle },
+        { name: "description", content: fallbackDescription },
+        { property: "og:title", content: fallbackTitle },
+        { property: "og:description", content: fallbackDescription },
+        { property: "og:type", content: "website" },
+        { name: "twitter:card", content: "summary_large_image" },
+      ] };
+    }
+
+    const title = `${loaderData.name} | Rifa Solidária Reviva Brasil`;
+    const promoText = loaderData.promotions.length > 0
+      ? ` Promoção: ${loaderData.promotions.map((p) => `${p.quantity} números por ${formatBRL(p.promotional_price)}`).join(", ")}.`
+      : "";
+    const description = `${loaderData.shortDescription ? `${loaderData.shortDescription} ` : ""}Número por ${formatBRL(loaderData.price)}.${promoText}`.trim();
+
+    const meta: { title?: string; name?: string; property?: string; content?: string }[] = [
+      { title },
+      { name: "description", content: description },
+      { property: "og:title", content: title },
+      { property: "og:description", content: description },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: title },
+      { name: "twitter:description", content: description },
+    ];
+
+    if (loaderData.bannerUrl) {
+      meta.push({ property: "og:image", content: loaderData.bannerUrl });
+      meta.push({ name: "twitter:image", content: loaderData.bannerUrl });
+    }
+
+    return { meta };
+  },
   component: CampaignPage,
 });
 
@@ -267,6 +337,8 @@ function CampaignPage() {
           price={Number(campaign.number_price)}
           endDate={campaign.end_date}
           shortDescription={campaign.short_description}
+          promotions={promotions}
+          bannerUrl={campaign.banner_url}
         />
 
         {/* 5) Ranking de vendedores abaixo do grid */}

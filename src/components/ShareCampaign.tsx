@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Mail, Copy, Check, Share2, Instagram } from "lucide-react";
 import { toast } from "sonner";
 import { formatBRL, formatDateBR } from "@/lib/format";
+import type { PromotionTier } from "@/lib/promotions";
 
 type Props = {
   campaignName: string;
@@ -9,20 +10,33 @@ type Props = {
   price: number;
   endDate: string;
   shortDescription?: string | null;
+  promotions?: PromotionTier[];
+  bannerUrl?: string | null;
 };
 
-export function ShareCampaign({ campaignName, slug, price, endDate, shortDescription }: Props) {
+export function ShareCampaign({ campaignName, slug, price, endDate, shortDescription, promotions = [], bannerUrl }: Props) {
   const [copied, setCopied] = useState(false);
 
   const url = `https://rifa.revivabrasil.com.br/campanha/${slug}`;
 
+  const activePromotions = promotions.filter((promotion) => promotion.active !== false);
+  const promotionLines = activePromotions
+    .map((promotion) => {
+      const savings = Number(price) * promotion.quantity - Number(promotion.promotional_price);
+      const savingsText = savings > 0 ? ` (economize ${formatBRL(savings)})` : "";
+      return `🎁 ${promotion.quantity} números por ${formatBRL(promotion.promotional_price)}${savingsText}`;
+    })
+    .join("\n");
+
   const message =
-    `🎟️ *Rifa Solidaria - Sistema de Água Reviva*\n\n` +
-    `Participe você também dessa corrente do bem! Cada número adquirido ajuda a *Restaurar Vidas e Transformar Histórias* através de projetos sociais que mudam realidades. 💙\n\n` +
-    `💰 Cota: R$ 10,00\n` +
-    `🗓️ Sorteio: 23/06/2026\n\n` +
-    `Garanta seus números agora e concorra a prêmios incríveis fazendo o bem:\n` +
-    `https://rifa.revivabrasil.com.br\n\n` +
+    `🎟️ *${campaignName}*\n\n` +
+    `${shortDescription ? `${shortDescription}\n\n` : ""}` +
+    `Participe dessa corrente do bem! Cada número ajuda a Associação Reviva Brasil a *Restaurar Vidas e Transformar Histórias*. 💙\n\n` +
+    `💰 Número: ${formatBRL(price)}\n` +
+    `${promotionLines ? `${promotionLines}\n` : ""}` +
+    `🗓️ Sorteio: ${formatDateBR(endDate)}\n\n` +
+    `Garanta seus números agora:\n` +
+    `${url}\n\n` +
     `#RifaSolidária #RevivaBrasil 🙏`;
 
   const subject = `Participe da Rifa Solidária — ${campaignName}`;
@@ -47,15 +61,28 @@ export function ShareCampaign({ campaignName, slug, price, endDate, shortDescrip
     window.open(instagramUrl, "_blank", "noopener,noreferrer");
   }
 
+  async function fetchBannerFile(): Promise<File | null> {
+    if (!bannerUrl) return null;
+    try {
+      const response = await fetch(bannerUrl);
+      const blob = await response.blob();
+      return new File([blob], `${slug}.jpg`, { type: blob.type || "image/jpeg" });
+    } catch {
+      return null;
+    }
+  }
+
   async function nativeShare() {
-    if (typeof navigator !== "undefined" && navigator.share) {
-      try {
-        await navigator.share({ title: subject, text: message, url });
-      } catch {
-        /* user cancelled */
-      }
-    } else {
+    if (typeof navigator === "undefined" || !navigator.share) {
       copyToClipboard();
+      return;
+    }
+    const file = await fetchBannerFile();
+    const filesPayload = file && navigator.canShare?.({ files: [file] }) ? { files: [file] } : {};
+    try {
+      await navigator.share({ title: subject, text: message, url, ...filesPayload });
+    } catch {
+      /* user cancelled */
     }
   }
 

@@ -7,3 +7,7 @@
 - [x] Exibir ofertas e preço promocional na página pública
 - [x] Exibir desconto no checkout
 - [x] Validar regra, interface e segurança
+- [x] Documentar a arquitetura da aplicação
+- [x] Documentar o banco de dados e a segurança
+- [x] Documentar o design system e a responsividade
+- [x] Reestruturar o README como índice operacional

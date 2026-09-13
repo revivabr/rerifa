@@ -1,148 +1,197 @@
-# Reviva Brasil — Rifa Solidária
+# Rifa Solidária — Associação Reviva Brasil
 
-Aplicação de rifa online da Associação Reviva Brasil, construída com foco em transparência, gamificação e facilidade de uso.
+Plataforma web para criação, divulgação, venda e gestão de rifas solidárias da Associação Reviva Brasil. O sistema reúne campanhas públicas, seleção de números, promoções por quantidade, pagamentos PIX, comprovantes, ranking de vendedores, sorteios e uma área administrativa.
 
-🌐 **Produção:** https://rifa.revivabrasil.com.br
+**Endereço oficial:** [https://rifa.revivabrasil.com.br](https://rifa.revivabrasil.com.br)
 
----
+## Documentação
 
-## 🚀 Stack
+| Documento | Conteúdo |
+| --- | --- |
+| [Arquitetura](docs/ARQUITETURA.md) | Organização do aplicativo, rotas, módulos, integrações e fluxos de execução |
+| [Banco de dados](docs/BANCO-DE-DADOS.md) | Modelo relacional, regras transacionais, funções, segurança e migrações |
+| [Design System](docs/DESIGN-SYSTEM.md) | Identidade visual, tokens, componentes, responsividade e acessibilidade |
 
-- **Frontend:** React 19 + TypeScript + TanStack Start (Router + Server Functions) + Vite 7
-- **UI:** Tailwind CSS 4, Shadcn UI, Lucide Icons, Framer Motion, canvas-confetti
-- **Backend:** Lovable Cloud (Supabase Postgres + Auth + Storage + Realtime)
-- **Pagamento:** Mercado Pago PIX (com webhook automático)
-- **Deploy:** Cloudflare Workers (via Lovable)
+## Visão do produto
 
----
+A plataforma atende três jornadas principais:
 
-## 📁 Estrutura
+1. **Participante:** encontra uma campanha, escolhe números, informa seus dados, paga por PIX e recebe um bilhete digital.
+2. **Vendedor:** é associado opcionalmente às compras e participa do ranking da campanha.
+3. **Administrador:** cria e edita campanhas, acompanha pedidos, emite segundas vias, administra promoções, realiza sorteios e consulta rankings.
 
+## Recursos principais
+
+### Experiência pública
+
+- Página inicial institucional com campanhas ativas.
+- Página própria por campanha em `/campanha/:slug`.
+- Grade responsiva com números disponíveis, reservados e vendidos.
+- Atualização da grade em tempo real.
+- Reserva atômica dos números por três minutos.
+- Promoções por quantidade exata, como “3 números por R$ 50,00”.
+- Checkout PIX integrado ao Mercado Pago.
+- Confirmação automática após aprovação do pagamento.
+- Bilhete comprovante em imagem, disponível para download ou compartilhamento.
+- Compartilhamento da campanha por WhatsApp, e-mail, recursos nativos e cópia de texto.
+- Ranking público agregado, sem exposição dos dados dos compradores.
+- Página única de informações com âncoras para Quem Somos, Como Funciona, Termos, Privacidade e Segurança.
+
+### Administração
+
+- Autenticação por e-mail e senha, com autorização vinculada a administradores cadastrados.
+- Painel com indicadores de campanhas, arrecadação, vendas e compradores.
+- Cadastro e edição completa de campanhas.
+- Quantidade configurável entre 100 e 1.000 números.
+- Meta calculada a partir da quantidade e do preço regular.
+- Cadastro de prêmios, imagens, regulamento e dados complementares.
+- Cadastro de múltiplas faixas promocionais por quantidade exata.
+- Gestão dos estados da campanha: rascunho, ativa, pausada, finalizada, sorteada ou cancelada.
+- Relatório de pedidos com comprador, números adquiridos, valor e situação.
+- Confirmação ou cancelamento administrativo de pedidos.
+- Emissão de segunda via do bilhete para pedidos pagos.
+- Exportação do ranking em PDF.
+- Sorteador gamificado restrito aos números efetivamente vendidos.
+- Ranking completo de vendedores com celebração do melhor resultado.
+
+## Tecnologias
+
+| Camada | Tecnologia |
+| --- | --- |
+| Aplicação | React 19, TypeScript e TanStack Start |
+| Navegação | TanStack Router com rotas baseadas em arquivos |
+| Estado assíncrono | TanStack Query e cliente da Lovable Cloud |
+| Interface | Tailwind CSS 4, componentes Radix UI e variantes Shadcn |
+| Formulários | React Hook Form e Zod |
+| Animações | Framer Motion e canvas-confetti |
+| Documentos | html-to-image, jsPDF e jsPDF AutoTable |
+| Backend | Lovable Cloud: PostgreSQL, autenticação, storage e atualizações em tempo real |
+| Pagamentos | API PIX do Mercado Pago e webhook de confirmação |
+| Build e entrega | Vite 7 e runtime serverless compatível com Edge |
+
+## Estrutura resumida
+
+```text
+.
+├── docs/
+│   ├── ARQUITETURA.md
+│   ├── BANCO-DE-DADOS.md
+│   ├── DESIGN-SYSTEM.md
+│   └── migrations/               # Cópias históricas iniciais
+├── src/
+│   ├── assets/                   # Logos, banner e imagens registradas
+│   ├── components/               # Componentes de domínio e biblioteca visual
+│   ├── hooks/                    # Hooks de sessão e responsividade
+│   ├── integrations/             # Clientes e tipos gerados da Lovable Cloud
+│   ├── lib/                      # Regras de preço, formatação e funções de servidor
+│   ├── routes/                   # Páginas e endpoint de webhook
+│   ├── router.tsx                # Instância do roteador
+│   ├── server.ts                 # Entrada SSR e tratamento de falhas
+│   ├── start.ts                  # Middlewares da aplicação
+│   └── styles.css                # Tokens e animações globais
+├── supabase/
+│   ├── migrations/               # Histórico versionado do banco
+│   └── complete_schema.sql       # Referência da estrutura-base
+├── package.json
+└── vite.config.ts
 ```
-src/
-├── routes/                # Rotas TanStack (file-based)
-│   ├── index.tsx                       # Home pública
-│   ├── campanha.$slug.tsx              # Página da campanha (compra)
-│   ├── checkout.$orderId.tsx           # PIX + QR Code
-│   ├── confirmacao.$orderId.tsx        # Confirmação + recibo
-│   ├── admin.tsx                       # Layout admin (sidebar)
-│   ├── admin.login.tsx                 # Login do admin
-│   ├── admin.dashboard.tsx             # KPIs gerais
-│   ├── admin.campaigns.{index,new,$id} # CRUD de campanhas
-│   ├── admin.draw.{index,$id}          # Sorteador gamificado
-│   ├── admin.ranking.{index,$id}       # Ranking de vendedores
-│   └── api.webhooks.mercadopago.ts     # Webhook PIX
-├── components/            # UI compartilhada (Header, Footer, ShareCampaign, etc)
-├── lib/api/               # Server Functions (createServerFn)
-├── integrations/supabase/ # Cliente Supabase + tipos gerados
-└── styles.css             # Design tokens + animações utilitárias
-```
 
----
+> `src/routeTree.gen.ts` e os arquivos em `src/integrations/supabase/` são gerados ou gerenciados pela plataforma e não devem ser editados manualmente.
 
-## 🧩 Funcionalidades
+## Como executar localmente
 
-### Público
-- Página da campanha com grid de números (vendidos/reservados/disponíveis em tempo real via Realtime).
-- Reserva de números por 3 minutos com nome do vendedor opcional.
-- Checkout PIX (QR Code + copia-e-cola) e confirmação automática via webhook.
-- Compartilhamento via WhatsApp/Instagram/Telegram/Copiar texto.
-- Ranking de vendedores agregado (top 5) na própria campanha.
+### Pré-requisitos
 
-### Admin (`/admin`)
-- **Dashboard:** total arrecadado, vendas, compradores, campanhas ativas.
-- **Campanhas:** criar, editar (todos os campos incluindo quantidade, datas, meta, valor, PIX, prêmios), pausar, encerrar, ver pedidos com números vendidos por comprador.
-- **Sorteador:** seleção de campanha → tela festiva fullscreen, botão "Iniciar Sorteio" com borda animada, 30s de animação iluminando números vendidos a cada 100ms, modal com confete, prêmio e dados do ganhador. Salva resultado em `draws`.
-- **Ranking:** seleção de campanha → tabela completa com vendedores (ordem aleatória), seus números vendidos e total. Botão "Melhor Vendedor" com borda animada abre modal gamificado com confete, som de palmas e destaque do top vendedor.
+- Bun compatível com o arquivo de lock do projeto.
+- Projeto conectado à Lovable Cloud.
+- Variáveis públicas e privadas configuradas no ambiente apropriado.
 
----
-
-## 🗄️ Banco de Dados (Lovable Cloud)
-
-| Tabela | Conteúdo | Acesso público (anon) | Acesso admin |
-|--------|----------|----------------------|--------------|
-| `campaigns` | Campanhas | SELECT (status visível) | ALL |
-| `raffle_numbers` | Números (1..N) por campanha | SELECT | ALL |
-| `buyers` | Nome/WhatsApp/email | — | ALL |
-| `orders` | Pedidos + valores + status | — (via server fn) | ALL |
-| `order_numbers` | Vínculo pedido↔número | — | ALL |
-| `campaign_prizes` | Prêmios da campanha | SELECT | ALL |
-| `draws` | Resultados de sorteio | SELECT | ALL |
-| `admin_users` | Usuários admin | SELECT próprio | — |
-| `audit_logs` | Log de ações | — | ALL |
-| `payments` | Histórico de pagamentos | — | ALL |
-
-**Princípios:**
-- Toda tabela em `public` tem `GRANT` explícito + RLS habilitada.
-- Dados de compradores (PII) nunca expostos diretamente ao `anon`.
-- Pedidos acessíveis ao comprador apenas via UUID do pedido (capability) através de `getOrderPublic` (server function com service role).
-- Operações privilegiadas via `SECURITY DEFINER` functions:
-  - `reserve_numbers` — reserva atômica + criação de pedido.
-  - `confirm_payment` — webhook marca pedido como pago e libera números como `sold`.
-  - `cancel_order` — cancela pedido e libera números.
-  - `expire_pending_orders` — limpa reservas expiradas.
-  - `get_seller_ranking` — agrega ranking público sem expor PII.
-  - `is_admin` — verifica role admin sem recursão RLS.
-  - `seed_raffle_numbers` — trigger que popula números ao criar campanha.
-
----
-
-## 🔐 Autenticação
-
-- **Comprador:** anônimo — identifica-se pelo WhatsApp + nome no checkout.
-- **Admin:** login Supabase Auth (email/senha) + checagem em `admin_users` via `useAdminSession`. Layout `admin.tsx` redireciona para `/admin/login` quando não há sessão.
-
----
-
-## 💳 Fluxo de Pagamento (PIX Mercado Pago)
-
-1. Usuário escolhe números → `reserve_numbers` RPC cria `order` (status `pending`, expira em 3 min).
-2. Redireciona para `/checkout/$orderId` → server fn `getOrderPublic` retorna QR Code/copia-e-cola.
-3. Mercado Pago envia webhook → `/api/webhooks/mercadopago` valida e chama `confirm_payment` RPC.
-4. Números viram `sold` e usuário vê `/confirmacao/$orderId` com recibo compartilhável.
-
-**Secrets esperados:** `MP_ACCESS_TOKEN`, `MP_WEBHOOK_SECRET`, `SUPABASE_SERVICE_ROLE_KEY`, `SUPABASE_URL` (já configurados na Lovable Cloud).
-
----
-
-## 🎲 Sorteador
-
-- Lista campanhas com `status = active` em `/admin/draw`.
-- Tela do sorteio replica a tabela de números: vendidos com borda dourada + número em preto (ativos), disponíveis em cinza claro.
-- Animação de 30 segundos sorteando aleatoriamente apenas entre números vendidos. Resultado salvo em `draws`.
-
----
-
-## 🏆 Ranking
-
-- `/admin/ranking` lista campanhas → tabela completa com todos os vendedores, seus números (ordem aleatória), quantidade e valor arrecadado.
-- Botão "Melhor Vendedor" com borda animada → modal com confete + som de palmas (WebAudio) + nome, números vendidos e total do top vendedor.
-
----
-
-## 🛠️ Desenvolvimento
+### Instalação e execução
 
 ```bash
 bun install
-bun dev      # Vite dev server (porta 8080)
+bun run dev
 ```
 
-Variáveis em `.env` (`VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY`).
+O servidor de desenvolvimento utiliza a configuração fornecida pela plataforma. Para gerar uma versão de produção:
 
----
+```bash
+bun run build
+```
 
-## 🚦 Status de Produção
+Para validar o código:
 
-- ✅ Banco com GRANTs explícitos para todas as 10 tabelas.
-- ✅ RLS habilitada em todas as tabelas.
-- ✅ Páginas públicas acessíveis sem login.
-- ✅ Sorteador integrado lendo números reais da campanha.
-- ✅ Ranking público via RPC `get_seller_ranking` (sem expor PII).
-- ✅ Webhook PIX validando assinatura antes de marcar pago.
-- ⚠️ Linter exibe 14 avisos `WARN` sobre `SECURITY DEFINER` — **intencional**: todas as funções listadas são necessárias para a operação anônima do app (reservar, confirmar, cancelar, agregar ranking, expirar) e foram revisadas para não expor dados sensíveis.
+```bash
+bun run lint
+```
 
----
+## Configuração de ambiente
 
-## 📝 Licença
+Nunca grave credenciais no repositório. As variáveis privadas devem existir apenas no ambiente de execução.
 
-Projeto interno da Associação Reviva Brasil.
+| Variável | Escopo | Finalidade |
+| --- | --- | --- |
+| `VITE_SUPABASE_URL` | Navegador | Endereço público do backend gerenciado |
+| `VITE_SUPABASE_PUBLISHABLE_KEY` | Navegador | Chave pública para operações sujeitas às políticas de acesso |
+| `SUPABASE_URL` | Servidor | Endereço do backend usado pelas funções de servidor |
+| `SUPABASE_SERVICE_ROLE_KEY` | Servidor | Operações privilegiadas estritamente controladas |
+| `ACCESS_TOKEN` | Servidor | Credencial da API do Mercado Pago |
+| `APP_BASE_URL` | Servidor | Origem pública usada para compor a URL do webhook |
+
+## Fluxo de compra
+
+```mermaid
+sequenceDiagram
+    participant P as Participante
+    participant W as Aplicação web
+    participant DB as Banco de dados
+    participant MP as Mercado Pago
+
+    P->>W: Seleciona números e informa os dados
+    W->>DB: reserve_numbers(...)
+    DB-->>W: Pedido pendente e reserva de 3 minutos
+    W->>MP: Solicita cobrança PIX com o valor validado
+    MP-->>W: QR Code e código copia e cola
+    MP->>W: Notifica o pagamento
+    W->>MP: Consulta o pagamento na origem
+    W->>DB: confirm_payment(...)
+    DB-->>W: Pedido pago e números vendidos
+    W-->>P: Confirmação e bilhete digital
+```
+
+O preço exibido no navegador é apenas uma prévia. O valor definitivo é calculado por `reserve_numbers` no banco, inclusive quando existe uma promoção ativa para a quantidade exata selecionada. O checkout e o Mercado Pago utilizam o valor persistido no pedido.
+
+## Segurança e privacidade
+
+- As tabelas usam Row Level Security e permissões explícitas.
+- Dados pessoais de compradores e detalhes internos de pedidos não são expostos por consultas públicas diretas.
+- O painel exige sessão autenticada e presença na tabela administrativa.
+- Reservas e confirmações importantes são executadas por funções transacionais do banco.
+- Funções de servidor validam identificadores com Zod antes de consultar dados privados.
+- O webhook confirma o estado do pagamento consultando a API do Mercado Pago antes de alterar o pedido.
+- Credenciais privadas ficam somente no ambiente do servidor.
+
+Consulte [Banco de dados — Segurança](docs/BANCO-DE-DADOS.md#segurança-e-controle-de-acesso) para a matriz de acesso e [Arquitetura — Pontos de atenção](docs/ARQUITETURA.md#pontos-de-atenção-e-evolução) para limites conhecidos.
+
+## Convenções de manutenção
+
+1. Toda mudança estrutural no banco deve ser criada como uma nova migração em `supabase/migrations/`.
+2. Toda nova tabela pública precisa de permissões explícitas, RLS e políticas no mesmo arquivo de migração.
+3. O preço final deve continuar sendo calculado no banco, nunca confiado ao navegador.
+4. Dados privados devem permanecer atrás das políticas administrativas ou de funções de servidor com retorno mínimo.
+5. Novas páginas devem seguir a navegação por arquivos do TanStack Router e declarar metadados próprios.
+6. Novos elementos visuais devem reutilizar tokens e componentes descritos no [Design System](docs/DESIGN-SYSTEM.md).
+7. Antes de publicar, validar build, fluxo público, autenticação administrativa, PIX, confirmação, bilhete e visualizações móveis.
+
+## Publicação e operação
+
+- O domínio oficial de divulgação é `https://rifa.revivabrasil.com.br`.
+- Links compartilhados devem usar o domínio oficial e o slug da campanha.
+- A URL de retorno do Mercado Pago é derivada de `APP_BASE_URL`.
+- O histórico do banco é mantido em `supabase/migrations/`; não altere migrações já aplicadas.
+- Logs de geração de PIX e processamento do webhook são emitidos no servidor para diagnóstico.
+- O estado da grade é distribuído em tempo real a partir de alterações em `raffle_numbers`.
+
+## Propriedade e licença
+
+Software de uso interno da **Associação Reviva Brasil**. Todos os direitos reservados. Distribuição, reutilização ou publicação do código dependem de autorização formal da organização.

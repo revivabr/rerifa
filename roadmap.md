@@ -13,4 +13,4 @@
 - [x] Reestruturar o README como índice operacional
 - [x] Exibir promoções da campanha ativa na página inicial
 - [x] Padronizar botões e mensagens de compartilhamento entre home e campanha
-- [x] Usar o banner oficial da campanha nos compartilhamentos
+- [x] Servir o banner oficial da campanha em URL pública e estável para as prévias sociais

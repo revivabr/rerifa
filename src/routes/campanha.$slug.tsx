@@ -48,7 +48,7 @@ export const Route = createFileRoute("/campanha/$slug")({
       promotions: (promotionRows ?? []).map((p) => ({ quantity: p.quantity, promotional_price: Number(p.promotional_price) })),
     };
   },
-  head: ({ loaderData }) => {
+  head: ({ params, loaderData }) => {
     const fallbackTitle = "Rifa Solidária | Associação Reviva Brasil";
     const fallbackDescription = "Escolha seus números, participe da Rifa Solidária e ajude a transformar vidas.";
 
@@ -68,6 +68,8 @@ export const Route = createFileRoute("/campanha/$slug")({
       ? ` Promoção: ${loaderData.promotions.map((p) => `${p.quantity} números por ${formatBRL(p.promotional_price)}`).join(", ")}.`
       : "";
     const description = `${loaderData.shortDescription ? `${loaderData.shortDescription} ` : ""}Número por ${formatBRL(loaderData.price)}.${promoText}`.trim();
+    const campaignUrl = `https://rifa.revivabrasil.com.br/campanha/${encodeURIComponent(params.slug)}`;
+    const campaignImageUrl = `https://rifa.revivabrasil.com.br/api/public/campaign-image/${encodeURIComponent(params.slug)}`;
 
     const meta: { title?: string; name?: string; property?: string; content?: string }[] = [
       { title },
@@ -75,17 +77,22 @@ export const Route = createFileRoute("/campanha/$slug")({
       { property: "og:title", content: title },
       { property: "og:description", content: description },
       { property: "og:type", content: "website" },
+      { property: "og:url", content: campaignUrl },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: title },
       { name: "twitter:description", content: description },
     ];
 
     if (loaderData.bannerUrl) {
-      meta.push({ property: "og:image", content: loaderData.bannerUrl });
-      meta.push({ name: "twitter:image", content: loaderData.bannerUrl });
+      meta.push({ property: "og:image", content: campaignImageUrl });
+      meta.push({ property: "og:image:alt", content: `Banner oficial da campanha ${loaderData.name}` });
+      meta.push({ name: "twitter:image", content: campaignImageUrl });
     }
 
-    return { meta };
+    return {
+      meta,
+      links: [{ rel: "canonical", href: campaignUrl }],
+    };
   },
   component: CampaignPage,
 });

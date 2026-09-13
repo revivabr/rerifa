@@ -38,6 +38,10 @@ function CheckoutPage() {
     const fetchOrder = async () => {
       const o = await getOrderPublic({ data: { orderId } });
       if (cancelled || !o) return;
+      if (o.expires_at) {
+        const seconds = Math.max(0, Math.floor((new Date(o.expires_at).getTime() - Date.now()) / 1000));
+        setRemaining(seconds);
+      }
       setOrder({
         id: o.id, campaign_id: o.campaign_id, status: o.status,
         amount: o.amount, list_amount: o.list_amount, promotion_applied: o.promotion_applied, quantity: o.quantity,
@@ -91,7 +95,8 @@ function CheckoutPage() {
   }, [order?.expires_at]);
 
   useEffect(() => {
-    if (!order?.expires_at || order.status !== "pending" || remaining > 0 || expirationHandled) return;
+    if (!order?.expires_at || order.status !== "pending" || expirationHandled) return;
+    if (new Date(order.expires_at).getTime() > Date.now()) return;
 
     setExpirationHandled(true);
     cancelOrder({ data: { orderId } })
@@ -135,7 +140,9 @@ function CheckoutPage() {
   if (!order) return <div className="flex min-h-[50vh] items-center justify-center"><Loader2 className="h-6 w-6 animate-spin text-primary/30" /></div>;
 
 
-  if ((remaining === 0 && order.status === "pending") || order.status === "cancelled") {
+  const reservationExpired = Boolean(order.expires_at && new Date(order.expires_at).getTime() <= Date.now());
+
+  if ((reservationExpired && order.status === "pending") || order.status === "cancelled") {
     return (
       <div className="mx-auto max-w-md px-6 py-20 text-center">
         <AlertCircle className="mx-auto h-12 w-12 text-destructive opacity-50" />

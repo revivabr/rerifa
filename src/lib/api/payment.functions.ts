@@ -36,7 +36,8 @@ export const getOrGeneratePix = createServerFn({ method: "POST" })
         return {
           qr_code_base64: order.pix_qr_code,
           qr_code: order.pix_copy_paste,
-          status: order.status
+          status: order.status,
+          expires_at: order.expires_at as string,
         };
       }
     }

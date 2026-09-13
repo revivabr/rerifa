@@ -17,8 +17,8 @@ dist-ssr
 *.local
 
 # Environment
-.env
-.env.local
+# .env contém apenas valores públicos e é versionado de propósito (necessário para o build).
+# Segredos de servidor ficam em .env.local, já coberto por *.local acima.
 
 # Wrangler / Cloudflare
 .wrangler/

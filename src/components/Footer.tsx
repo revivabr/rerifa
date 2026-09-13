@@ -8,10 +8,10 @@ import { Heart, Info } from "lucide-react";
 export function Footer() {
   return (
     <footer className="bg-primary text-white">
-      <div className="mx-auto max-w-7xl px-6 py-10">
+      <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
         <div className="grid gap-6 lg:grid-cols-3">
           <div className="space-y-4">
-            <img src={logoBranco.url} alt="Associação Reviva Brasil" className="h-24 w-auto object-contain" />
+            <img src={logoBranco.url} alt="Associação Reviva Brasil" className="h-20 w-auto object-contain sm:h-24" />
             <p className="text-xs leading-snug text-white/60 whitespace-pre-line">
               Restaurando vidas e valores através da solidariedade. Junte-se a nós e transforme o futuro de milhares de famílias.
 Para nos conhecer melhor acesse: https://revivabrasil.com.br
@@ -23,7 +23,7 @@ Para nos conhecer melhor acesse: https://revivabrasil.com.br
               <Heart className="h-3 w-3" />
               Projetos Sociais
             </h4>
-            <div className="flex items-center gap-4 flex-wrap">
+            <div className="flex flex-wrap items-center gap-3 sm:gap-4">
               {[
                 { logo: logoVirando, name: "Virando o Jogo" },
                 { logo: logoBazar, name: "Bazar Solidário" },
@@ -56,11 +56,11 @@ Para nos conhecer melhor acesse: https://revivabrasil.com.br
         <div className="mt-10 flex flex-col items-center gap-3 border-t border-white/5 pt-5 text-xs font-medium text-white/40">
           <div className="flex flex-col items-center gap-3 w-full">
             <div className="flex flex-col md:flex-row items-center justify-center gap-3 w-full flex-wrap">
-              <p>Sorteios auditados por IA na plataforma. Ambiente 100% seguro, pagamento via API&nbsp;</p>
+              <p className="text-center">Sorteios auditados por IA na plataforma. Ambiente 100% seguro, pagamento via API.</p>
               <img src={logoMercadoPago.url} alt="Mercado Pago" className="h-4 w-auto opacity-60 brightness-0 invert" />
             </div>
             <div className="flex flex-col md:flex-row items-center justify-center gap-2 md:gap-4 w-full flex-wrap">
-              <p>© {new Date().getFullYear()} Associação Reviva Brasil. Todos os direitos reservados.</p>
+              <p className="text-center">© {new Date().getFullYear()} Associação Reviva Brasil. Todos os direitos reservados.</p>
               <span className="hidden md:inline text-white/20">·</span>
               <p>
                 Feito com ❤️ por{" "}

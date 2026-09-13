@@ -60,7 +60,7 @@ function AdminDashboard() {
           {recent.map(c => {
             const pct = c.total > 0 ? Math.round((c.sold / c.total) * 100) : 0;
             return (
-              <Link key={c.id} to="/admin/campaigns/$id" params={{ id: c.id }} className="flex items-center gap-4 p-5 transition hover:bg-secondary/50">
+              <Link key={c.id} to="/admin/campaigns/$id" params={{ id: c.id }} className="flex flex-col gap-3 p-4 transition hover:bg-secondary/50 sm:flex-row sm:items-center sm:gap-4 sm:p-5">
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2">
                     <h3 className="truncate font-bold text-foreground">{c.name}</h3>
@@ -71,7 +71,7 @@ function AdminDashboard() {
                   </div>
                   <p className="mt-1 text-xs text-muted-foreground">{c.sold}/{c.total} vendidos · {pct}%</p>
                 </div>
-                <div className="text-right">
+                <div className="w-full text-left sm:w-auto sm:text-right">
                   <p className="text-xs text-muted-foreground">Arrecadado</p>
                   <p className="font-bold text-primary">{formatBRL(c.raised)}</p>
                 </div>

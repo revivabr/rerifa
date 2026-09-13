@@ -197,7 +197,7 @@ function CampaignPage() {
 
         {/* 3) Escolha seus números — largura total */}
         <section id="escolher-numeros">
-          <div className="rounded-[2rem] md:rounded-[2.5rem] border border-black/[0.05] bg-white p-6 md:p-12 shadow-2xl relative overflow-hidden">
+          <div className="relative overflow-hidden rounded-[2rem] border border-black/[0.05] bg-white p-4 shadow-2xl sm:p-6 md:rounded-[2.5rem] md:p-12">
             <div className="absolute top-0 right-0 p-8 opacity-5 pointer-events-none">
               <Ticket className="h-64 w-64 rotate-12" />
             </div>
@@ -205,7 +205,7 @@ function CampaignPage() {
               <h2 className="text-2xl md:text-3xl font-bold text-primary mb-1">Escolha seus números</h2>
               <p className="text-sm text-muted-foreground mb-6">Toque para selecionar. Reserva de 3 minutos.</p>
 
-              <div className="grid gap-2" style={{ gridTemplateColumns: `repeat(auto-fill, minmax(56px, 1fr))` }}>
+              <div className="grid grid-cols-5 gap-1.5 min-[380px]:grid-cols-6 sm:grid-cols-8 sm:gap-2 md:grid-cols-10 lg:grid-cols-12">
                 {numbers.map(n => {
                   const status = selected.has(n.number) ? "selected" : n.status;
                   return (
@@ -214,7 +214,7 @@ function CampaignPage() {
                       onClick={() => toggle(n.number, n.status)}
                       disabled={n.status !== "available"}
                       className={cn(
-                        "relative aspect-square rounded-xl font-bold tabular-nums transition-all duration-300 text-sm",
+                        "relative aspect-square min-w-0 rounded-lg font-bold tabular-nums transition-all duration-300 text-xs sm:rounded-xl sm:text-sm",
                         "border border-black/[0.05]",
                         status === "available" && "bg-secondary text-primary hover:bg-primary/10",
                         status === "selected" && "bg-primary text-white scale-105 shadow-lg",
@@ -244,13 +244,13 @@ function CampaignPage() {
         <SellerRanking campaignId={campaign.id} />
 
         {selected.size > 0 && (
-          <div className="fixed bottom-6 left-6 right-6 z-50 flex items-center justify-center">
-            <div className="flex w-full max-w-xl items-center justify-between rounded-3xl bg-white p-6 shadow-[0_20px_50px_-12px_rgba(0,0,0,0.25)] border border-black/[0.03]">
+          <div className="fixed bottom-3 left-3 right-3 z-50 flex items-center justify-center sm:bottom-6 sm:left-6 sm:right-6">
+            <div className="flex w-full max-w-xl items-center justify-between gap-3 rounded-2xl border border-black/[0.03] bg-white p-3 shadow-[0_20px_50px_-12px_rgba(0,0,0,0.25)] sm:rounded-3xl sm:p-6">
               <div>
                 <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">{selected.size} selecionados</p>
-                <p className="text-2xl font-black text-primary">{formatBRL(total)}</p>
+                <p className="text-xl font-black text-primary sm:text-2xl">{formatBRL(total)}</p>
               </div>
-              <Button onClick={() => setShowModal(true)} className="h-14 px-8 rounded-2xl bg-primary text-white font-black shadow-premium">PAGAR AGORA</Button>
+              <Button onClick={() => setShowModal(true)} className="h-12 rounded-xl bg-primary px-4 text-xs font-black text-primary-foreground shadow-premium sm:h-14 sm:rounded-2xl sm:px-8 sm:text-sm">PAGAR AGORA</Button>
             </div>
           </div>
         )}

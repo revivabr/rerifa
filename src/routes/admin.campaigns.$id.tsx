@@ -59,7 +59,8 @@ function CampaignAdmin() {
 
     // Calculate ranking from all paid orders
     const ranks = allOrders.filter(o => o.status === "paid" && o.seller_name).reduce((acc: Record<string, SellerRank>, curr) => {
-      const name = curr.seller_name!.trim();
+      const name = curr.seller_name?.trim();
+      if (!name) return acc;
       if (!acc[name]) acc[name] = { name, sales: 0, total_amount: 0 };
       acc[name].sales += curr.quantity;
       acc[name].total_amount += Number(curr.amount);

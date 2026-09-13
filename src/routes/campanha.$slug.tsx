@@ -152,7 +152,8 @@ function CampaignPage() {
     const result = data as { ok: boolean; error?: string; order_id?: string };
     if (!result.ok) { toast.error(result.error ?? "Erro ao reservar"); return; }
     toast.success("Números reservados!");
-    navigate({ to: "/checkout/$orderId", params: { orderId: result.order_id! } });
+    if (!result.order_id) { toast.error("Não foi possível abrir o pagamento."); return; }
+    navigate({ to: "/checkout/$orderId", params: { orderId: result.order_id } });
   }
 
   if (loading) return <div className="mx-auto max-w-6xl px-4 py-20 text-center text-muted-foreground">Carregando…</div>;

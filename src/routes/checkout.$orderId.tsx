@@ -76,8 +76,9 @@ function CheckoutPage() {
 
   useEffect(() => {
     if (!order?.expires_at) return;
+    const expiresAt = order.expires_at;
     const tick = () => {
-      const ms = new Date(order.expires_at!).getTime() - Date.now();
+      const ms = new Date(expiresAt).getTime() - Date.now();
       setRemaining(Math.max(0, Math.floor(ms / 1000)));
     };
     tick();

@@ -26,9 +26,9 @@ export function BuyerModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md rounded-3xl border-none p-8 shadow-premium">
+      <DialogContent className="max-h-[92vh] max-w-[calc(100vw-1.5rem)] overflow-y-auto rounded-2xl border-none p-5 shadow-premium sm:max-w-md sm:rounded-3xl sm:p-8">
         <DialogHeader className="space-y-2">
-          <DialogTitle className="text-3xl font-bold tracking-tight text-primary">Seus Dados</DialogTitle>
+          <DialogTitle className="text-2xl font-bold text-primary sm:text-3xl">Seus Dados</DialogTitle>
           <DialogDescription className="text-sm">
             {count} {count === 1 ? "número" : "números"} · Total <strong className="text-primary">{formatBRL(total)}</strong>
           </DialogDescription>

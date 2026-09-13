@@ -66,7 +66,7 @@ function NewCampaign() {
 
       status: form.status,
     }).select().single();
-    if (error) { toast.error(error.message); return; }
+    if (error) { setLoading(false); toast.error(error.message); return; }
     const campaignId = (data as { id: string }).id;
     if (promotions.length > 0) {
       const { error: promotionError } = await supabase.from("campaign_promotions").insert(promotions.map(p => ({

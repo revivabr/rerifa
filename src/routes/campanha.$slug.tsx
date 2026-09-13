@@ -11,9 +11,18 @@ import { SellerRanking } from "@/components/SellerRanking";
 import { ShareCampaign } from "@/components/ShareCampaign";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { calculateCampaignPrice, type PromotionTier } from "@/lib/promotions";
 
 
 export const Route = createFileRoute("/campanha/$slug")({
+  head: () => ({ meta: [
+    { title: "Rifa Solidária | Associação Reviva Brasil" },
+    { name: "description", content: "Escolha seus números, participe da Rifa Solidária e ajude a transformar vidas." },
+    { property: "og:title", content: "Rifa Solidária | Associação Reviva Brasil" },
+    { property: "og:description", content: "Participe da campanha, concorra a prêmios e ajude os projetos da Associação Reviva Brasil." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary_large_image" },
+  ] }),
   component: CampaignPage,
 });
 
@@ -35,6 +44,7 @@ function CampaignPage() {
   const [campaign, setCampaign] = useState<Campaign | null>(null);
   const [numbers, setNumbers] = useState<RaffleNumber[]>([]);
   const [prizes, setPrizes] = useState<Prize[]>([]);
+  const [promotions, setPromotions] = useState<PromotionTier[]>([]);
   const [selected, setSelected] = useState<Set<number>>(new Set());
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
@@ -66,8 +76,12 @@ function CampaignPage() {
 
       setCampaign(campaignData);
       
-      const { data: nums } = await supabase.from("raffle_numbers").select("number,status").eq("campaign_id", c.id).order("number");
+      const [{ data: nums }, { data: promotionRows }] = await Promise.all([
+        supabase.from("raffle_numbers").select("number,status").eq("campaign_id", c.id).order("number"),
+        supabase.from("campaign_promotions").select("id,quantity,promotional_price,active").eq("campaign_id", c.id).eq("active", true).order("quantity"),
+      ]);
       setNumbers((nums ?? []) as RaffleNumber[]);
+      setPromotions((promotionRows ?? []).map(p => ({ ...p, promotional_price: Number(p.promotional_price) })));
 
       const { data: pz } = await supabase.from("campaign_prizes").select("*").eq("campaign_id", c.id).order("position");
       
@@ -108,7 +122,7 @@ function CampaignPage() {
     return () => { if (channel) supabase.removeChannel(channel); };
   }, [slug]);
 
-  const total = useMemo(() => (campaign ? selected.size * Number(campaign.number_price) : 0), [selected, campaign]);
+  const price = useMemo(() => calculateCampaignPrice(Number(campaign?.number_price ?? 0), selected.size, promotions), [selected, campaign, promotions]);
   const sold = useMemo(() => numbers.filter(n => n.status === "sold").length, [numbers]);
   const pct = campaign ? Math.round((sold / campaign.number_quantity) * 100) : 0;
 
@@ -205,6 +219,20 @@ function CampaignPage() {
               <h2 className="text-2xl md:text-3xl font-bold text-primary mb-1">Escolha seus números</h2>
               <p className="text-sm text-muted-foreground mb-6">Toque para selecionar. Reserva de 3 minutos.</p>
 
+              {promotions.length > 0 && (
+                <div className="mb-6 flex flex-wrap gap-2" aria-label="Ofertas promocionais">
+                  {promotions.map(promotion => {
+                    const active = promotion.quantity === selected.size;
+                    return (
+                      <div key={promotion.id ?? promotion.quantity} className={cn("rounded-xl border px-3 py-2 text-sm transition-colors", active ? "border-gold bg-gold/10 text-primary shadow-sm" : "border-primary/15 bg-primary/5 text-primary")}>
+                        <span className="font-black">{promotion.quantity} números por {formatBRL(promotion.promotional_price)}</span>
+                        {active && <span className="ml-2 text-xs font-bold text-success">Oferta ativada</span>}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+
               <div className="grid grid-cols-5 gap-1.5 min-[380px]:grid-cols-6 sm:grid-cols-8 sm:gap-2 md:grid-cols-10 lg:grid-cols-12">
                 {numbers.map(n => {
                   const status = selected.has(n.number) ? "selected" : n.status;
@@ -248,14 +276,16 @@ function CampaignPage() {
             <div className="flex w-full max-w-xl items-center justify-between gap-3 rounded-2xl border border-black/[0.03] bg-white p-3 shadow-[0_20px_50px_-12px_rgba(0,0,0,0.25)] sm:rounded-3xl sm:p-6">
               <div>
                 <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">{selected.size} selecionados</p>
-                <p className="text-xl font-black text-primary sm:text-2xl">{formatBRL(total)}</p>
+                {price.promotion && <p className="text-xs font-semibold text-muted-foreground line-through">{formatBRL(price.listAmount)}</p>}
+                <p className="text-xl font-black text-primary sm:text-2xl">{formatBRL(price.amount)}</p>
+                {price.promotion && <p className="text-[10px] font-bold text-success">Você economiza {formatBRL(price.savings)}</p>}
               </div>
               <Button onClick={() => setShowModal(true)} className="h-12 rounded-xl bg-primary px-4 text-xs font-black text-primary-foreground shadow-premium sm:h-14 sm:rounded-2xl sm:px-8 sm:text-sm">PAGAR AGORA</Button>
             </div>
           </div>
         )}
 
-        <BuyerModal open={showModal} onOpenChange={setShowModal} onSubmit={handleSubmit} submitting={submitting} total={total} count={selected.size} />
+        <BuyerModal open={showModal} onOpenChange={setShowModal} onSubmit={handleSubmit} submitting={submitting} total={price.amount} listTotal={price.listAmount} count={selected.size} />
       </div>
       </div>
     </div>

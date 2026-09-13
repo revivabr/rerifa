@@ -11,3 +11,6 @@
 - [x] Documentar o banco de dados e a segurança
 - [x] Documentar o design system e a responsividade
 - [x] Reestruturar o README como índice operacional
+- [ ] Exibir promoções da campanha ativa na página inicial
+- [ ] Padronizar botões e mensagens de compartilhamento entre home e campanha
+- [ ] Usar o banner oficial da campanha nos compartilhamentos

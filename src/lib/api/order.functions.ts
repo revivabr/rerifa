@@ -19,6 +19,10 @@ export const getOrderPublic = createServerFn({ method: "GET" })
   .handler(async ({ data }) => {
     const supabase = getSupabaseAdmin();
 
+    // Cada consulta também limpa reservas vencidas. Assim, os números voltam
+    // para venda mesmo sem uma tarefa agendada ou outro comprador acessando-os.
+    await supabase.rpc("expire_pending_orders");
+
     const { data: order } = await supabase
       .from("orders")
       .select("id,status,amount,list_amount,campaign_promotion_id,quantity,pix_qr_code,pix_copy_paste,expires_at,paid_at,campaign_id,buyer_id,seller_name")

@@ -71,8 +71,8 @@ export const getOrGeneratePix = createServerFn({ method: "POST" })
         throw new Error("Erro ao gerar dados do PIX no Mercado Pago");
       }
 
-      // 3. Atualiza o pedido no banco com os dados reais e o ID do pagamento MP
-      await supabase.from("orders").update({
+      // 3. Persiste o PIX e inicia somente agora a reserva de 90 segundos.
+      const { error: updateError } = await supabase.from("orders").update({
         pix_qr_code: pixData.qr_code_base64,
         pix_copy_paste: pixData.qr_code,
         payment_provider_id: String(mpResponse.id),
@@ -80,10 +80,23 @@ export const getOrGeneratePix = createServerFn({ method: "POST" })
         updated_at: new Date().toISOString()
       }).eq("id", order.id);
 
+      if (updateError) {
+        throw new Error("Não foi possível salvar a cobrança PIX");
+      }
+
+      const { data: paymentWindow, error: windowError } = await supabase.rpc("start_pix_payment_window", {
+        p_order_id: order.id,
+      });
+
+      if (windowError || !paymentWindow?.ok) {
+        throw new Error("Não foi possível iniciar o prazo de pagamento");
+      }
+
       return {
         qr_code_base64: pixData.qr_code_base64,
         qr_code: pixData.qr_code,
-        status: order.status
+        status: order.status,
+        expires_at: paymentWindow.expires_at as string,
       };
     } catch (err: any) {
       console.error("Erro ao processar PIX:", err);

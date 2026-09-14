@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { createClient } from "@supabase/supabase-js";
 import process from "node:process";
+import { cancelPixPaymentRecord } from "../mercadopago.server";
 
 function getSupabaseAdmin() {
   const url = process.env.SUPABASE_URL;
@@ -18,10 +19,6 @@ export const getOrderPublic = createServerFn({ method: "GET" })
   .inputValidator(z.object({ orderId: z.string().uuid() }))
   .handler(async ({ data }) => {
     const supabase = getSupabaseAdmin();
-
-    // Cada consulta também limpa reservas vencidas. Assim, os números voltam
-    // para venda mesmo sem uma tarefa agendada ou outro comprador acessando-os.
-    await supabase.rpc("expire_pending_orders");
 
     const { data: order } = await supabase
       .from("orders")
@@ -69,6 +66,35 @@ export const cancelOrder = createServerFn({ method: "POST" })
   .inputValidator(z.object({ orderId: z.string().uuid() }))
   .handler(async ({ data }) => {
     const supabase = getSupabaseAdmin();
+
+    const { data: order, error: orderError } = await supabase
+      .from("orders")
+      .select("id,status,payment_provider_id")
+      .eq("id", data.orderId)
+      .maybeSingle();
+
+    if (orderError || !order) return { ok: false, error: "Pedido não encontrado" };
+    if (order.status === "paid") return { ok: true, paid: true };
+
+    if (order.payment_provider_id) {
+      try {
+        const payment = await cancelPixPaymentRecord(String(order.payment_provider_id));
+        if (payment.status === "approved") {
+          const { data: confirmed, error: confirmError } = await supabase.rpc("confirm_payment", {
+            p_order_id: data.orderId,
+            p_external_id: String(order.payment_provider_id),
+          });
+          if (confirmError || !confirmed?.ok) {
+            return { ok: false, error: confirmed?.error || "Pagamento aprovado, mas ainda não confirmado" };
+          }
+          return { ok: true, paid: true };
+        }
+      } catch (error) {
+        console.error("Erro ao descartar cobrança PIX:", error);
+        return { ok: false, error: "Não foi possível descartar o PIX com segurança. Tente novamente." };
+      }
+    }
+
     const { data: result, error } = await supabase.rpc("cancel_order", {
       p_order_id: data.orderId,
     });
@@ -78,6 +104,6 @@ export const cancelOrder = createServerFn({ method: "POST" })
       return { ok: false, error: error.message };
     }
 
-    return result as { ok: boolean; error?: string };
+    return result as { ok: boolean; error?: string; paid?: boolean };
   });
 

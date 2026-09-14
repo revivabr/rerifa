@@ -25,6 +25,7 @@ import { Route as AdminRankingIdRouteImport } from './routes/admin.ranking.$id'
 import { Route as AdminDrawIdRouteImport } from './routes/admin.draw.$id'
 import { Route as AdminCampaignsNewRouteImport } from './routes/admin.campaigns.new'
 import { Route as AdminCampaignsIdRouteImport } from './routes/admin.campaigns.$id'
+import { Route as ApiPublicWebhooksMercadopagoRouteImport } from './routes/api.public.webhooks.mercadopago'
 import { Route as ApiPublicCampaignImageSlugRouteImport } from './routes/api.public.campaign-image.$slug'
 
 const InformacoesRoute = InformacoesRouteImport.update({
@@ -107,6 +108,12 @@ const AdminCampaignsIdRoute = AdminCampaignsIdRouteImport.update({
   path: '/campaigns/$id',
   getParentRoute: () => AdminRoute,
 } as any)
+const ApiPublicWebhooksMercadopagoRoute =
+  ApiPublicWebhooksMercadopagoRouteImport.update({
+    id: '/api/public/webhooks/mercadopago',
+    path: '/api/public/webhooks/mercadopago',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicCampaignImageSlugRoute =
   ApiPublicCampaignImageSlugRouteImport.update({
     id: '/api/public/campaign-image/$slug',
@@ -132,6 +139,7 @@ export interface FileRoutesByFullPath {
   '/admin/draw/': typeof AdminDrawIndexRoute
   '/admin/ranking/': typeof AdminRankingIndexRoute
   '/api/public/campaign-image/$slug': typeof ApiPublicCampaignImageSlugRoute
+  '/api/public/webhooks/mercadopago': typeof ApiPublicWebhooksMercadopagoRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -151,6 +159,7 @@ export interface FileRoutesByTo {
   '/admin/draw': typeof AdminDrawIndexRoute
   '/admin/ranking': typeof AdminRankingIndexRoute
   '/api/public/campaign-image/$slug': typeof ApiPublicCampaignImageSlugRoute
+  '/api/public/webhooks/mercadopago': typeof ApiPublicWebhooksMercadopagoRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -171,6 +180,7 @@ export interface FileRoutesById {
   '/admin/draw/': typeof AdminDrawIndexRoute
   '/admin/ranking/': typeof AdminRankingIndexRoute
   '/api/public/campaign-image/$slug': typeof ApiPublicCampaignImageSlugRoute
+  '/api/public/webhooks/mercadopago': typeof ApiPublicWebhooksMercadopagoRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -192,6 +202,7 @@ export interface FileRouteTypes {
     | '/admin/draw/'
     | '/admin/ranking/'
     | '/api/public/campaign-image/$slug'
+    | '/api/public/webhooks/mercadopago'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -211,6 +222,7 @@ export interface FileRouteTypes {
     | '/admin/draw'
     | '/admin/ranking'
     | '/api/public/campaign-image/$slug'
+    | '/api/public/webhooks/mercadopago'
   id:
     | '__root__'
     | '/'
@@ -230,6 +242,7 @@ export interface FileRouteTypes {
     | '/admin/draw/'
     | '/admin/ranking/'
     | '/api/public/campaign-image/$slug'
+    | '/api/public/webhooks/mercadopago'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -241,6 +254,7 @@ export interface RootRouteChildren {
   ConfirmacaoOrderIdRoute: typeof ConfirmacaoOrderIdRoute
   ApiWebhooksMercadopagoRoute: typeof ApiWebhooksMercadopagoRoute
   ApiPublicCampaignImageSlugRoute: typeof ApiPublicCampaignImageSlugRoute
+  ApiPublicWebhooksMercadopagoRoute: typeof ApiPublicWebhooksMercadopagoRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -357,6 +371,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminCampaignsIdRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/api/public/webhooks/mercadopago': {
+      id: '/api/public/webhooks/mercadopago'
+      path: '/api/public/webhooks/mercadopago'
+      fullPath: '/api/public/webhooks/mercadopago'
+      preLoaderRoute: typeof ApiPublicWebhooksMercadopagoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/campaign-image/$slug': {
       id: '/api/public/campaign-image/$slug'
       path: '/api/public/campaign-image/$slug'
@@ -402,6 +423,7 @@ const rootRouteChildren: RootRouteChildren = {
   ConfirmacaoOrderIdRoute: ConfirmacaoOrderIdRoute,
   ApiWebhooksMercadopagoRoute: ApiWebhooksMercadopagoRoute,
   ApiPublicCampaignImageSlugRoute: ApiPublicCampaignImageSlugRoute,
+  ApiPublicWebhooksMercadopagoRoute: ApiPublicWebhooksMercadopagoRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

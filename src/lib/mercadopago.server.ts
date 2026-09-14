@@ -43,12 +43,10 @@ export async function createPixPaymentRecord({
     throw new Error("Mercado Pago ACCESS_TOKEN não configurado no servidor.");
   }
 
-  // Validade do QR no Mercado Pago: 30 minutos.
-  // A reserva interna do pedido (3 min) é controlada à parte —
-  // quando o pedido expira, o app gera um novo QR via getOrGeneratePix.
-  // Manter a janela do MP folgada evita o erro "negado pela instituição
-  // financeira" causado por QR nascendo já vencido por latência/fuso.
-  const expiration = new Date(Date.now() + 30 * 60 * 1000);
+  // O Mercado Pago exige pelo menos 180 segundos. A reserva dos números
+  // continua sendo de 90 segundos e, ao vencer, a cobrança é cancelada no
+  // provedor antes de os números voltarem para venda.
+  const expiration = new Date(Date.now() + 3 * 60 * 1000);
 
   const body = {
     transaction_amount: Number(amount.toFixed(2)),
@@ -56,9 +54,7 @@ export async function createPixPaymentRecord({
     payment_method_id: 'pix',
     installments: 1,
     external_reference: id,
-    notification_url: process.env.APP_BASE_URL 
-      ? `${process.env.APP_BASE_URL}/api/webhooks/mercadopago`
-      : undefined,
+    notification_url: `${process.env.APP_BASE_URL || "https://rifa.revivabrasil.com.br"}/api/public/webhooks/mercadopago`,
     payer: {
       email: email?.trim() || "comprador@revivabrasil.com.br",
       first_name: firstName?.trim() || "Comprador",
@@ -93,5 +89,48 @@ export async function createPixPaymentRecord({
     console.error("Falha ao chamar API do Mercado Pago:", error.message);
     throw error;
   }
+}
+
+type MercadoPagoPaymentStatus = {
+  id?: number;
+  status?: string;
+  external_reference?: string;
+  transaction_amount?: number;
+};
+
+async function mercadoPagoRequest(path: string, init?: RequestInit): Promise<MercadoPagoPaymentStatus> {
+  const accessToken = process.env.ACCESS_TOKEN;
+  if (!accessToken) {
+    throw new Error("Mercado Pago ACCESS_TOKEN não configurado no servidor.");
+  }
+
+  const response = await fetch(`https://api.mercadopago.com${path}`, {
+    ...init,
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      "Content-Type": "application/json",
+      ...init?.headers,
+    },
+  });
+  const result = await response.json() as MercadoPagoPaymentStatus & { message?: string };
+  if (!response.ok) {
+    throw new Error(result.message || `Mercado Pago respondeu com status ${response.status}`);
+  }
+  return result;
+}
+
+export function getPixPaymentRecord(paymentId: string) {
+  return mercadoPagoRequest(`/v1/payments/${encodeURIComponent(paymentId)}`);
+}
+
+export async function cancelPixPaymentRecord(paymentId: string) {
+  const payment = await getPixPaymentRecord(paymentId);
+  if (payment.status === "approved") return payment;
+  if (payment.status === "cancelled" || payment.status === "rejected") return payment;
+
+  return mercadoPagoRequest(`/v1/payments/${encodeURIComponent(paymentId)}`, {
+    method: "PUT",
+    body: JSON.stringify({ status: "cancelled" }),
+  });
 }
 

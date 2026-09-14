@@ -97,7 +97,6 @@ export const Route = createFileRoute("/campanha/$slug")({
     if (campaignImageUrl) {
       meta.push({ property: "og:image", content: campaignImageUrl });
       meta.push({ property: "og:image:secure_url", content: campaignImageUrl });
-      meta.push({ property: "og:image:type", content: "image/jpeg" });
       meta.push({ property: "og:image:width", content: "1200" });
       meta.push({ property: "og:image:height", content: "675" });
       meta.push({ property: "og:image:alt", content: `Banner oficial da campanha ${loaderData.name}` });

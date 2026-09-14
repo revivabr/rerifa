@@ -173,7 +173,7 @@ function HomePage() {
                     <div className="flex flex-col lg:flex-row">
                          <div className="relative aspect-video w-full overflow-hidden bg-secondary lg:w-1/2">
                             <img 
-                                src={activeCampaign.banner_url || USER_BANNER} 
+                                 src={activeCampaign.banner_url ? `/api/public/campaign-image/${encodeURIComponent(activeCampaign.slug)}` : USER_BANNER} 
                                 alt={activeCampaign.name} 
                                  className="h-full w-full object-contain"
                             />

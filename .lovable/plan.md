@@ -1,11 +1,18 @@
-# Redirecionar após o tempo esgotado
+# Restaurar campanha ativa na página inicial
 
-## Alteração
-- Manter a tela “Tempo esgotado” visível por 10 segundos após o cancelamento e a liberação dos números.
-- Ao final desse período, redirecionar automaticamente para a campanha, mostrando novamente a seleção de números.
-- Evitar que a tela fique presa caso o pedido já esteja cancelado ao ser carregado.
+## Objetivo
+- Fazer a campanha ativa “Vôo do Bem” voltar a aparecer em Campanhas em destaque.
+- Exibir o banner cadastrado inteiro, mantendo a proporção 16:9 e sem cortes.
+
+## Alterações
+- Corrigir a leitura pública das informações necessárias da campanha, sem liberar dados de pagamento ou dados internos.
+- Ajustar o bloco da imagem na página inicial para proporção fixa 16:9 com encaixe completo.
+- Preservar promoções, compartilhamento e botão Participar já existentes.
 
 ## Validação
-- Confirmar que o cancelamento libera os números.
-- Confirmar a espera de 10 segundos e o retorno automático à campanha.
-- Verificar que pagamentos aprovados continuam seguindo para a confirmação.
+- Confirmar a campanha na página inicial em computador e celular.
+- Confirmar que nenhuma parte do banner é cortada.
+- Verificar erros de carregamento e compilação.
+
+## Segurança
+- Restringir também os dados internos atualmente expostos nas campanhas, sorteios e números, mantendo públicas somente as informações usadas pelas telas.

@@ -158,18 +158,33 @@ function CampaignAdmin() {
     if (error) {
       toast.error(error.message);
     } else {
-      const existingIds = promotions.flatMap(p => p.id ? [p.id] : []);
+      const existingPromotions = promotions.filter((promotion): promotion is PromotionTier & { id: string } => Boolean(promotion.id));
+      const newPromotions = promotions.filter(promotion => !promotion.id);
+      const existingIds = existingPromotions.map(promotion => promotion.id);
       let deleteQuery = supabase.from("campaign_promotions").delete().eq("campaign_id", id);
       if (existingIds.length > 0) deleteQuery = deleteQuery.not("id", "in", `(${existingIds.join(",")})`);
       const { error: deleteError } = await deleteQuery;
       if (deleteError) { toast.error(deleteError.message); return; }
 
-      if (promotions.length > 0) {
-        const { error: promotionError } = await supabase.from("campaign_promotions").upsert(promotions.map(p => ({
-          ...(p.id ? { id: p.id } : {}), campaign_id: id, quantity: p.quantity,
-          promotional_price: p.promotional_price, active: p.active !== false,
-        })), { onConflict: "campaign_id,quantity" });
-        if (promotionError) { toast.error(promotionError.message); return; }
+      if (existingPromotions.length > 0) {
+        const { error: updatePromotionError } = await supabase.from("campaign_promotions").upsert(existingPromotions.map(promotion => ({
+          id: promotion.id,
+          campaign_id: id,
+          quantity: promotion.quantity,
+          promotional_price: promotion.promotional_price,
+          active: promotion.active !== false,
+        })), { onConflict: "id" });
+        if (updatePromotionError) { toast.error(updatePromotionError.message); return; }
+      }
+
+      if (newPromotions.length > 0) {
+        const { error: insertPromotionError } = await supabase.from("campaign_promotions").insert(newPromotions.map(promotion => ({
+          campaign_id: id,
+          quantity: promotion.quantity,
+          promotional_price: promotion.promotional_price,
+          active: promotion.active !== false,
+        })));
+        if (insertPromotionError) { toast.error(insertPromotionError.message); return; }
       }
       toast.success("Campanha atualizada!");
       setIsEditing(false);

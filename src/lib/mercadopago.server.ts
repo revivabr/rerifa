@@ -43,10 +43,10 @@ export async function createPixPaymentRecord({
     throw new Error("Mercado Pago ACCESS_TOKEN não configurado no servidor.");
   }
 
-  // O Mercado Pago exige pelo menos 180 segundos. A reserva dos números
-  // continua sendo de 90 segundos e, ao vencer, a cobrança é cancelada no
-  // provedor antes de os números voltarem para venda.
-  const expiration = new Date(Date.now() + 3 * 60 * 1000);
+  // O QR Code e a reserva compartilham a mesma janela de 90 segundos.
+  // Ao vencer, a aplicação consulta o pagamento, cancela a cobrança pendente
+  // e só então libera os números para uma nova tentativa.
+  const expiration = new Date(Date.now() + 90 * 1000);
 
   const body = {
     transaction_amount: Number(amount.toFixed(2)),

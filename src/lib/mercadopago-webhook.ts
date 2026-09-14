@@ -51,8 +51,11 @@ export async function handleMercadoPagoWebhook(request: Request): Promise<Respon
       p_order_id: order.id,
       p_external_id: paymentId,
     });
-    if (confirmError || !confirmed?.ok) {
-      throw new Error(confirmed?.error || confirmError?.message || "Falha ao confirmar pedido");
+    const confirmation = confirmed && typeof confirmed === "object" && !Array.isArray(confirmed)
+      ? confirmed as { ok?: boolean; error?: string }
+      : null;
+    if (confirmError || !confirmation?.ok) {
+      throw new Error(confirmation?.error || confirmError?.message || "Falha ao confirmar pedido");
     }
 
     return new Response("OK", { status: 200 });

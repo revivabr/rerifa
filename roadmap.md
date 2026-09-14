@@ -17,3 +17,6 @@
 - [x] Limitar a reserva PIX a 90 segundos e liberar automaticamente os números vencidos
 - [x] Restaurar o Mercado Pago real e confirmar automaticamente pedidos aprovados
 - [x] Exibir contagem regressiva de 10 segundos após expirar o PIX e retornar à seleção de números
+
+- [x] Restaurar a campanha ativa na página inicial e manter o banner 16:9 sem cortes
+- [x] Restringir dados internos expostos nas leituras públicas

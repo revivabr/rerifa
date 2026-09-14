@@ -185,7 +185,7 @@ function HomePage() {
                                 Prêmio Principal
                             </div>
                              <h2 className="text-2xl font-black leading-tight text-primary sm:text-4xl">{activeCampaign.name}</h2>
-                            <p className="mt-4 max-w-3xl font-medium leading-relaxed text-slate-600">{activeCampaign.description}</p>
+                             <p className="mt-4 max-w-3xl whitespace-pre-line font-medium leading-relaxed text-slate-600">{activeCampaign.description}</p>
 
                              {promotions.length > 0 && (
                                  <div className="mt-6 w-full" aria-label="Promoções da campanha">

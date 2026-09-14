@@ -15,3 +15,4 @@
 - [x] Padronizar botões e mensagens de compartilhamento entre home e campanha
 - [x] Servir o banner oficial da campanha em URL pública e estável para as prévias sociais
 - [x] Limitar a reserva PIX a 90 segundos e liberar automaticamente os números vencidos
+- [x] Restaurar o Mercado Pago real e confirmar automaticamente pedidos aprovados

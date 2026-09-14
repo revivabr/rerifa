@@ -39,7 +39,7 @@ function HomePage() {
     (async () => {
       const { data } = await supabase
         .from("campaigns")
-        .select("*")
+        .select("id,name,slug,description,banner_url,status,number_quantity,number_price,end_date,created_at")
         .eq("status", "active")
         .order("created_at", { ascending: false })
         .limit(1)
@@ -171,11 +171,11 @@ function HomePage() {
             ) : activeCampaign ? (
                  <div className="group relative overflow-hidden rounded-2xl bg-white shadow-2xl transition-all duration-700 hover:shadow-primary/5 sm:rounded-[2.5rem]">
                     <div className="flex flex-col lg:flex-row">
-                        <div className="relative aspect-[16/10] w-full lg:w-1/2 overflow-hidden">
+                         <div className="relative aspect-video w-full shrink-0 self-center overflow-hidden bg-secondary lg:w-1/2">
                             <img 
-                                src={activeCampaign.banner_url || USER_BANNER} 
+                                 src={activeCampaign.banner_url ? `/api/public/campaign-image/${encodeURIComponent(activeCampaign.slug)}` : USER_BANNER} 
                                 alt={activeCampaign.name} 
-                                className="h-full w-full object-cover transition-transform duration-[3s] group-hover:scale-110"
+                                 className="h-full w-full object-contain"
                             />
                             <div className="absolute inset-0 bg-gradient-to-t from-primary/20 to-transparent" />
                         </div>

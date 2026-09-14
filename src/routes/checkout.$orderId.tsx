@@ -1,4 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
 import { formatBRL, padNumber } from "@/lib/format";
 import { Button } from "@/components/ui/button";
@@ -32,6 +33,8 @@ type Order = {
 function CheckoutPage() {
   const { orderId } = Route.useParams();
   const navigate = useNavigate();
+  const getOrGeneratePixFn = useServerFn(getOrGeneratePix);
+  const cancelOrderFn = useServerFn(cancelOrder);
   const [order, setOrder] = useState<Order | null>(null);
   const [campaignName, setCampaignName] = useState<string>("");
   const [campaignSlug, setCampaignSlug] = useState<string>("");
@@ -77,12 +80,15 @@ function CheckoutPage() {
   useEffect(() => {
     const fetchPix = async () => {
       try {
-        const result = await getOrGeneratePix({ data: { orderId } });
+        const result = await getOrGeneratePixFn({ data: { orderId } });
         if (result.qr_code && result.qr_code_base64) {
           setRealPixData({ qr_code: result.qr_code, qr_code_base64: result.qr_code_base64 });
           if (result.expires_at) {
             setOrder((current) => current ? { ...current, expires_at: result.expires_at } : current);
           }
+        }
+        if (result.status === "expired") {
+          setRemaining(0);
         }
         setLoadingPix(false);
       } catch (err: any) {
@@ -91,7 +97,7 @@ function CheckoutPage() {
       }
     };
     fetchPix();
-  }, [orderId]);
+  }, [getOrGeneratePixFn, orderId]);
 
   useEffect(() => {
     if (!order?.expires_at) return;
@@ -110,7 +116,7 @@ function CheckoutPage() {
     if (new Date(order.expires_at).getTime() > Date.now()) return;
 
     setExpirationHandled(true);
-    cancelOrder({ data: { orderId } })
+    cancelOrderFn({ data: { orderId } })
       .then((result) => {
         if (result.ok) {
           if (result.paid) {
@@ -129,7 +135,7 @@ function CheckoutPage() {
         toast.error("Não foi possível liberar os números. Tente novamente.");
         setExpirationHandled(false);
       });
-  }, [campaignSlug, expirationHandled, navigate, order?.expires_at, order?.status, orderId, remaining]);
+  }, [campaignSlug, cancelOrderFn, expirationHandled, navigate, order?.expires_at, order?.status, orderId, remaining]);
 
   useEffect(() => {
     if (order?.status !== "cancelled" || !campaignSlug) return;
@@ -160,7 +166,7 @@ function CheckoutPage() {
   async function handleCancel() {
     try {
       setLoadingPix(true);
-      const res = await cancelOrder({ data: { orderId } });
+      const res = await cancelOrderFn({ data: { orderId } });
       if (res.ok) {
         if (res.paid) {
           navigate({ to: "/confirmacao/$orderId", params: { orderId } });

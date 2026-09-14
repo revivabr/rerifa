@@ -28,7 +28,9 @@ export const getOrGeneratePix = createServerFn({ method: "POST" })
       throw new Error("Pedido não encontrado");
     }
 
-    // Se já tiver os dados do PIX e não estiver expirado, retorna
+    // Um pedido recebe apenas uma cobrança PIX. Se ela venceu, o checkout
+    // deve cancelar o pedido e liberar os números, nunca criar outra cobrança
+    // para a mesma reserva.
     if (order.pix_qr_code && order.pix_copy_paste && order.status === 'pending') {
       const expiresAt = order.expires_at ? new Date(order.expires_at).getTime() : 0;
       if (expiresAt > Date.now()) {
@@ -40,6 +42,11 @@ export const getOrGeneratePix = createServerFn({ method: "POST" })
           expires_at: order.expires_at as string,
         };
       }
+
+      return {
+        status: "expired",
+        expires_at: order.expires_at as string | null,
+      };
     }
 
     if (order.status !== 'pending') {

@@ -171,7 +171,7 @@ function HomePage() {
             ) : activeCampaign ? (
                  <div className="group relative overflow-hidden rounded-2xl bg-white shadow-2xl transition-all duration-700 hover:shadow-primary/5 sm:rounded-[2.5rem]">
                     <div className="flex flex-col lg:flex-row">
-                         <div className="relative aspect-video w-full overflow-hidden bg-secondary lg:w-1/2">
+                         <div className="relative aspect-video w-full shrink-0 self-center overflow-hidden bg-secondary lg:w-1/2">
                             <img 
                                  src={activeCampaign.banner_url ? `/api/public/campaign-image/${encodeURIComponent(activeCampaign.slug)}` : USER_BANNER} 
                                 alt={activeCampaign.name} 

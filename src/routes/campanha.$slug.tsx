@@ -140,7 +140,11 @@ function CampaignPage() {
     let channel: ReturnType<typeof supabase.channel> | null = null;
     (async () => {
       setLoading(true);
-      const { data: c } = await supabase.from("campaigns").select("*").eq("slug", slug).maybeSingle();
+      const { data: c } = await supabase
+        .from("campaigns")
+        .select("id,name,slug,description,short_description,banner_url,prize_description,prize_image_1,prize_image_2,status,number_quantity,number_price,start_date,end_date,goal_amount,regulation_url,regulation_text")
+        .eq("slug", slug)
+        .maybeSingle();
       if (!c) { setLoading(false); return; }
       
       let campaignData = c as Campaign;

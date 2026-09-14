@@ -22,6 +22,15 @@ type CampaignMeta = {
   promotions: { quantity: number; promotional_price: number }[];
 };
 
+function bannerVersion(bannerUrl: string): string {
+  let hash = 2166136261;
+  for (let index = 0; index < bannerUrl.length; index += 1) {
+    hash ^= bannerUrl.charCodeAt(index);
+    hash = Math.imul(hash, 16777619);
+  }
+  return (hash >>> 0).toString(36);
+}
+
 export const Route = createFileRoute("/campanha/$slug")({
   loader: async ({ params }): Promise<CampaignMeta | null> => {
     const { data: c } = await supabase
@@ -69,7 +78,9 @@ export const Route = createFileRoute("/campanha/$slug")({
       : "";
     const description = `${loaderData.shortDescription ? `${loaderData.shortDescription} ` : ""}Número por ${formatBRL(loaderData.price)}.${promoText}`.trim();
     const campaignUrl = `https://rifa.revivabrasil.com.br/campanha/${encodeURIComponent(params.slug)}`;
-    const campaignImageUrl = `https://rifa.revivabrasil.com.br/api/public/campaign-image/${encodeURIComponent(params.slug)}`;
+    const campaignImageUrl = loaderData.bannerUrl
+      ? `https://rifa.revivabrasil.com.br/api/public/campaign-image/${encodeURIComponent(params.slug)}?v=${bannerVersion(loaderData.bannerUrl)}`
+      : null;
 
     const meta: { title?: string; name?: string; property?: string; content?: string }[] = [
       { title },
@@ -83,8 +94,12 @@ export const Route = createFileRoute("/campanha/$slug")({
       { name: "twitter:description", content: description },
     ];
 
-    if (loaderData.bannerUrl) {
+    if (campaignImageUrl) {
       meta.push({ property: "og:image", content: campaignImageUrl });
+      meta.push({ property: "og:image:secure_url", content: campaignImageUrl });
+      meta.push({ property: "og:image:type", content: "image/jpeg" });
+      meta.push({ property: "og:image:width", content: "1200" });
+      meta.push({ property: "og:image:height", content: "675" });
       meta.push({ property: "og:image:alt", content: `Banner oficial da campanha ${loaderData.name}` });
       meta.push({ name: "twitter:image", content: campaignImageUrl });
     }

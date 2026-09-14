@@ -29,12 +29,13 @@ export function Header() {
           >
             Início
           </Link>
-          <a 
-            href="#campanhas" 
+          <Link
+            to="/"
+            hash="campanhas"
             className="text-xs font-bold uppercase tracking-widest text-foreground/50 hover:text-primary transition-colors"
           >
             Campanhas
-          </a>
+          </Link>
           <div className="h-4 w-px bg-primary/10" />
           <Link 
             to="/admin/login" 
@@ -65,9 +66,9 @@ export function Header() {
                 </Link>
               </SheetClose>
               <SheetClose asChild>
-                <a href="/#campanhas" className="flex min-h-12 items-center gap-3 rounded-xl px-4 text-sm font-bold text-foreground hover:bg-secondary">
+                <Link to="/" hash="campanhas" className="flex min-h-12 items-center gap-3 rounded-xl px-4 text-sm font-bold text-foreground hover:bg-secondary">
                   <Ticket className="h-5 w-5 text-primary" /> Campanhas
-                </a>
+                </Link>
               </SheetClose>
               <div className="my-2 h-px bg-border" />
               <SheetClose asChild>

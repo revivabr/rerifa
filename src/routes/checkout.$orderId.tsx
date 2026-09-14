@@ -10,6 +10,16 @@ import { getOrderPublic, cancelOrder } from "@/lib/api/order.functions";
 
 
 export const Route = createFileRoute("/checkout/$orderId")({
+  head: () => ({
+    meta: [
+      { title: "Pagamento PIX | Rifa Solidária" },
+      { name: "description", content: "Finalize sua participação na Rifa Solidária com pagamento seguro via PIX." },
+      { property: "og:title", content: "Pagamento PIX | Rifa Solidária" },
+      { property: "og:description", content: "Finalize sua participação na Rifa Solidária com pagamento seguro via PIX." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
+    ],
+  }),
   component: CheckoutPage,
 });
 
@@ -32,6 +42,7 @@ function CheckoutPage() {
   const [pixError, setPixError] = useState<string | null>(null);
   const [realPixData, setRealPixData] = useState<{ qr_code: string; qr_code_base64: string } | null>(null);
   const [expirationHandled, setExpirationHandled] = useState(false);
+  const [redirectRemaining, setRedirectRemaining] = useState(10);
 
   useEffect(() => {
     let cancelled = false;
@@ -109,7 +120,6 @@ function CheckoutPage() {
           setOrder((current) => current ? { ...current, status: "cancelled" } : current);
           setRealPixData(null);
           toast.error("Tempo esgotado. Tente novamente — os números foram liberados.");
-          navigate({ to: "/campanha/$slug", params: { slug: campaignSlug } });
         } else {
           toast.error(result.error || "Não foi possível liberar os números. Tente novamente.");
           setExpirationHandled(false);
@@ -120,6 +130,23 @@ function CheckoutPage() {
         setExpirationHandled(false);
       });
   }, [campaignSlug, expirationHandled, navigate, order?.expires_at, order?.status, orderId, remaining]);
+
+  useEffect(() => {
+    if (order?.status !== "cancelled" || !campaignSlug) return;
+
+    setRedirectRemaining(10);
+    const interval = window.setInterval(() => {
+      setRedirectRemaining((current) => Math.max(0, current - 1));
+    }, 1000);
+    const redirect = window.setTimeout(() => {
+      navigate({ to: "/campanha/$slug", params: { slug: campaignSlug }, replace: true });
+    }, 10_000);
+
+    return () => {
+      window.clearInterval(interval);
+      window.clearTimeout(redirect);
+    };
+  }, [campaignSlug, navigate, order?.status]);
 
   const mm = String(Math.floor(remaining / 60)).padStart(2, "0");
   const ss = String(remaining % 60).padStart(2, "0");
@@ -157,12 +184,23 @@ function CheckoutPage() {
   const reservationExpired = Boolean(order.expires_at && new Date(order.expires_at).getTime() <= Date.now());
 
   if ((reservationExpired && order.status === "pending") || order.status === "cancelled") {
+    const numbersReleased = order.status === "cancelled";
     return (
       <div className="mx-auto max-w-md px-6 py-20 text-center">
         <AlertCircle className="mx-auto h-12 w-12 text-destructive opacity-50" />
         <h1 className="mt-6 text-2xl font-bold text-primary">Tempo esgotado</h1>
-        <p className="mt-2 text-sm text-muted-foreground">Cancelando o PIX e liberando os números para você tentar novamente…</p>
-        <Loader2 className="mx-auto mt-6 h-6 w-6 animate-spin text-primary/40" />
+        <p className="mt-2 text-sm text-muted-foreground">
+          {numbersReleased
+            ? "O PIX foi cancelado e os números foram liberados para uma nova tentativa."
+            : "Cancelando o PIX e liberando os números para você tentar novamente…"}
+        </p>
+        {numbersReleased ? (
+          <p className="mt-6 text-sm font-semibold text-primary" aria-live="polite">
+            Voltando para os números em <span className="tabular-nums">{redirectRemaining}</span> segundos…
+          </p>
+        ) : (
+          <Loader2 className="mx-auto mt-6 h-6 w-6 animate-spin text-primary/40" />
+        )}
       </div>
     );
   }

@@ -102,6 +102,10 @@ function CheckoutPage() {
     cancelOrder({ data: { orderId } })
       .then((result) => {
         if (result.ok) {
+          if (result.paid) {
+            navigate({ to: "/confirmacao/$orderId", params: { orderId } });
+            return;
+          }
           setOrder((current) => current ? { ...current, status: "cancelled" } : current);
           setRealPixData(null);
         }
@@ -125,6 +129,10 @@ function CheckoutPage() {
       setLoadingPix(true);
       const res = await cancelOrder({ data: { orderId } });
       if (res.ok) {
+        if (res.paid) {
+          navigate({ to: "/confirmacao/$orderId", params: { orderId } });
+          return;
+        }
         toast.success("Pedido cancelado e números liberados.");
         navigate({ to: "/campanha/$slug", params: { slug: campaignSlug } });
       } else {

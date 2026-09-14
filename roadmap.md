@@ -22,3 +22,4 @@
 - [x] Restringir dados internos expostos nas leituras públicas
 
 - [ ] Auditar e homologar o sistema completo ponta a ponta
+- [x] Reorganizar “Campanhas em destaque” em layout vertical e simétrico

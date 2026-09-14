@@ -5,6 +5,7 @@ Validar o sistema completo em condições próximas à produção e corrigir fal
 
 ## Escopo
 - Fluxo público: início, campanha, promoções, seleção de números, reserva, PIX, expiração, confirmação e comprovante.
+- Página inicial: reorganizar “Campanhas em destaque” em composição vertical e simétrica, com o banner 16:9 inteiro acima do conteúdo.
 - Compartilhamento: imagem, texto, links e metadados sociais.
 - Área administrativa: acesso, navegação, campanhas, pedidos, sorteio, ranking e segunda via.
 - Integrações: banco, armazenamento, Mercado Pago e notificações automáticas.

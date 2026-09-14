@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { formatBRL, padNumber } from "@/lib/format";
 import { Button } from "@/components/ui/button";
@@ -108,12 +108,18 @@ function CheckoutPage() {
           }
           setOrder((current) => current ? { ...current, status: "cancelled" } : current);
           setRealPixData(null);
+          toast.error("Tempo esgotado. Tente novamente — os números foram liberados.");
+          navigate({ to: "/campanha/$slug", params: { slug: campaignSlug } });
+        } else {
+          toast.error(result.error || "Não foi possível liberar os números. Tente novamente.");
+          setExpirationHandled(false);
         }
       })
       .catch(() => {
+        toast.error("Não foi possível liberar os números. Tente novamente.");
         setExpirationHandled(false);
       });
-  }, [expirationHandled, order?.expires_at, order?.status, orderId, remaining]);
+  }, [campaignSlug, expirationHandled, navigate, order?.expires_at, order?.status, orderId, remaining]);
 
   const mm = String(Math.floor(remaining / 60)).padStart(2, "0");
   const ss = String(remaining % 60).padStart(2, "0");
@@ -154,11 +160,9 @@ function CheckoutPage() {
     return (
       <div className="mx-auto max-w-md px-6 py-20 text-center">
         <AlertCircle className="mx-auto h-12 w-12 text-destructive opacity-50" />
-        <h1 className="mt-6 text-2xl font-bold text-primary">Reserva expirada</h1>
-        <p className="mt-2 text-muted-foreground text-sm">Os 90 segundos terminaram. O PIX foi descartado e os números já estão disponíveis novamente.</p>
-        <Link to="/campanha/$slug" params={{ slug: campaignSlug }} className="mt-8 inline-flex h-12 items-center rounded-xl bg-primary px-8 font-black text-white shadow-premium transition-all hover:bg-primary/90 active:scale-95">
-          Tentar novamente
-        </Link>
+        <h1 className="mt-6 text-2xl font-bold text-primary">Tempo esgotado</h1>
+        <p className="mt-2 text-sm text-muted-foreground">Cancelando o PIX e liberando os números para você tentar novamente…</p>
+        <Loader2 className="mx-auto mt-6 h-6 w-6 animate-spin text-primary/40" />
       </div>
     );
   }

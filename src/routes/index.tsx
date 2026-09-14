@@ -169,9 +169,9 @@ function HomePage() {
                     <div className="h-[400px] animate-pulse rounded-3xl bg-white shadow-sm" />
                 </div>
             ) : activeCampaign ? (
-                 <div className="group relative overflow-hidden rounded-2xl bg-white shadow-2xl transition-all duration-700 hover:shadow-primary/5 sm:rounded-[2.5rem]">
-                    <div className="flex flex-col lg:flex-row">
-                         <div className="relative aspect-video w-full shrink-0 self-center overflow-hidden bg-secondary lg:w-1/2">
+                 <div className="group relative mx-auto max-w-5xl overflow-hidden rounded-2xl bg-white shadow-2xl transition-all duration-700 hover:shadow-primary/5 sm:rounded-[2.5rem]">
+                    <div className="flex flex-col">
+                         <div className="relative aspect-video w-full overflow-hidden bg-secondary">
                             <img 
                                  src={activeCampaign.banner_url ? `/api/public/campaign-image/${encodeURIComponent(activeCampaign.slug)}` : USER_BANNER} 
                                 alt={activeCampaign.name} 
@@ -179,18 +179,18 @@ function HomePage() {
                             />
                             <div className="absolute inset-0 bg-gradient-to-t from-primary/20 to-transparent" />
                         </div>
-                         <div className="flex flex-1 flex-col justify-center p-5 sm:p-8 lg:p-12">
-                            <div className="inline-flex mb-4 text-gold font-bold text-xs uppercase tracking-widest gap-2 items-center">
+                         <div className="flex flex-col items-center p-5 text-center sm:p-8 lg:p-12">
+                            <div className="mb-4 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-gold">
                                 <Trophy className="h-4 w-4" />
                                 Prêmio Principal
                             </div>
-                             <h2 className="text-2xl font-black text-primary sm:text-4xl leading-tight">{activeCampaign.name}</h2>
-                            <p className="mt-4 text-slate-600 font-medium leading-relaxed line-clamp-4">{activeCampaign.description}</p>
+                             <h2 className="text-2xl font-black leading-tight text-primary sm:text-4xl">{activeCampaign.name}</h2>
+                            <p className="mt-4 max-w-3xl font-medium leading-relaxed text-slate-600">{activeCampaign.description}</p>
 
                              {promotions.length > 0 && (
-                                 <div className="mt-6" aria-label="Promoções da campanha">
+                                 <div className="mt-6 w-full" aria-label="Promoções da campanha">
                                      <p className="mb-2 text-[10px] font-black uppercase tracking-widest text-slate-400">Ofertas por quantidade</p>
-                                     <div className="flex flex-wrap gap-2">
+                                     <div className="flex flex-wrap justify-center gap-2">
                                          {promotions.map((promotion) => {
                                              const regularTotal = Number(activeCampaign.number_price) * promotion.quantity;
                                              const savings = regularTotal - Number(promotion.promotional_price);
@@ -205,8 +205,8 @@ function HomePage() {
                                  </div>
                              )}
                             
-                             <div className="mt-8 flex flex-col gap-5 rounded-2xl border border-slate-100 bg-slate-50 p-4 sm:p-6">
-                                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                             <div className="mt-8 flex w-full max-w-3xl flex-col items-center gap-5 rounded-2xl border border-slate-100 bg-slate-50 p-4 sm:p-6">
+                                 <div className="flex w-full flex-col items-center justify-center gap-4 sm:flex-row sm:gap-10">
                                     <div>
                                         <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Valor da Cota</span>
                                         <p className="text-3xl font-black text-primary mt-1">{formatBRL(activeCampaign.number_price)}</p>
@@ -223,7 +223,7 @@ function HomePage() {
                                     </div>
                                 </div>
                                 
-                                <div className="flex flex-col items-start gap-3 pt-2 border-t border-slate-100 sm:flex-row sm:items-center">
+                                 <div className="flex w-full flex-col items-center justify-center gap-3 border-t border-slate-100 pt-4 sm:flex-row">
                                     <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Compartilhe:</span>
                                     <ShareButtons
                                         campaignName={activeCampaign.name}

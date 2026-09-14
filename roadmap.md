@@ -20,3 +20,5 @@
 
 - [x] Restaurar a campanha ativa na página inicial e manter o banner 16:9 sem cortes
 - [x] Restringir dados internos expostos nas leituras públicas
+
+- [ ] Auditar e homologar o sistema completo ponta a ponta

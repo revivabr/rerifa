@@ -31,7 +31,12 @@ export function buildCampaignShareMessage({
     })
     .join("\n\n");
 
-  const introduction = shortDescription?.trim();
+  const introduction = shortDescription
+    ?.trim()
+    .split(/\n+/)
+    .map((paragraph) => paragraph.trim())
+    .filter(Boolean)
+    .join("\n\n");
 
   return (
     `🎟️ Rifa ${campaignName} da Associação Reviva Brasil\n\n` +

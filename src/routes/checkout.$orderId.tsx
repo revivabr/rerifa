@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
 import { formatBRL, padNumber } from "@/lib/format";
@@ -201,11 +201,27 @@ function CheckoutPage() {
             : "Cancelando o PIX e liberando os números para você tentar novamente…"}
         </p>
         {numbersReleased ? (
-          <p className="mt-6 text-sm font-semibold text-primary" aria-live="polite">
-            Voltando para os números em <span className="tabular-nums">{redirectRemaining}</span> segundos…
-          </p>
+          <>
+            <p className="mt-6 text-sm font-semibold text-primary" aria-live="polite">
+              Voltando para os números em <span className="tabular-nums">{redirectRemaining}</span> segundos…
+            </p>
+            <Button asChild className="mt-6">
+              <Link to="/campanha/$slug" params={{ slug: campaignSlug }} replace>
+                Voltar para a campanha
+              </Link>
+            </Button>
+          </>
         ) : (
-          <Loader2 className="mx-auto mt-6 h-6 w-6 animate-spin text-primary/40" />
+          <>
+            <Loader2 className="mx-auto mt-6 h-6 w-6 animate-spin text-primary/40" />
+            {campaignSlug && (
+              <Button asChild variant="outline" className="mt-6">
+                <Link to="/campanha/$slug" params={{ slug: campaignSlug }} replace>
+                  Voltar para a campanha
+                </Link>
+              </Button>
+            )}
+          </>
         )}
       </div>
     );

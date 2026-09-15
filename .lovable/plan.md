@@ -1,23 +1,23 @@
-# Auditoria geral e homologação ponta a ponta
+# Padronizar todos os compartilhamentos das campanhas
 
 ## Objetivo
-Validar o sistema completo em condições próximas à produção e corrigir falhas comprovadas sem alterar regras de negócio.
+Usar uma única mensagem em todos os compartilhamentos, seguindo exatamente a estrutura e as quebras de linha fornecidas, com os dados de cada campanha preenchidos automaticamente.
 
-## Escopo
-- Fluxo público: início, campanha, promoções, seleção de números, reserva, PIX, expiração, confirmação e comprovante.
-- Página inicial: reorganizar “Campanhas em destaque” em composição vertical e simétrica, com o banner 16:9 inteiro acima do conteúdo.
-- Compartilhamento: imagem, texto, links e metadados sociais.
-- Área administrativa: acesso, navegação, campanhas, pedidos, sorteio, ranking e segunda via.
-- Integrações: banco, armazenamento, Mercado Pago e notificações automáticas.
-- Qualidade: telas pequenas e grandes, acessibilidade básica, rotas, erros visíveis e segurança.
+## Implementação
+- Centralizar o modelo em uma única função reutilizada pela página inicial, página da campanha, WhatsApp, Instagram, e-mail, copiar texto e compartilhamento nativo.
+- Montar o texto com nome da campanha, descrição curta, valor unitário, promoções ativas, economia, data do sorteio e endereço oficial da campanha.
+- Preservar os parágrafos e linhas em branco do modelo, sem adicionar marcações como asteriscos ao nome.
+- Ordenar as promoções por quantidade e separar cada oferta por uma linha em branco.
+- Fazer o compartilhamento do bilhete após o pagamento usar a mesma mensagem, mantendo o bilhete como imagem anexada quando o aparelho permitir.
+- Alinhar os textos da prévia social da página pública com a mesma mensagem da campanha, mantendo o banner cadastrado como imagem.
 
-## Execução
-- Conferir dados, permissões, estados e rotinas críticas do banco.
-- Percorrer as jornadas no navegador, incluindo cenários de sucesso e falha seguros.
-- Validar endpoints públicos sem disparar cobrança real nem sorteio definitivo.
-- Corrigir problemas reproduzíveis e repetir os testes afetados.
-- Registrar no relatório o que foi aprovado, corrigido ou depende de uma compra real.
+## Regra para campanhas futuras
+- O exemplo “Vôo do Bem” será dinâmico: novas campanhas receberão o mesmo formato com seus próprios dados cadastrados.
+- A introdução virá da descrição curta, preservando suas quebras de linha.
+- Valor, economia e data serão formatados automaticamente em português do Brasil.
+- O link sempre usará `https://rifa.revivabrasil.com.br/campanha/{slug}`.
 
-## Entrega
-- Sistema corrigido no que for possível homologar com segurança.
-- Relatório final em Markdown com evidências, limitações e checklist para publicação.
+## Validação
+- Comparar o texto produzido para “Vôo do Bem” com o modelo enviado, incluindo espaços e quebras de linha.
+- Testar copiar, WhatsApp, e-mail, Instagram, compartilhamento nativo e compartilhamento do bilhete.
+- Conferir a prévia da mensagem nas páginas inicial e da campanha, além dos metadados da página pública.

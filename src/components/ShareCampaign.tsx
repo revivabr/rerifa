@@ -48,7 +48,7 @@ export function ShareCampaign({ campaignName, slug, price, endDate, shortDescrip
           <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-2">
             Pré-visualização da mensagem
           </p>
-          <p className="whitespace-pre-line text-xs leading-relaxed text-stone-700 line-clamp-6">
+          <p className="whitespace-pre-line text-xs leading-relaxed text-stone-700">
             {message}
           </p>
         </div>

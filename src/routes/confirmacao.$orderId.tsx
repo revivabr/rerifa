@@ -7,6 +7,8 @@ import { formatBRL, padNumber } from "@/lib/format";
 import { CheckCircle2, Heart, ArrowLeft, Sparkles, Download, Share2, Ticket } from "lucide-react";
 import { getOrderPublic } from "@/lib/api/order.functions";
 import { ReceiptTicket, type ReceiptData } from "@/components/ReceiptTicket";
+import { buildCampaignShareMessage } from "@/lib/share";
+import type { PromotionTier } from "@/lib/promotions";
 
 export const Route = createFileRoute("/confirmacao/$orderId")({
   component: ConfirmationPage,
@@ -27,6 +29,7 @@ function ConfirmationPage() {
   const { orderId } = Route.useParams();
   const [receipt, setReceipt] = useState<ReceiptData | null>(null);
   const [slug, setSlug] = useState<string>("");
+  const [shareMessage, setShareMessage] = useState("");
   const [generating, setGenerating] = useState(false);
   const fired = useRef(false);
   const ticketRef = useRef<HTMLDivElement>(null);
@@ -36,6 +39,14 @@ function ConfirmationPage() {
       const o = await getOrderPublic({ data: { orderId } });
       if (!o) return;
       setSlug(o.campaign_slug);
+      setShareMessage(buildCampaignShareMessage({
+        campaignName: o.campaign_name,
+        slug: o.campaign_slug,
+        price: o.campaign_number_price,
+        endDate: o.campaign_end_date,
+        shortDescription: o.campaign_short_description,
+        promotions: (o.campaign_promotions ?? []) as PromotionTier[],
+      }));
       setReceipt({
         orderId: o.id,
         campaignName: o.campaign_name,
@@ -89,8 +100,8 @@ function ConfirmationPage() {
         try {
           await navigator.share({
             files: [file],
-            title: "Meu bilhete da sorte",
-            text: `Acabei de garantir meus números na rifa "${receipt.campaignName}"! 🍀`,
+            title: `Rifa ${receipt.campaignName} da Associação Reviva Brasil`,
+            text: shareMessage,
           });
           return;
         } catch (err: any) {

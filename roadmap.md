@@ -27,3 +27,4 @@
 - [x] Preservar parágrafos e quebras de linha cadastrados nas campanhas em destaque
 - [x] Liberar reservas PIX vencidas mesmo quando o comprador fecha a tela de pagamento
 - [x] Garantir liberação local após 90 segundos e oferecer retorno manual à campanha
+- [x] Padronizar a mensagem em todos os compartilhamentos e campanhas futuras

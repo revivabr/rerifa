@@ -20,23 +20,27 @@ export function buildCampaignShareMessage({
   shortDescription?: string | null;
   promotions?: PromotionTier[];
 }): string {
-  const activePromotions = promotions.filter((promotion) => promotion.active !== false);
+  const activePromotions = promotions
+    .filter((promotion) => promotion.active !== false)
+    .sort((a, b) => a.quantity - b.quantity);
   const promotionLines = activePromotions
     .map((promotion) => {
       const savings = Number(price) * promotion.quantity - Number(promotion.promotional_price);
       const savingsText = savings > 0 ? ` (economize ${formatBRL(savings)})` : "";
       return `🎁 ${promotion.quantity} números por ${formatBRL(promotion.promotional_price)}${savingsText}`;
     })
-    .join("\n");
+    .join("\n\n");
+
+  const introduction = shortDescription?.trim();
 
   return (
-    `🎟️ *${campaignName}*\n\n` +
-    `${shortDescription ? `${shortDescription}\n\n` : ""}` +
-    `Participe dessa corrente do bem! Cada número ajuda a Associação Reviva Brasil a *Restaurar Vidas e Transformar Histórias*. 💙\n\n` +
-    `💰 Número: ${formatBRL(price)}\n` +
-    `${promotionLines ? `${promotionLines}\n` : ""}` +
+    `🎟️ Rifa ${campaignName} da Associação Reviva Brasil\n\n` +
+    `${introduction ? `${introduction}\n\n` : ""}` +
+    `Participe dessa corrente do bem! Cada número ajuda a Associação Reviva Brasil a Restaurar Vidas e Transformar Histórias. 💙\n\n` +
+    `💰 Número: ${formatBRL(price)}\n\n` +
+    `${promotionLines ? `${promotionLines}\n\n` : ""}` +
     `🗓️ Sorteio: ${formatCalendarDateBR(endDate)}\n\n` +
-    `Garanta seus números agora:\n` +
+    `Garanta seus números agora:\n\n` +
     `${campaignPublicUrl(slug)}\n\n` +
     `#RifaSolidária #RevivaBrasil 🙏`
   );

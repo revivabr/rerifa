@@ -14,6 +14,7 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { calculateCampaignPrice, type PromotionTier } from "@/lib/promotions";
 import { getCampaignNumberAvailability } from "@/lib/api/order.functions";
+import { buildCampaignShareMessage } from "@/lib/share";
 
 
 type CampaignMeta = {
@@ -21,6 +22,7 @@ type CampaignMeta = {
   shortDescription: string | null;
   bannerUrl: string | null;
   price: number;
+  endDate: string;
   promotions: { quantity: number; promotional_price: number }[];
 };
 
@@ -37,7 +39,7 @@ export const Route = createFileRoute("/campanha/$slug")({
   loader: async ({ params }): Promise<CampaignMeta | null> => {
     const { data: c } = await supabase
       .from("campaigns")
-      .select("id,name,short_description,banner_url,number_price")
+      .select("id,name,slug,short_description,banner_url,number_price,end_date")
       .eq("slug", params.slug)
       .maybeSingle();
     if (!c) return null;
@@ -56,6 +58,7 @@ export const Route = createFileRoute("/campanha/$slug")({
       shortDescription: c.short_description,
       bannerUrl,
       price: Number(c.number_price),
+      endDate: c.end_date,
       promotions: (promotionRows ?? []).map((p) => ({ quantity: p.quantity, promotional_price: Number(p.promotional_price) })),
     };
   },
@@ -75,10 +78,14 @@ export const Route = createFileRoute("/campanha/$slug")({
     }
 
     const title = `${loaderData.name} | Rifa Solidária Reviva Brasil`;
-    const promoText = loaderData.promotions.length > 0
-      ? ` Promoção: ${loaderData.promotions.map((p) => `${p.quantity} números por ${formatBRL(p.promotional_price)}`).join(", ")}.`
-      : "";
-    const description = `${loaderData.shortDescription ? `${loaderData.shortDescription} ` : ""}Número por ${formatBRL(loaderData.price)}.${promoText}`.trim();
+    const description = buildCampaignShareMessage({
+      campaignName: loaderData.name,
+      slug: params.slug,
+      price: loaderData.price,
+      endDate: loaderData.endDate,
+      shortDescription: loaderData.shortDescription,
+      promotions: loaderData.promotions,
+    });
     const campaignUrl = `https://rifa.revivabrasil.com.br/campanha/${encodeURIComponent(params.slug)}`;
     const campaignImageUrl = loaderData.bannerUrl
       ? `https://rifa.revivabrasil.com.br/api/public/campaign-image/${encodeURIComponent(params.slug)}?v=${bannerVersion(loaderData.bannerUrl)}`

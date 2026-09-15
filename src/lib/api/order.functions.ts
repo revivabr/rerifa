@@ -29,7 +29,7 @@ export const getOrderPublic = createServerFn({ method: "GET" })
     if (!order) return null;
 
     const [{ data: campaign }, { data: nums }, { data: buyer }] = await Promise.all([
-      supabase.from("campaigns").select("name,slug,banner_url,number_quantity").eq("id", order.campaign_id).maybeSingle(),
+      supabase.from("campaigns").select("name,slug,banner_url,number_quantity,number_price,end_date,short_description").eq("id", order.campaign_id).maybeSingle(),
       supabase.from("order_numbers").select("number").eq("order_id", data.orderId).order("number"),
       order.buyer_id
         ? supabase.from("buyers").select("name,whatsapp").eq("id", order.buyer_id).maybeSingle()
@@ -52,6 +52,9 @@ export const getOrderPublic = createServerFn({ method: "GET" })
       campaign_slug: (campaign?.slug as string) ?? "",
       campaign_banner: (campaign?.banner_url as string | null) ?? null,
       campaign_number_quantity: (campaign?.number_quantity as number) ?? 1000,
+      campaign_number_price: Number(campaign?.number_price ?? 0),
+      campaign_end_date: (campaign?.end_date as string) ?? "",
+      campaign_short_description: (campaign?.short_description as string | null) ?? null,
       buyer_name: (buyer?.name as string) ?? "",
       buyer_whatsapp: (buyer?.whatsapp as string | null) ?? null,
       seller_name: order.seller_name as string | null,

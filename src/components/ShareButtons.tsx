@@ -28,7 +28,7 @@ export function ShareButtons({
 }: Props) {
   const [copied, setCopied] = useState(false);
 
-  const url = campaignPublicUrl(slug);
+  campaignPublicUrl(slug);
   const message = buildCampaignShareMessage({ campaignName, slug, price, endDate, shortDescription, promotions });
   const subject = `Participe da Rifa Solidária — ${campaignName}`;
 
@@ -71,7 +71,7 @@ export function ShareButtons({
     const file = await fetchBannerFile();
     const filesPayload = file && navigator.canShare?.({ files: [file] }) ? { files: [file] } : {};
     try {
-      await navigator.share({ title: subject, text: message, url, ...filesPayload });
+      await navigator.share({ title: subject, text: message, ...filesPayload });
     } catch {
       /* user cancelled */
     }

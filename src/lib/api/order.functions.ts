@@ -60,6 +60,38 @@ export const getOrderPublic = createServerFn({ method: "GET" })
   });
 
 /**
+ * Libera reservas vencidas antes de devolver a disponibilidade pública.
+ * Assim, fechar o checkout não mantém números bloqueados indefinidamente.
+ */
+export const getCampaignNumberAvailability = createServerFn({ method: "GET" })
+  .inputValidator(z.object({ campaignId: z.string().uuid() }))
+  .handler(async ({ data }) => {
+    const supabase = getSupabaseAdmin();
+    const { error: expirationError } = await supabase.rpc("expire_pending_orders");
+
+    if (expirationError) {
+      console.error("Erro ao liberar reservas vencidas:", expirationError);
+      throw new Error("Não foi possível atualizar a disponibilidade dos números");
+    }
+
+    const { data: numbers, error } = await supabase
+      .from("raffle_numbers")
+      .select("number,status")
+      .eq("campaign_id", data.campaignId)
+      .order("number");
+
+    if (error) {
+      console.error("Erro ao consultar números da campanha:", error);
+      throw new Error("Não foi possível consultar os números da campanha");
+    }
+
+    return (numbers ?? []).map((number) => ({
+      number: number.number as number,
+      status: number.status as string,
+    }));
+  });
+
+/**
  * Cancela um pedido e libera os números imediatamente.
  */
 export const cancelOrder = createServerFn({ method: "POST" })

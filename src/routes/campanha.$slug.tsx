@@ -12,6 +12,7 @@ import { ShareCampaign } from "@/components/ShareCampaign";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { calculateCampaignPrice, type PromotionTier } from "@/lib/promotions";
+import { getCampaignNumberAvailability } from "@/lib/api/order.functions";
 
 
 type CampaignMeta = {
@@ -125,6 +126,7 @@ type Prize = { id: string; title: string; description: string | null; image_url:
 function CampaignPage() {
   const { slug } = Route.useParams();
   const navigate = useNavigate();
+  const getCampaignNumberAvailabilityFn = useServerFn(getCampaignNumberAvailability);
 
   const [campaign, setCampaign] = useState<Campaign | null>(null);
   const [numbers, setNumbers] = useState<RaffleNumber[]>([]);
@@ -166,8 +168,8 @@ function CampaignPage() {
 
       setCampaign(campaignData);
       
-      const [{ data: nums }, { data: promotionRows }] = await Promise.all([
-        supabase.from("raffle_numbers").select("number,status").eq("campaign_id", c.id).order("number"),
+      const [nums, { data: promotionRows }] = await Promise.all([
+        getCampaignNumberAvailabilityFn({ data: { campaignId: c.id } }),
         supabase.from("campaign_promotions").select("id,quantity,promotional_price,active").eq("campaign_id", c.id).eq("active", true).order("quantity"),
       ]);
       setNumbers((nums ?? []) as RaffleNumber[]);
@@ -210,7 +212,7 @@ function CampaignPage() {
         .subscribe();
     })();
     return () => { if (channel) supabase.removeChannel(channel); };
-  }, [slug]);
+  }, [getCampaignNumberAvailabilityFn, slug]);
 
   const price = useMemo(() => calculateCampaignPrice(Number(campaign?.number_price ?? 0), selected.size, promotions), [selected, campaign, promotions]);
   const sold = useMemo(() => numbers.filter(n => n.status === "sold").length, [numbers]);

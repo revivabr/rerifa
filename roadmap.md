@@ -25,3 +25,4 @@
 - [x] Reorganizar “Campanhas em destaque” em layout vertical e simétrico
 - [x] Corrigir o salvamento conjunto de promoções existentes e novas na edição de campanhas
 - [x] Preservar parágrafos e quebras de linha cadastrados nas campanhas em destaque
+- [x] Liberar reservas PIX vencidas mesmo quando o comprador fecha a tela de pagamento

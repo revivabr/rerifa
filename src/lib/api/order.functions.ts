@@ -28,12 +28,13 @@ export const getOrderPublic = createServerFn({ method: "GET" })
 
     if (!order) return null;
 
-    const [{ data: campaign }, { data: nums }, { data: buyer }] = await Promise.all([
+    const [{ data: campaign }, { data: nums }, { data: buyer }, { data: promotions }] = await Promise.all([
       supabase.from("campaigns").select("name,slug,banner_url,number_quantity,number_price,end_date,short_description").eq("id", order.campaign_id).maybeSingle(),
       supabase.from("order_numbers").select("number").eq("order_id", data.orderId).order("number"),
       order.buyer_id
         ? supabase.from("buyers").select("name,whatsapp").eq("id", order.buyer_id).maybeSingle()
         : Promise.resolve({ data: null }),
+      supabase.from("campaign_promotions").select("id,quantity,promotional_price,active").eq("campaign_id", order.campaign_id).eq("active", true).order("quantity"),
     ]);
 
     return {
@@ -55,6 +56,10 @@ export const getOrderPublic = createServerFn({ method: "GET" })
       campaign_number_price: Number(campaign?.number_price ?? 0),
       campaign_end_date: (campaign?.end_date as string) ?? "",
       campaign_short_description: (campaign?.short_description as string | null) ?? null,
+      campaign_promotions: (promotions ?? []).map((promotion) => ({
+        ...promotion,
+        promotional_price: Number(promotion.promotional_price),
+      })),
       buyer_name: (buyer?.name as string) ?? "",
       buyer_whatsapp: (buyer?.whatsapp as string | null) ?? null,
       seller_name: order.seller_name as string | null,

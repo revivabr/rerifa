@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Mail, Copy, Check, Instagram, Share2 } from "lucide-react";
 import { toast } from "sonner";
 import type { PromotionTier } from "@/lib/promotions";
-import { buildCampaignShareMessage, campaignPublicUrl } from "@/lib/share";
+import { buildCampaignShareMessage } from "@/lib/share";
 import { cn } from "@/lib/utils";
 
 type Props = {
@@ -28,7 +28,6 @@ export function ShareButtons({
 }: Props) {
   const [copied, setCopied] = useState(false);
 
-  campaignPublicUrl(slug);
   const message = buildCampaignShareMessage({ campaignName, slug, price, endDate, shortDescription, promotions });
   const subject = `Participe da Rifa Solidária — ${campaignName}`;
 

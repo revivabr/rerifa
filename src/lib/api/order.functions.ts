@@ -101,12 +101,15 @@ export const cancelOrder = createServerFn({ method: "POST" })
 
     const { data: order, error: orderError } = await supabase
       .from("orders")
-      .select("id,status,payment_provider_id")
+      .select("id,status,payment_provider_id,expires_at")
       .eq("id", data.orderId)
       .maybeSingle();
 
     if (orderError || !order) return { ok: false, error: "Pedido não encontrado" };
     if (order.status === "paid") return { ok: true, paid: true };
+    const reservationExpired = Boolean(
+      order.expires_at && new Date(order.expires_at).getTime() <= Date.now(),
+    );
 
     if (order.payment_provider_id) {
       try {
@@ -123,7 +126,11 @@ export const cancelOrder = createServerFn({ method: "POST" })
         }
       } catch (error) {
         console.error("Erro ao descartar cobrança PIX:", error);
-        return { ok: false, error: "Não foi possível descartar o PIX com segurança. Tente novamente." };
+        if (!reservationExpired) {
+          return { ok: false, error: "Não foi possível descartar o PIX com segurança. Tente novamente." };
+        }
+        // Uma indisponibilidade do provedor não pode manter números vencidos
+        // bloqueados. O webhook ainda valida uma eventual aprovação tardia.
       }
     }
 

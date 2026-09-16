@@ -79,7 +79,7 @@ export const getOrGeneratePix = createServerFn({ method: "POST" })
         throw new Error("Erro ao gerar dados do PIX no Mercado Pago");
       }
 
-      // 3. Persiste o PIX e inicia somente agora a reserva de 90 segundos.
+      // 3. Persiste o PIX e inicia somente agora a reserva unificada de 180 segundos.
       const { error: updateError } = await supabase.from("orders").update({
         pix_qr_code: pixData.qr_code_base64,
         pix_copy_paste: pixData.qr_code,

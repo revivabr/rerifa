@@ -14,7 +14,7 @@
 - [x] Exibir promoções da campanha ativa na página inicial
 - [x] Padronizar botões e mensagens de compartilhamento entre home e campanha
 - [x] Servir o banner oficial da campanha em URL pública e estável para as prévias sociais
-- [x] Limitar a reserva PIX a 90 segundos e liberar automaticamente os números vencidos
+- [x] Unificar cobrança e reserva PIX em 180 segundos e liberar automaticamente os números vencidos
 - [x] Restaurar o Mercado Pago real e confirmar automaticamente pedidos aprovados
 - [x] Exibir contagem regressiva de 10 segundos após expirar o PIX e retornar à seleção de números
 
@@ -26,5 +26,5 @@
 - [x] Corrigir o salvamento conjunto de promoções existentes e novas na edição de campanhas
 - [x] Preservar parágrafos e quebras de linha cadastrados nas campanhas em destaque
 - [x] Liberar reservas PIX vencidas mesmo quando o comprador fecha a tela de pagamento
-- [x] Garantir liberação local após 90 segundos e oferecer retorno manual à campanha
+- [x] Garantir liberação local após 180 segundos e oferecer retorno manual à campanha
 - [x] Padronizar a mensagem em todos os compartilhamentos e campanhas futuras

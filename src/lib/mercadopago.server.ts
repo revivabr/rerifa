@@ -43,8 +43,8 @@ export async function createPixPaymentRecord({
     throw new Error("Mercado Pago ACCESS_TOKEN não configurado no servidor.");
   }
 
-  // O Mercado Pago exige validade mínima de 180 segundos. A reserva local
-  // continua limitada a 90 segundos e a cobrança é descartada ao final dela.
+  // Cobrança e reserva usam o mesmo prazo de 180 segundos para evitar
+  // divergências entre o contador exibido e a validade informada ao provedor.
   const expiration = new Date(Date.now() + 180 * 1000);
 
   const body = {

@@ -4,7 +4,7 @@ import confetti from "canvas-confetti";
 import { toPng } from "html-to-image";
 import { toast } from "sonner";
 import { formatBRL, padNumber } from "@/lib/format";
-import { CheckCircle2, Heart, ArrowLeft, Sparkles, Download, Share2, Ticket } from "lucide-react";
+import { CheckCircle2, Heart, ArrowLeft, Sparkles, Download, Ticket } from "lucide-react";
 import { getOrderPublic } from "@/lib/api/order.functions";
 import { ReceiptTicket, type ReceiptData } from "@/components/ReceiptTicket";
 import { buildCampaignShareMessage } from "@/lib/share";

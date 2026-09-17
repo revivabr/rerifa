@@ -9,12 +9,24 @@ import { getOrderPublic } from "@/lib/api/order.functions";
 import { ReceiptTicket, type ReceiptData } from "@/components/ReceiptTicket";
 import { buildCampaignShareMessage } from "@/lib/share";
 import type { PromotionTier } from "@/lib/promotions";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/confirmacao/$orderId")({
+  head: () => ({
+    meta: [
+      { title: "Compra confirmada — Reviva Brasil" },
+      { name: "description", content: "Confirmação da participação, números da sorte e comprovante da Rifa Solidária Reviva Brasil." },
+      { property: "og:title", content: "Compra confirmada — Reviva Brasil" },
+      { property: "og:description", content: "Confira seus números da sorte e gere o comprovante da sua participação." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
+    ],
+  }),
   component: ConfirmationPage,
 });
 
 function fireConfetti() {
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
   const colors = ["#2B4BEB", "#F5C518", "#16A34A", "#F97316", "#EC4899"];
   const end = Date.now() + 1800;
   (function frame() {
@@ -124,59 +136,84 @@ function ConfirmationPage() {
     }
   }
 
-  if (!receipt) return <div className="flex min-h-[50vh] items-center justify-center">...</div>;
+  if (!receipt) return <div className="flex min-h-[50vh] items-center justify-center text-sm text-muted-foreground">Carregando confirmação...</div>;
 
   const firstName = receipt.buyerName.split(" ")[0];
 
   return (
-    <div className="min-h-screen bg-slate-50 selection:bg-primary/10 relative overflow-hidden">
+    <div className="relative min-h-screen overflow-hidden bg-secondary selection:bg-primary/10">
       <div className="absolute inset-0 bg-mesh opacity-20 pointer-events-none" />
-      <div className="mx-auto max-w-xl px-6 py-16 relative z-10">
-        <div className="overflow-hidden rounded-3xl bg-white shadow-premium">
-          <div className="relative bg-gradient-to-br from-success/10 via-primary/5 to-gold/10 p-12 text-center">
-            <div className="absolute top-4 right-4 flex items-center gap-1 rounded-full bg-white/80 px-3 py-1 backdrop-blur-sm shadow-sm">
+      <div className="relative z-10 mx-auto max-w-xl px-3 py-6 sm:px-6 sm:py-12">
+        <div className="overflow-hidden rounded-2xl bg-background shadow-premium sm:rounded-3xl">
+          <div className="relative bg-gradient-to-br from-success/10 via-primary/5 to-gold/10 px-5 pb-7 pt-12 text-center sm:p-12">
+            <div className="absolute right-3 top-3 flex items-center gap-1 rounded-full bg-background/80 px-2.5 py-1 shadow-sm backdrop-blur-sm sm:right-4 sm:top-4 sm:px-3">
               <Sparkles className="h-3 w-3 text-gold" />
               <span className="text-[10px] font-black uppercase tracking-wider text-primary">Boa sorte!</span>
             </div>
-            <div className="mx-auto flex h-24 w-24 items-center justify-center rounded-full bg-white shadow-md border border-success/10 animate-scale-in">
-              <CheckCircle2 className="h-12 w-12 text-success" />
+            <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full border border-success/10 bg-background shadow-md animate-scale-in sm:h-24 sm:w-24">
+              <CheckCircle2 className="h-10 w-10 text-success sm:h-12 sm:w-12" />
             </div>
-            <h1 className="mt-8 text-3xl font-black text-primary animate-fade-in">
+            <h1 className="mt-5 text-2xl font-black text-primary animate-fade-in sm:mt-8 sm:text-3xl">
               Parabéns, {firstName}! 🎉
             </h1>
-            <p className="mt-3 text-base font-semibold text-primary/80 animate-fade-in">
+            <p className="mt-2 text-base font-semibold text-primary/80 animate-fade-in sm:mt-3">
               Sua participação está confirmada
             </p>
-            <p className="mt-4 text-sm leading-relaxed text-muted-foreground max-w-sm mx-auto animate-fade-in">
+            <p className="mx-auto mt-3 max-w-sm text-sm leading-relaxed text-muted-foreground animate-fade-in sm:mt-4">
               Muito obrigado por acreditar e fazer parte dessa corrente do bem.
               Cada número comprado se transforma em <strong className="text-success">esperança e oportunidade</strong> para
               quem mais precisa. Que a sorte esteja com você <Heart className="inline h-3.5 w-3.5 fill-success text-success" />
             </p>
           </div>
 
-          <div className="p-8 md:p-12 space-y-6">
-            {/* CTA bilhete — bem chamativo */}
-            <button
+          <div className="space-y-5 p-4 sm:space-y-6 sm:p-8 md:p-12">
+            <Button
+              type="button"
               onClick={handleReceipt}
               disabled={generating}
-              className="group relative w-full overflow-hidden rounded-2xl bg-gradient-to-r from-gold via-amber-400 to-gold p-[2px] shadow-[0_12px_40px_-8px_rgba(245,197,24,0.6)] transition-all hover:shadow-[0_18px_50px_-8px_rgba(245,197,24,0.8)] active:scale-[0.98] disabled:opacity-70"
+              size="lg"
+              className="group relative h-auto min-h-20 w-full overflow-hidden border-2 border-gold bg-primary px-4 py-4 shadow-premium ring-4 ring-gold/20 hover:bg-primary/95 sm:min-h-24 sm:px-6"
             >
-              <span className="flex h-16 w-full items-center justify-center gap-3 rounded-[14px] bg-gradient-to-r from-primary to-primary/90 px-6 text-base font-black uppercase tracking-wide text-white">
-                <Ticket className="h-5 w-5" />
-                {generating ? "Gerando seu bilhete..." : "Emitir bilhete comprovante"}
-                {!generating && <Download className="h-5 w-5 transition-transform group-hover:translate-y-0.5" />}
+              <span className="flex min-w-0 items-center gap-3 text-primary-foreground">
+                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gold text-primary sm:h-12 sm:w-12">
+                  <Ticket className="h-6 w-6" />
+                </span>
+                <span className="min-w-0 text-left">
+                  <span className="block text-base font-black uppercase sm:text-lg">
+                    {generating ? "Gerando comprovante..." : "Gerar meu comprovante"}
+                  </span>
+                  <span className="mt-0.5 block whitespace-normal text-xs font-semibold normal-case text-primary-foreground/75 sm:text-sm">
+                    Baixe ou compartilhe seu bilhete de compra
+                  </span>
+                </span>
+                {!generating && <Download className="ml-auto h-5 w-5 shrink-0 transition-transform group-hover:translate-y-0.5" />}
               </span>
-              <span className="pointer-events-none absolute -top-1 -right-1 inline-flex items-center gap-1 rounded-full bg-success px-2 py-0.5 text-[9px] font-black uppercase tracking-widest text-white shadow-md">
-                <Share2 className="h-2.5 w-2.5" /> Baixar/Compartilhar
-              </span>
-            </button>
+            </Button>
 
-            <div className="space-y-4 rounded-2xl border border-black/[0.03] bg-secondary/30 p-6 text-sm">
+            <div className="space-y-3 rounded-2xl border border-border bg-secondary/30 p-4 text-sm sm:space-y-4 sm:p-6">
               <Row label="Campanha" value={receipt.campaignName} />
               <Row label="Comprador" value={receipt.buyerName} />
-              <Row label="Números da sorte" value={<span className="font-bold text-primary">{receipt.numbers.map(n => padNumber(n, receipt.numberTotal)).join(", ")}</span>} />
               <Row label="Valor" value={<span className="font-bold text-primary">{formatBRL(receipt.amount)}</span>} />
             </div>
+
+            <section className="rounded-2xl border border-gold/40 bg-gold/10 p-4 sm:p-6" aria-labelledby="numbers-title">
+              <div className="flex items-center justify-center gap-2 text-primary">
+                <Ticket className="h-4 w-4 text-gold" />
+                <h2 id="numbers-title" className="text-center text-xs font-black uppercase tracking-widest">
+                  Seus números da sorte ({receipt.numbers.length})
+                </h2>
+              </div>
+              <div className="mt-4 grid grid-cols-4 gap-2 min-[420px]:grid-cols-5 sm:grid-cols-6">
+                {receipt.numbers.map((number) => (
+                  <span
+                    key={number}
+                    className="flex aspect-square min-w-0 items-center justify-center rounded-lg bg-primary px-1 text-sm font-black tabular-nums text-primary-foreground shadow-sm"
+                  >
+                    {padNumber(number, receipt.numberTotal)}
+                  </span>
+                ))}
+              </div>
+            </section>
 
             <div className="rounded-2xl bg-gradient-to-r from-primary/5 to-gold/5 p-5 text-center">
               <p className="text-sm font-bold text-primary">
@@ -192,14 +229,12 @@ function ConfirmationPage() {
             </p>
 
             {slug && (
-              <Link
-                to="/campanha/$slug"
-                params={{ slug }}
-                className="flex h-14 w-full items-center justify-center gap-3 rounded-2xl bg-primary text-sm font-bold text-white shadow-premium transition-all hover:bg-primary/90 active:scale-95"
-              >
-                <ArrowLeft className="h-4 w-4" />
-                Voltar para a campanha
-              </Link>
+              <Button asChild size="lg" className="w-full">
+                <Link to="/campanha/$slug" params={{ slug }}>
+                  <ArrowLeft className="h-4 w-4" />
+                  Voltar para a campanha
+                </Link>
+              </Button>
             )}
           </div>
         </div>
@@ -224,9 +259,9 @@ function ConfirmationPage() {
 
 function Row({ label, value }: { label: string; value: React.ReactNode }) {
   return (
-    <div className="flex justify-between items-start py-1 border-b border-black/[0.03] last:border-0 last:pb-0">
+    <div className="grid grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] items-start gap-3 border-b border-border py-1 last:border-0 last:pb-0">
       <span className="text-muted-foreground font-medium">{label}</span>
-      <span className="text-right text-primary font-bold max-w-[60%]">{value}</span>
+      <span className="min-w-0 break-words text-right font-bold text-primary">{value}</span>
     </div>
   );
 }

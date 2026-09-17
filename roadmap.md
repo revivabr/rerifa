@@ -29,3 +29,4 @@
 - [x] Garantir liberação local após 180 segundos e oferecer retorno manual à campanha
 - [x] Padronizar a mensagem em todos os compartilhamentos e campanhas futuras
 - [x] Corrigir a recusa bancária do PIX mantendo a reserva em 180 segundos
+- [x] Melhorar a confirmação no celular, destacar o comprovante e restaurar os confetes

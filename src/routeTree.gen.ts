@@ -9,28 +9,28 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as AdminRouteImport } from './routes/admin'
 import { Route as InformacoesRouteImport } from './routes/informacoes'
-import { Route as AdminDashboardRouteImport } from './routes/admin.dashboard'
-import { Route as AdminLoginRouteImport } from './routes/admin.login'
-import { Route as CampanhaSlugRouteImport } from './routes/campanha.$slug'
-import { Route as CheckoutOrderIdRouteImport } from './routes/checkout.$orderId'
+import { Route as AdminRouteImport } from './routes/admin'
+import { Route as IndexRouteImport } from './routes/index'
 import { Route as ConfirmacaoOrderIdRouteImport } from './routes/confirmacao.$orderId'
-import { Route as AdminCampaignsIndexRouteImport } from './routes/admin.campaigns.index'
-import { Route as AdminCampaignsIdRouteImport } from './routes/admin.campaigns.$id'
-import { Route as AdminCampaignsNewRouteImport } from './routes/admin.campaigns.new'
-import { Route as AdminDrawIndexRouteImport } from './routes/admin.draw.index'
-import { Route as AdminDrawIdRouteImport } from './routes/admin.draw.$id'
+import { Route as CheckoutOrderIdRouteImport } from './routes/checkout.$orderId'
+import { Route as CampanhaSlugRouteImport } from './routes/campanha.$slug'
+import { Route as AdminLoginRouteImport } from './routes/admin.login'
+import { Route as AdminDashboardRouteImport } from './routes/admin.dashboard'
 import { Route as AdminRankingIndexRouteImport } from './routes/admin.ranking.index'
-import { Route as AdminRankingIdRouteImport } from './routes/admin.ranking.$id'
+import { Route as AdminDrawIndexRouteImport } from './routes/admin.draw.index'
+import { Route as AdminCampaignsIndexRouteImport } from './routes/admin.campaigns.index'
 import { Route as ApiWebhooksMercadopagoRouteImport } from './routes/api.webhooks.mercadopago'
-import { Route as ApiPublicCampaignImageSlugRouteImport } from './routes/api.public.campaign-image.$slug'
+import { Route as AdminRankingIdRouteImport } from './routes/admin.ranking.$id'
+import { Route as AdminDrawIdRouteImport } from './routes/admin.draw.$id'
+import { Route as AdminCampaignsNewRouteImport } from './routes/admin.campaigns.new'
+import { Route as AdminCampaignsIdRouteImport } from './routes/admin.campaigns.$id'
 import { Route as ApiPublicWebhooksMercadopagoRouteImport } from './routes/api.public.webhooks.mercadopago'
+import { Route as ApiPublicCampaignImageSlugRouteImport } from './routes/api.public.campaign-image.$slug'
 
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const InformacoesRoute = InformacoesRouteImport.update({
+  id: '/informacoes',
+  path: '/informacoes',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminRoute = AdminRouteImport.update({
@@ -38,29 +38,9 @@ const AdminRoute = AdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
-const InformacoesRoute = InformacoesRouteImport.update({
-  id: '/informacoes',
-  path: '/informacoes',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminDashboardRoute = AdminDashboardRouteImport.update({
-  id: '/dashboard',
-  path: '/dashboard',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminLoginRoute = AdminLoginRouteImport.update({
-  id: '/login',
-  path: '/login',
-  getParentRoute: () => AdminRoute,
-} as any)
-const CampanhaSlugRoute = CampanhaSlugRouteImport.update({
-  id: '/campanha/$slug',
-  path: '/campanha/$slug',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CheckoutOrderIdRoute = CheckoutOrderIdRouteImport.update({
-  id: '/checkout/$orderId',
-  path: '/checkout/$orderId',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ConfirmacaoOrderIdRoute = ConfirmacaoOrderIdRouteImport.update({
@@ -68,29 +48,24 @@ const ConfirmacaoOrderIdRoute = ConfirmacaoOrderIdRouteImport.update({
   path: '/confirmacao/$orderId',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AdminCampaignsIndexRoute = AdminCampaignsIndexRouteImport.update({
-  id: '/campaigns/',
-  path: '/campaigns/',
+const CheckoutOrderIdRoute = CheckoutOrderIdRouteImport.update({
+  id: '/checkout/$orderId',
+  path: '/checkout/$orderId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CampanhaSlugRoute = CampanhaSlugRouteImport.update({
+  id: '/campanha/$slug',
+  path: '/campanha/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminLoginRoute = AdminLoginRouteImport.update({
+  id: '/login',
+  path: '/login',
   getParentRoute: () => AdminRoute,
 } as any)
-const AdminCampaignsIdRoute = AdminCampaignsIdRouteImport.update({
-  id: '/campaigns/$id',
-  path: '/campaigns/$id',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminCampaignsNewRoute = AdminCampaignsNewRouteImport.update({
-  id: '/campaigns/new',
-  path: '/campaigns/new',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminDrawIndexRoute = AdminDrawIndexRouteImport.update({
-  id: '/draw/',
-  path: '/draw/',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminDrawIdRoute = AdminDrawIdRouteImport.update({
-  id: '/draw/$id',
-  path: '/draw/$id',
+const AdminDashboardRoute = AdminDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminRankingIndexRoute = AdminRankingIndexRouteImport.update({
@@ -98,9 +73,14 @@ const AdminRankingIndexRoute = AdminRankingIndexRouteImport.update({
   path: '/ranking/',
   getParentRoute: () => AdminRoute,
 } as any)
-const AdminRankingIdRoute = AdminRankingIdRouteImport.update({
-  id: '/ranking/$id',
-  path: '/ranking/$id',
+const AdminDrawIndexRoute = AdminDrawIndexRouteImport.update({
+  id: '/draw/',
+  path: '/draw/',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminCampaignsIndexRoute = AdminCampaignsIndexRouteImport.update({
+  id: '/campaigns/',
+  path: '/campaigns/',
   getParentRoute: () => AdminRoute,
 } as any)
 const ApiWebhooksMercadopagoRoute = ApiWebhooksMercadopagoRouteImport.update({
@@ -108,16 +88,36 @@ const ApiWebhooksMercadopagoRoute = ApiWebhooksMercadopagoRouteImport.update({
   path: '/api/webhooks/mercadopago',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiPublicCampaignImageSlugRoute =
-  ApiPublicCampaignImageSlugRouteImport.update({
-    id: '/api/public/campaign-image/$slug',
-    path: '/api/public/campaign-image/$slug',
-    getParentRoute: () => rootRouteImport,
-  } as any)
+const AdminRankingIdRoute = AdminRankingIdRouteImport.update({
+  id: '/ranking/$id',
+  path: '/ranking/$id',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminDrawIdRoute = AdminDrawIdRouteImport.update({
+  id: '/draw/$id',
+  path: '/draw/$id',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminCampaignsNewRoute = AdminCampaignsNewRouteImport.update({
+  id: '/campaigns/new',
+  path: '/campaigns/new',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminCampaignsIdRoute = AdminCampaignsIdRouteImport.update({
+  id: '/campaigns/$id',
+  path: '/campaigns/$id',
+  getParentRoute: () => AdminRoute,
+} as any)
 const ApiPublicWebhooksMercadopagoRoute =
   ApiPublicWebhooksMercadopagoRouteImport.update({
     id: '/api/public/webhooks/mercadopago',
     path: '/api/public/webhooks/mercadopago',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicCampaignImageSlugRoute =
+  ApiPublicCampaignImageSlugRouteImport.update({
+    id: '/api/public/campaign-image/$slug',
+    path: '/api/public/campaign-image/$slug',
     getParentRoute: () => rootRouteImport,
   } as any)
 
@@ -259,11 +259,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/informacoes': {
+      id: '/informacoes'
+      path: '/informacoes'
+      fullPath: '/informacoes'
+      preLoaderRoute: typeof InformacoesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin': {
@@ -273,39 +273,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/informacoes': {
-      id: '/informacoes'
-      path: '/informacoes'
-      fullPath: '/informacoes'
-      preLoaderRoute: typeof InformacoesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin/dashboard': {
-      id: '/admin/dashboard'
-      path: '/dashboard'
-      fullPath: '/admin/dashboard'
-      preLoaderRoute: typeof AdminDashboardRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/login': {
-      id: '/admin/login'
-      path: '/login'
-      fullPath: '/admin/login'
-      preLoaderRoute: typeof AdminLoginRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/campanha/$slug': {
-      id: '/campanha/$slug'
-      path: '/campanha/$slug'
-      fullPath: '/campanha/$slug'
-      preLoaderRoute: typeof CampanhaSlugRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/checkout/$orderId': {
-      id: '/checkout/$orderId'
-      path: '/checkout/$orderId'
-      fullPath: '/checkout/$orderId'
-      preLoaderRoute: typeof CheckoutOrderIdRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/confirmacao/$orderId': {
@@ -315,39 +287,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ConfirmacaoOrderIdRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/admin/campaigns/': {
-      id: '/admin/campaigns/'
-      path: '/campaigns'
-      fullPath: '/admin/campaigns/'
-      preLoaderRoute: typeof AdminCampaignsIndexRouteImport
+    '/checkout/$orderId': {
+      id: '/checkout/$orderId'
+      path: '/checkout/$orderId'
+      fullPath: '/checkout/$orderId'
+      preLoaderRoute: typeof CheckoutOrderIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/campanha/$slug': {
+      id: '/campanha/$slug'
+      path: '/campanha/$slug'
+      fullPath: '/campanha/$slug'
+      preLoaderRoute: typeof CampanhaSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/login': {
+      id: '/admin/login'
+      path: '/login'
+      fullPath: '/admin/login'
+      preLoaderRoute: typeof AdminLoginRouteImport
       parentRoute: typeof AdminRoute
     }
-    '/admin/campaigns/$id': {
-      id: '/admin/campaigns/$id'
-      path: '/campaigns/$id'
-      fullPath: '/admin/campaigns/$id'
-      preLoaderRoute: typeof AdminCampaignsIdRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/campaigns/new': {
-      id: '/admin/campaigns/new'
-      path: '/campaigns/new'
-      fullPath: '/admin/campaigns/new'
-      preLoaderRoute: typeof AdminCampaignsNewRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/draw/': {
-      id: '/admin/draw/'
-      path: '/draw'
-      fullPath: '/admin/draw/'
-      preLoaderRoute: typeof AdminDrawIndexRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/draw/$id': {
-      id: '/admin/draw/$id'
-      path: '/draw/$id'
-      fullPath: '/admin/draw/$id'
-      preLoaderRoute: typeof AdminDrawIdRouteImport
+    '/admin/dashboard': {
+      id: '/admin/dashboard'
+      path: '/dashboard'
+      fullPath: '/admin/dashboard'
+      preLoaderRoute: typeof AdminDashboardRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/ranking/': {
@@ -357,11 +322,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminRankingIndexRouteImport
       parentRoute: typeof AdminRoute
     }
-    '/admin/ranking/$id': {
-      id: '/admin/ranking/$id'
-      path: '/ranking/$id'
-      fullPath: '/admin/ranking/$id'
-      preLoaderRoute: typeof AdminRankingIdRouteImport
+    '/admin/draw/': {
+      id: '/admin/draw/'
+      path: '/draw'
+      fullPath: '/admin/draw/'
+      preLoaderRoute: typeof AdminDrawIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/campaigns/': {
+      id: '/admin/campaigns/'
+      path: '/campaigns'
+      fullPath: '/admin/campaigns/'
+      preLoaderRoute: typeof AdminCampaignsIndexRouteImport
       parentRoute: typeof AdminRoute
     }
     '/api/webhooks/mercadopago': {
@@ -371,18 +343,46 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiWebhooksMercadopagoRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/campaign-image/$slug': {
-      id: '/api/public/campaign-image/$slug'
-      path: '/api/public/campaign-image/$slug'
-      fullPath: '/api/public/campaign-image/$slug'
-      preLoaderRoute: typeof ApiPublicCampaignImageSlugRouteImport
-      parentRoute: typeof rootRouteImport
+    '/admin/ranking/$id': {
+      id: '/admin/ranking/$id'
+      path: '/ranking/$id'
+      fullPath: '/admin/ranking/$id'
+      preLoaderRoute: typeof AdminRankingIdRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/draw/$id': {
+      id: '/admin/draw/$id'
+      path: '/draw/$id'
+      fullPath: '/admin/draw/$id'
+      preLoaderRoute: typeof AdminDrawIdRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/campaigns/new': {
+      id: '/admin/campaigns/new'
+      path: '/campaigns/new'
+      fullPath: '/admin/campaigns/new'
+      preLoaderRoute: typeof AdminCampaignsNewRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/campaigns/$id': {
+      id: '/admin/campaigns/$id'
+      path: '/campaigns/$id'
+      fullPath: '/admin/campaigns/$id'
+      preLoaderRoute: typeof AdminCampaignsIdRouteImport
+      parentRoute: typeof AdminRoute
     }
     '/api/public/webhooks/mercadopago': {
       id: '/api/public/webhooks/mercadopago'
       path: '/api/public/webhooks/mercadopago'
       fullPath: '/api/public/webhooks/mercadopago'
       preLoaderRoute: typeof ApiPublicWebhooksMercadopagoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/campaign-image/$slug': {
+      id: '/api/public/campaign-image/$slug'
+      path: '/api/public/campaign-image/$slug'
+      fullPath: '/api/public/campaign-image/$slug'
+      preLoaderRoute: typeof ApiPublicCampaignImageSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
   }

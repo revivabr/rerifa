@@ -43,9 +43,10 @@ export async function createPixPaymentRecord({
     throw new Error("Mercado Pago ACCESS_TOKEN não configurado no servidor.");
   }
 
-  // Cobrança e reserva usam o mesmo prazo de 180 segundos para evitar
-  // divergências entre o contador exibido e a validade informada ao provedor.
-  const expiration = new Date(Date.now() + 180 * 1000);
+  // O Mercado Pago precisa de margem operacional para liquidar o PIX entre
+  // instituições. A reserva no site continua limitada a 180 segundos e, ao
+  // terminar, a cobrança é cancelada pelo fluxo de checkout.
+  const expiration = new Date(Date.now() + 30 * 60 * 1000);
 
   const body = {
     transaction_amount: Number(amount.toFixed(2)),
@@ -70,7 +71,9 @@ export async function createPixPaymentRecord({
       headers: {
         "Authorization": `Bearer ${accessToken}`,
         "Content-Type": "application/json",
-        "X-Idempotency-Key": `${id}-${Date.now()}` // Chave única por tentativa para evitar lock 423
+        // Um pedido só pode originar uma cobrança. Repetições de rede devem
+        // devolver a mesma cobrança, não criar PIX órfãos.
+        "X-Idempotency-Key": id,
       },
       body: JSON.stringify(body)
     });

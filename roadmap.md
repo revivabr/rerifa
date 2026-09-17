@@ -28,3 +28,4 @@
 - [x] Liberar reservas PIX vencidas mesmo quando o comprador fecha a tela de pagamento
 - [x] Garantir liberação local após 180 segundos e oferecer retorno manual à campanha
 - [x] Padronizar a mensagem em todos os compartilhamentos e campanhas futuras
+- [x] Corrigir a recusa bancária do PIX mantendo a reserva em 180 segundos

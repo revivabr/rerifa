@@ -30,3 +30,5 @@
 - [x] Padronizar a mensagem em todos os compartilhamentos e campanhas futuras
 - [x] Corrigir a recusa bancária do PIX mantendo a reserva em 180 segundos
 - [x] Melhorar a confirmação no celular, destacar o comprovante e restaurar os confetes
+- [x] Recuperar a cobrança PIX após bloqueio temporário sem gerar duplicidade
+- [x] Alinhar a validade do código PIX à reserva de 180 segundos

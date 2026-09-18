@@ -239,7 +239,19 @@ function CampaignPage() {
     if (!campaign) return;
     setSubmitting(true);
     const nums = [...selected].sort((a,b) => a-b);
-    const { data, error } = await supabase.rpc("reserve_numbers", {
+    type ReserveNumbersClient = {
+      rpc: (name: "reserve_numbers", args: {
+        p_campaign_id: string;
+        p_numbers: number[];
+        p_buyer_name: string;
+        p_buyer_email: string;
+        p_buyer_whatsapp: string;
+        p_buyer_cpf: string;
+        p_seller_name: string;
+      }) => ReturnType<typeof supabase.rpc>;
+    };
+    const reserveClient = supabase as unknown as ReserveNumbersClient;
+    const { data, error } = await reserveClient.rpc("reserve_numbers", {
       p_campaign_id: campaign.id,
       p_numbers: nums,
       p_buyer_name: form.name,

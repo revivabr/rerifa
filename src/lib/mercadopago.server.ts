@@ -1,12 +1,7 @@
 import process from "node:process";
 
 /**
- * Formata uma data como ISO-8601 com offset de São Paulo (-03:00),
- * que é o formato exigido pelo Mercado Pago no campo `date_of_expiration`.
- * Enviar `.toISOString()` (com `Z` em UTC) pode fazer o pagamento nascer
- * marcado como vencido devido à interpretação de fuso no lado do MP.
- *
- * Exemplo de saída: 2026-06-12T15:30:45.000-03:00
+ * Formata a validade no padrão ISO-8601 em UTC, sem ambiguidade de fuso.
  */
 function formatMpExpiration(date: Date): string {
   return date.toISOString();
@@ -18,8 +13,8 @@ export async function createPixPaymentRecord({
   email,
   description,
   firstName,
-  lastName
-  ,cpf
+  lastName,
+  cpf,
 }: {
   id: string;
   amount: number;

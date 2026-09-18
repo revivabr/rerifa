@@ -43,10 +43,9 @@ export async function createPixPaymentRecord({
     throw new Error("Mercado Pago ACCESS_TOKEN não configurado no servidor.");
   }
 
-  // O Mercado Pago precisa de margem operacional para liquidar o PIX entre
-  // instituições. A reserva no site continua limitada a 180 segundos e, ao
-  // terminar, a cobrança é cancelada pelo fluxo de checkout.
-  const expiration = new Date(Date.now() + 30 * 60 * 1000);
+  // A cobrança e a reserva precisam vencer juntas. Assim, um código salvo não
+  // pode ser pago depois que os números já tiverem sido liberados.
+  const expiration = new Date(Date.now() + 180 * 1000);
 
   const body = {
     transaction_amount: Number(amount.toFixed(2)),
@@ -66,41 +65,96 @@ export async function createPixPaymentRecord({
   console.log("Iniciando requisição direta ao Mercado Pago para o pedido:", id);
 
   try {
-    const response = await fetch("https://api.mercadopago.com/v1/payments", {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${accessToken}`,
-        "Content-Type": "application/json",
-        // Um pedido só pode originar uma cobrança. Repetições de rede devem
-        // devolver a mesma cobrança, não criar PIX órfãos.
-        "X-Idempotency-Key": id,
-      },
-      body: JSON.stringify(body)
-    });
+    for (let attempt = 0; attempt < 2; attempt += 1) {
+      const response = await fetch("https://api.mercadopago.com/v1/payments", {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+          // Um pedido só pode originar uma cobrança. Repetições de rede devem
+          // devolver a mesma cobrança, não criar PIX órfãos.
+          "X-Idempotency-Key": id,
+        },
+        body: JSON.stringify(body)
+      });
 
-    const result = await response.json();
+      const result = await response.json() as MercadoPagoPayment;
+      if (response.ok) {
+        console.log("Pagamento PIX gerado com sucesso para o pedido:", id);
+        return result;
+      }
 
-    if (!response.ok) {
       console.error("Erro na API do Mercado Pago:", JSON.stringify(result));
-      throw new Error(result.message || "Erro na comunicação com Mercado Pago");
+      if (!isResourceLocked(response.status, result)) {
+        throw new Error(result.message || "Erro na comunicação com Mercado Pago");
+      }
+
+      // O Mercado Pago pode bloquear brevemente a mesma chave idempotente
+      // quando duas abas/requisições chegam juntas. Aguarda a primeira criação
+      // terminar e recupera a cobrança pelo identificador do pedido.
+      const recovered = await recoverPixPayment(id, accessToken);
+      if (recovered) {
+        console.log("Pagamento PIX recuperado após bloqueio para o pedido:", id);
+        return recovered;
+      }
     }
 
-    console.log("Pagamento PIX gerado com sucesso para o pedido:", id);
-    return result;
-  } catch (error: any) {
-    console.error("Falha ao chamar API do Mercado Pago:", error.message);
+    throw new Error("A cobrança PIX ainda está sendo processada. Tente novamente em alguns segundos.");
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : "Erro na comunicação com Mercado Pago";
+    console.error("Falha ao chamar API do Mercado Pago:", message);
     throw error;
   }
 }
 
-type MercadoPagoPaymentStatus = {
+type MercadoPagoPayment = {
   id?: number;
   status?: string;
+  message?: string;
   external_reference?: string;
   transaction_amount?: number;
+  point_of_interaction?: {
+    transaction_data?: {
+      qr_code_base64?: string;
+      qr_code?: string;
+    };
+  };
 };
 
-async function mercadoPagoRequest(path: string, init?: RequestInit): Promise<MercadoPagoPaymentStatus> {
+function isResourceLocked(httpStatus: number, result: MercadoPagoPayment) {
+  const message = result.message?.toLowerCase() ?? "";
+  return httpStatus === 423 || message.includes("resource is locked") || message.includes("lock error");
+}
+
+async function recoverPixPayment(orderId: string, accessToken: string): Promise<MercadoPagoPayment | null> {
+  const delays = [400, 900, 1_800];
+
+  for (const delay of delays) {
+    await new Promise((resolve) => setTimeout(resolve, delay));
+    const params = new URLSearchParams({
+      external_reference: orderId,
+      sort: "date_created",
+      criteria: "desc",
+      limit: "10",
+    });
+    const response = await fetch(`https://api.mercadopago.com/v1/payments/search?${params}`, {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+    if (!response.ok) continue;
+
+    const search = await response.json() as { results?: MercadoPagoPayment[] };
+    const payment = search.results?.find((candidate) => (
+      candidate.external_reference === orderId
+      && candidate.point_of_interaction?.transaction_data?.qr_code
+      && candidate.point_of_interaction.transaction_data.qr_code_base64
+    ));
+    if (payment) return payment;
+  }
+
+  return null;
+}
+
+async function mercadoPagoRequest(path: string, init?: RequestInit): Promise<MercadoPagoPayment> {
   const accessToken = process.env.ACCESS_TOKEN;
   if (!accessToken) {
     throw new Error("Mercado Pago ACCESS_TOKEN não configurado no servidor.");
@@ -114,7 +168,7 @@ async function mercadoPagoRequest(path: string, init?: RequestInit): Promise<Mer
       ...init?.headers,
     },
   });
-  const result = await response.json() as MercadoPagoPaymentStatus & { message?: string };
+  const result = await response.json() as MercadoPagoPayment;
   if (!response.ok) {
     throw new Error(result.message || `Mercado Pago respondeu com status ${response.status}`);
   }

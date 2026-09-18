@@ -106,12 +106,12 @@ export const getOrGeneratePix = createServerFn({ method: "POST" })
         status: order.status,
         expires_at: paymentWindow.expires_at as string,
       };
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Erro ao processar PIX:", err);
-      // Log extra para depurar o erro no console do servidor
       if (err instanceof Error) {
         console.error("Stack trace:", err.stack);
+        throw new Error(err.message);
       }
-      throw new Error(err.message || "Erro interno ao processar pagamento");
+      throw new Error("Erro interno ao processar pagamento");
     }
   });

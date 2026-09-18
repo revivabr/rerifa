@@ -81,6 +81,7 @@ export type Database = {
       }
       buyers: {
         Row: {
+          cpf: string | null
           created_at: string | null
           email: string | null
           id: string
@@ -88,6 +89,7 @@ export type Database = {
           whatsapp: string
         }
         Insert: {
+          cpf?: string | null
           created_at?: string | null
           email?: string | null
           id?: string
@@ -95,6 +97,7 @@ export type Database = {
           whatsapp: string
         }
         Update: {
+          cpf?: string | null
           created_at?: string | null
           email?: string | null
           id?: string
@@ -766,6 +769,18 @@ export type Database = {
           }
         | {
             Args: {
+              p_buyer_email: string
+              p_buyer_name: string
+              p_buyer_whatsapp: string
+              p_campaign_id: string
+              p_numbers: number[]
+              p_seller_name?: string
+            }
+            Returns: Json
+          }
+        | {
+            Args: {
+              p_buyer_cpf?: string
               p_buyer_email: string
               p_buyer_name: string
               p_buyer_whatsapp: string

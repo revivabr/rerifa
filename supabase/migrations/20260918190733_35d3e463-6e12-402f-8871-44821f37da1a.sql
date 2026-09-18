@@ -1,0 +1,1 @@
+COMMENT ON COLUMN public.orders.expires_at IS 'Vencimento autoritativo da reserva e da cobrança PIX, armazenado em UTC';

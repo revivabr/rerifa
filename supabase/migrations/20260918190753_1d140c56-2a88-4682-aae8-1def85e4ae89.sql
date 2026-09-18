@@ -1,0 +1,1 @@
+COMMENT ON INDEX public.orders_payment_provider_id_unique IS 'Impede que a mesma cobrança do provedor seja vinculada a pedidos diferentes';

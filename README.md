@@ -84,7 +84,7 @@ A plataforma atende três jornadas principais:
 │   ├── hooks/                    # Hooks de sessão e responsividade
 │   ├── integrations/             # Clientes e tipos gerados da Lovable Cloud
 │   ├── lib/                      # Regras de preço, formatação e funções de servidor
-│   ├── routes/                   # Páginas e endpoint de webhook
+│   ├── routes/                   # Páginas, webhook público e manutenção interna do PIX
 │   ├── router.tsx                # Instância do roteador
 │   ├── server.ts                 # Entrada SSR e tratamento de falhas
 │   ├── start.ts                  # Middlewares da aplicação
@@ -168,7 +168,8 @@ O preço exibido no navegador é apenas uma prévia. O valor definitivo é calcu
 - O painel exige sessão autenticada e presença na tabela administrativa.
 - Reservas e confirmações importantes são executadas por funções transacionais do banco.
 - Funções de servidor validam identificadores com Zod antes de consultar dados privados.
-- O webhook confirma o estado do pagamento consultando a API do Mercado Pago antes de alterar o pedido.
+- O webhook oficial em `/api/public/webhooks/mercadopago` confirma o estado do pagamento consultando a API do Mercado Pago antes de alterar o pedido.
+- A manutenção protegida do PIX roda a cada minuto, encerra reservas vencidas mesmo com a tela fechada e encaminha pagamentos tardios para estorno.
 - Credenciais privadas ficam somente no ambiente do servidor.
 
 Consulte [Banco de dados — Segurança](docs/BANCO-DE-DADOS.md#segurança-e-controle-de-acesso) para a matriz de acesso e [Arquitetura — Pontos de atenção](docs/ARQUITETURA.md#pontos-de-atenção-e-evolução) para limites conhecidos.

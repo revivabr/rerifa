@@ -3,7 +3,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
 import { formatBRL, padNumber } from "@/lib/format";
 import { Button } from "@/components/ui/button";
-import { Copy, CheckCircle2, Clock, Loader2, AlertCircle, X } from "lucide-react";
+import { Copy, Clock, Loader2, AlertCircle, RefreshCw, X } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { getOrGeneratePix } from "@/lib/api/payment.functions";
@@ -47,6 +47,25 @@ function CheckoutPage() {
   const [expirationHandled, setExpirationHandled] = useState(false);
   const [redirectRemaining, setRedirectRemaining] = useState(10);
 
+  async function fetchPix() {
+    setLoadingPix(true);
+    setPixError(null);
+    try {
+      const result = await getOrGeneratePixFn({ data: { orderId } });
+      if (result.qr_code && result.qr_code_base64) {
+        setRealPixData({ qr_code: result.qr_code, qr_code_base64: result.qr_code_base64 });
+        if (result.expires_at) {
+          setOrder((current) => current ? { ...current, expires_at: result.expires_at } : current);
+        }
+      }
+      if (result.status === "expired") setRemaining(0);
+    } catch (err) {
+      setPixError(err instanceof Error ? err.message : "Não foi possível gerar o PIX.");
+    } finally {
+      setLoadingPix(false);
+    }
+  }
+
   useEffect(() => {
     let cancelled = false;
     const fetchOrder = async () => {
@@ -78,25 +97,9 @@ function CheckoutPage() {
   }, [orderId, navigate]);
 
   useEffect(() => {
-    const fetchPix = async () => {
-      try {
-        const result = await getOrGeneratePixFn({ data: { orderId } });
-        if (result.qr_code && result.qr_code_base64) {
-          setRealPixData({ qr_code: result.qr_code, qr_code_base64: result.qr_code_base64 });
-          if (result.expires_at) {
-            setOrder((current) => current ? { ...current, expires_at: result.expires_at } : current);
-          }
-        }
-        if (result.status === "expired") {
-          setRemaining(0);
-        }
-        setLoadingPix(false);
-      } catch (err: any) {
-        setPixError("Erro ao gerar PIX. Tente novamente.");
-        setLoadingPix(false);
-      }
-    };
     fetchPix();
+    // fetchPix is intentionally tied to the stable server function and order id.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getOrGeneratePixFn, orderId]);
 
   useEffect(() => {
@@ -275,6 +278,9 @@ function CheckoutPage() {
               <div className="flex h-[280px] w-[280px] flex-col items-center justify-center rounded-3xl bg-destructive/5 p-6 text-center text-destructive">
                 <AlertCircle className="h-8 w-8 opacity-40" />
                 <p className="mt-4 text-xs font-bold leading-tight">{pixError}</p>
+                 <Button onClick={fetchPix} variant="outline" size="sm" className="mt-5 gap-2">
+                   <RefreshCw className="h-4 w-4" /> Tentar novamente
+                 </Button>
               </div>
             )}
             <p className="mt-6 text-[11px] font-bold uppercase tracking-widest text-muted-foreground/60">Escaneie o QR Code no seu banco</p>

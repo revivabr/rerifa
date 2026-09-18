@@ -141,7 +141,7 @@ src/
 
 | Método e caminho | Arquivo | Responsabilidade |
 | --- | --- | --- |
-| `POST /api/webhooks/mercadopago` | `src/routes/api.webhooks.mercadopago.ts` | Receber notificação, consultar o pagamento no provedor e confirmar o pedido |
+| `POST /api/public/webhooks/mercadopago` | `src/routes/api.public.webhooks.mercadopago.ts` | Receber notificação, consultar o pagamento no provedor e confirmar o pedido |
 
 ## 7. Componentes de domínio
 
@@ -194,7 +194,7 @@ flowchart TD
 3. Se existir PIX válido para o pedido pendente, ele é reutilizado.
 4. Caso contrário, `createPixPaymentRecord` envia o valor persistido à API do Mercado Pago.
 5. O QR Code, o código copia e cola e o identificador externo são gravados no pedido.
-6. A validade enviada ao Mercado Pago é de 30 minutos com offset `-03:00`; a reserva interna continua em três minutos.
+6. A cobrança e a reserva vencem juntas após 180 segundos, com horário salvo pelo servidor.
 7. A tela consulta o pedido a cada 1,5 segundo e navega imediatamente quando encontra `paid`.
 8. Se a reserva zerar sem pagamento, o participante volta à campanha para iniciar um novo pedido.
 
@@ -331,7 +331,7 @@ A ocultação de telas não substitui a autorização no banco; a proteção efe
 
 Os itens abaixo descrevem o estado atual e devem orientar melhorias futuras:
 
-1. **Assinatura do webhook:** o endpoint reconfirma o pagamento na API do Mercado Pago, mas o código atual não valida criptograficamente o cabeçalho de assinatura antes da consulta. A assinatura deve ser adicionada como defesa adicional.
+1. **Validação do webhook:** a notificação nunca aprova um pedido diretamente; o servidor consulta a cobrança autenticada no Mercado Pago, confere pedido e valor e registra o evento de forma idempotente.
 2. **Capability do pedido:** páginas públicas consultam pedido por UUID. O retorno é mínimo, porém links de pedido devem ser tratados como privados e não enviados a terceiros.
 3. **Validade PIX versus reserva:** a cobrança do provedor dura 30 minutos e a reserva interna, três. A interface considera a reserva; evoluções devem cancelar/inutilizar cobranças antigas de forma explícita quando possível.
 4. **Tipos gerados:** após novas migrações, atualizar os tipos do backend para evitar divergência entre o TypeScript e o schema real.

@@ -4,7 +4,7 @@ import confetti from "canvas-confetti";
 import { toPng } from "html-to-image";
 import { toast } from "sonner";
 import { formatBRL, padNumber } from "@/lib/format";
-import { CheckCircle2, Heart, ArrowLeft, Sparkles, Download, Ticket } from "lucide-react";
+import { AlertCircle, CheckCircle2, Heart, ArrowLeft, Sparkles, Download, Ticket } from "lucide-react";
 import { getOrderPublic } from "@/lib/api/order.functions";
 import { ReceiptTicket, type ReceiptData } from "@/components/ReceiptTicket";
 import { buildCampaignShareMessage } from "@/lib/share";
@@ -43,6 +43,7 @@ function ConfirmationPage() {
   const [slug, setSlug] = useState<string>("");
   const [shareMessage, setShareMessage] = useState("");
   const [generating, setGenerating] = useState(false);
+  const [notPaid, setNotPaid] = useState(false);
   const fired = useRef(false);
   const ticketRef = useRef<HTMLDivElement>(null);
 
@@ -50,6 +51,11 @@ function ConfirmationPage() {
     (async () => {
       const o = await getOrderPublic({ data: { orderId } });
       if (!o) return;
+      if (o.status !== "paid") {
+        setSlug(o.campaign_slug);
+        setNotPaid(true);
+        return;
+      }
       setSlug(o.campaign_slug);
       setShareMessage(buildCampaignShareMessage({
         campaignName: o.campaign_name,
@@ -136,6 +142,14 @@ function ConfirmationPage() {
     }
   }
 
+  if (notPaid) return (
+    <div className="mx-auto flex min-h-[50vh] max-w-md flex-col items-center justify-center px-6 text-center">
+      <AlertCircle className="h-10 w-10 text-warning" />
+      <h1 className="mt-4 text-2xl font-black text-primary">Pagamento ainda não confirmado</h1>
+      <p className="mt-2 text-sm text-muted-foreground">O comprovante será liberado somente após a aprovação do PIX.</p>
+      {slug && <Button asChild className="mt-6"><Link to="/campanha/$slug" params={{ slug }}>Voltar para a campanha</Link></Button>}
+    </div>
+  );
   if (!receipt) return <div className="flex min-h-[50vh] items-center justify-center text-sm text-muted-foreground">Carregando confirmação...</div>;
 
   const firstName = receipt.buyerName.split(" ")[0];

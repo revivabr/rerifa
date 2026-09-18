@@ -1,26 +1,10 @@
 import process from "node:process";
 
 /**
- * Formata uma data como ISO-8601 com offset de São Paulo (-03:00),
- * que é o formato exigido pelo Mercado Pago no campo `date_of_expiration`.
- * Enviar `.toISOString()` (com `Z` em UTC) pode fazer o pagamento nascer
- * marcado como vencido devido à interpretação de fuso no lado do MP.
- *
- * Exemplo de saída: 2026-06-12T15:30:45.000-03:00
+ * Formata a validade no padrão ISO-8601 em UTC, sem ambiguidade de fuso.
  */
 function formatMpExpiration(date: Date): string {
-  // São Paulo não tem horário de verão desde 2019: offset fixo -03:00
-  const offsetMinutes = -180; // -03:00
-  const local = new Date(date.getTime() + offsetMinutes * 60 * 1000);
-  const pad = (n: number, w = 2) => String(n).padStart(w, "0");
-  const yyyy = local.getUTCFullYear();
-  const mm = pad(local.getUTCMonth() + 1);
-  const dd = pad(local.getUTCDate());
-  const hh = pad(local.getUTCHours());
-  const mi = pad(local.getUTCMinutes());
-  const ss = pad(local.getUTCSeconds());
-  const ms = pad(local.getUTCMilliseconds(), 3);
-  return `${yyyy}-${mm}-${dd}T${hh}:${mi}:${ss}.${ms}-03:00`;
+  return date.toISOString();
 }
 
 export async function createPixPaymentRecord({
@@ -29,7 +13,8 @@ export async function createPixPaymentRecord({
   email,
   description,
   firstName,
-  lastName
+  lastName,
+  cpf,
 }: {
   id: string;
   amount: number;
@@ -37,6 +22,7 @@ export async function createPixPaymentRecord({
   description: string;
   firstName: string;
   lastName: string;
+  cpf: string;
 }) {
   const accessToken = process.env.ACCESS_TOKEN;
   if (!accessToken) {
@@ -58,6 +44,10 @@ export async function createPixPaymentRecord({
       email: email?.trim() || "comprador@revivabrasil.com.br",
       first_name: firstName?.trim() || "Comprador",
       last_name: lastName?.trim() || "Silva",
+      identification: {
+        type: "CPF",
+        number: cpf,
+      },
     },
     date_of_expiration: formatMpExpiration(expiration),
   };
@@ -107,8 +97,8 @@ export async function createPixPaymentRecord({
   }
 }
 
-type MercadoPagoPayment = {
-  id?: number;
+export type MercadoPagoPayment = {
+  id?: number | string;
   status?: string;
   message?: string;
   external_reference?: string;
@@ -186,7 +176,16 @@ export async function cancelPixPaymentRecord(paymentId: string) {
 
   return mercadoPagoRequest(`/v1/payments/${encodeURIComponent(paymentId)}`, {
     method: "PUT",
+    headers: { "X-Idempotency-Key": `cancel-${paymentId}` },
     body: JSON.stringify({ status: "cancelled" }),
+  });
+}
+
+export function refundPixPaymentRecord(paymentId: string) {
+  return mercadoPagoRequest(`/v1/payments/${encodeURIComponent(paymentId)}/refunds`, {
+    method: "POST",
+    headers: { "X-Idempotency-Key": `refund-${paymentId}` },
+    body: JSON.stringify({}),
   });
 }
 

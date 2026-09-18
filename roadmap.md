@@ -28,7 +28,16 @@
 - [x] Liberar reservas PIX vencidas mesmo quando o comprador fecha a tela de pagamento
 - [x] Garantir liberação local após 180 segundos e oferecer retorno manual à campanha
 - [x] Padronizar a mensagem em todos os compartilhamentos e campanhas futuras
-- [x] Corrigir a recusa bancária do PIX mantendo a reserva em 180 segundos
+- [x] Corrigir a recusa bancária do PIX com CPF do pagador e reserva em 180 segundos
 - [x] Melhorar a confirmação no celular, destacar o comprovante e restaurar os confetes
 - [x] Recuperar a cobrança PIX após bloqueio temporário sem gerar duplicidade
 - [x] Alinhar a validade do código PIX à reserva de 180 segundos
+
+- [x] Tornar a geração do PIX atômica e recuperável em chamadas concorrentes
+- [x] Executar expiração e liberação segura sem depender da tela do comprador (agendada a cada minuto; publicação necessária para ativar a nova rota)
+- [x] Estornar e registrar automaticamente pagamentos aprovados após a liberação
+- [x] Registrar webhooks idempotentes e mostrar reconciliações no painel
+- [ ] Homologar concorrência, expiração, webhook duplicado e pagamento tardio (testes técnicos concluídos; falta compra real após publicação)
+
+- [x] Ajustar a autenticação do webhook ao modelo disponível no Mercado Pago, sem exigir credencial inexistente
+- [x] Enviar o CPF do comprador na cobrança PIX para reduzir recusas bancárias

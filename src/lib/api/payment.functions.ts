@@ -20,7 +20,7 @@ export const getOrGeneratePix = createServerFn({ method: "POST" })
     // 1. Busca o pedido e dados necessários
     const { data: order, error: orderError } = await supabase
       .from("orders")
-      .select("*, campaigns(name), buyers(name, email, whatsapp)")
+      .select("*, campaigns(name), buyers(name, email, whatsapp, cpf)")
       .eq("id", data.orderId)
       .single();
 
@@ -53,7 +53,7 @@ export const getOrGeneratePix = createServerFn({ method: "POST" })
        return { status: order.status };
     }
 
-    const buyer = order.buyers as { name?: string; email?: string } | null;
+    const buyer = order.buyers as { name?: string; email?: string; cpf?: string } | null;
     const campaign = order.campaigns as { name?: string } | null;
     if (!buyer || !campaign) throw new Error("Dados do pedido estão incompletos");
 
@@ -99,7 +99,8 @@ export const getOrGeneratePix = createServerFn({ method: "POST" })
         email: buyer.email || "comprador@revivabrasil.com.br",
         description: `Rifa Reviva Brasil - ${campaign.name}`,
         firstName,
-        lastName
+        lastName,
+        cpf: buyer.cpf ?? "",
       });
 
       const pixData = mpResponse.point_of_interaction?.transaction_data;

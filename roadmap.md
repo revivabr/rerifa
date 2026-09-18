@@ -40,3 +40,4 @@
 - [ ] Homologar concorrência, expiração, webhook duplicado e pagamento tardio (testes técnicos concluídos; falta compra real após publicação)
 
 - [x] Ajustar a autenticação do webhook ao modelo disponível no Mercado Pago, sem exigir credencial inexistente
+- [x] Enviar o CPF do comprador na cobrança PIX para reduzir recusas bancárias

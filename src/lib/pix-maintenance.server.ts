@@ -37,6 +37,7 @@ export async function refundLatePayment(
 
 export async function processPixMaintenance(limit = 25) {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  await supabaseAdmin.rpc("expire_pending_orders");
   const now = new Date().toISOString();
   const { data: expiredOrders, error } = await supabaseAdmin
     .from("orders")

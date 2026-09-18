@@ -9,18 +9,7 @@ import process from "node:process";
  * Exemplo de saída: 2026-06-12T15:30:45.000-03:00
  */
 function formatMpExpiration(date: Date): string {
-  // São Paulo não tem horário de verão desde 2019: offset fixo -03:00
-  const offsetMinutes = -180; // -03:00
-  const local = new Date(date.getTime() + offsetMinutes * 60 * 1000);
-  const pad = (n: number, w = 2) => String(n).padStart(w, "0");
-  const yyyy = local.getUTCFullYear();
-  const mm = pad(local.getUTCMonth() + 1);
-  const dd = pad(local.getUTCDate());
-  const hh = pad(local.getUTCHours());
-  const mi = pad(local.getUTCMinutes());
-  const ss = pad(local.getUTCSeconds());
-  const ms = pad(local.getUTCMilliseconds(), 3);
-  return `${yyyy}-${mm}-${dd}T${hh}:${mi}:${ss}.${ms}-03:00`;
+  return date.toISOString();
 }
 
 export async function createPixPaymentRecord({
@@ -30,6 +19,7 @@ export async function createPixPaymentRecord({
   description,
   firstName,
   lastName
+  ,cpf
 }: {
   id: string;
   amount: number;
@@ -37,6 +27,7 @@ export async function createPixPaymentRecord({
   description: string;
   firstName: string;
   lastName: string;
+  cpf: string;
 }) {
   const accessToken = process.env.ACCESS_TOKEN;
   if (!accessToken) {
@@ -58,6 +49,10 @@ export async function createPixPaymentRecord({
       email: email?.trim() || "comprador@revivabrasil.com.br",
       first_name: firstName?.trim() || "Comprador",
       last_name: lastName?.trim() || "Silva",
+      identification: {
+        type: "CPF",
+        number: cpf,
+      },
     },
     date_of_expiration: formatMpExpiration(expiration),
   };

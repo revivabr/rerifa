@@ -405,6 +405,10 @@ export type Database = {
           payment_provider: string | null
           payment_provider_id: string | null
           pix_copy_paste: string | null
+          pix_generation_attempts: number
+          pix_generation_error_code: string | null
+          pix_generation_started_at: string | null
+          pix_generation_status: string
           pix_qr_code: string | null
           quantity: number
           seller_name: string | null
@@ -424,6 +428,10 @@ export type Database = {
           payment_provider?: string | null
           payment_provider_id?: string | null
           pix_copy_paste?: string | null
+          pix_generation_attempts?: number
+          pix_generation_error_code?: string | null
+          pix_generation_started_at?: string | null
+          pix_generation_status?: string
           pix_qr_code?: string | null
           quantity: number
           seller_name?: string | null
@@ -443,6 +451,10 @@ export type Database = {
           payment_provider?: string | null
           payment_provider_id?: string | null
           pix_copy_paste?: string | null
+          pix_generation_attempts?: number
+          pix_generation_error_code?: string | null
+          pix_generation_started_at?: string | null
+          pix_generation_status?: string
           pix_qr_code?: string | null
           quantity?: number
           seller_name?: string | null
@@ -472,6 +484,98 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      payment_reconciliation_issues: {
+        Row: {
+          amount: number
+          attempt_count: number
+          created_at: string
+          id: string
+          last_error: string | null
+          order_id: string
+          provider_payment_id: string
+          reason: string
+          refund_provider_id: string | null
+          resolved_at: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          amount: number
+          attempt_count?: number
+          created_at?: string
+          id?: string
+          last_error?: string | null
+          order_id: string
+          provider_payment_id: string
+          reason: string
+          refund_provider_id?: string | null
+          resolved_at?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          attempt_count?: number
+          created_at?: string
+          id?: string
+          last_error?: string | null
+          order_id?: string
+          provider_payment_id?: string
+          reason?: string
+          refund_provider_id?: string | null
+          resolved_at?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payment_reconciliation_issues_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      payment_webhook_events: {
+        Row: {
+          error_code: string | null
+          error_message: string | null
+          event_key: string
+          event_type: string
+          id: string
+          processed_at: string | null
+          processing_status: string
+          provider: string
+          provider_payment_id: string | null
+          received_at: string
+        }
+        Insert: {
+          error_code?: string | null
+          error_message?: string | null
+          event_key: string
+          event_type: string
+          id?: string
+          processed_at?: string | null
+          processing_status?: string
+          provider?: string
+          provider_payment_id?: string | null
+          received_at?: string
+        }
+        Update: {
+          error_code?: string | null
+          error_message?: string | null
+          event_key?: string
+          event_type?: string
+          id?: string
+          processed_at?: string | null
+          processing_status?: string
+          provider?: string
+          provider_payment_id?: string | null
+          received_at?: string
+        }
+        Relationships: []
       }
       payments: {
         Row: {
@@ -591,11 +695,25 @@ export type Database = {
     }
     Functions: {
       cancel_order: { Args: { p_order_id: string }; Returns: Json }
+      claim_pix_generation: { Args: { p_order_id: string }; Returns: Json }
       confirm_payment: {
         Args: { p_external_id?: string; p_order_id: string }
         Returns: Json
       }
       expire_pending_orders: { Args: never; Returns: number }
+      fail_pix_generation: {
+        Args: { p_error_code: string; p_order_id: string }
+        Returns: undefined
+      }
+      finalize_pix_generation: {
+        Args: {
+          p_copy_paste: string
+          p_order_id: string
+          p_provider_id: string
+          p_qr_code: string
+        }
+        Returns: Json
+      }
       get_seller_ranking: {
         Args: { p_campaign_id: string }
         Returns: {
@@ -605,6 +723,15 @@ export type Database = {
         }[]
       }
       is_admin: { Args: never; Returns: boolean }
+      mark_reconciliation_result: {
+        Args: {
+          p_error?: string
+          p_provider_payment_id: string
+          p_refund_provider_id?: string
+          p_status: string
+        }
+        Returns: undefined
+      }
       reserve_numbers:
         | {
             Args: {

@@ -20,12 +20,12 @@ import { Route as AdminDashboardRouteImport } from './routes/admin.dashboard'
 import { Route as AdminRankingIndexRouteImport } from './routes/admin.ranking.index'
 import { Route as AdminDrawIndexRouteImport } from './routes/admin.draw.index'
 import { Route as AdminCampaignsIndexRouteImport } from './routes/admin.campaigns.index'
-import { Route as ApiWebhooksMercadopagoRouteImport } from './routes/api.webhooks.mercadopago'
 import { Route as AdminRankingIdRouteImport } from './routes/admin.ranking.$id'
 import { Route as AdminDrawIdRouteImport } from './routes/admin.draw.$id'
 import { Route as AdminCampaignsNewRouteImport } from './routes/admin.campaigns.new'
 import { Route as AdminCampaignsIdRouteImport } from './routes/admin.campaigns.$id'
 import { Route as ApiPublicWebhooksMercadopagoRouteImport } from './routes/api.public.webhooks.mercadopago'
+import { Route as ApiPublicInternalPixMaintenanceRouteImport } from './routes/api.public.internal.pix-maintenance'
 import { Route as ApiPublicCampaignImageSlugRouteImport } from './routes/api.public.campaign-image.$slug'
 
 const InformacoesRoute = InformacoesRouteImport.update({
@@ -83,11 +83,6 @@ const AdminCampaignsIndexRoute = AdminCampaignsIndexRouteImport.update({
   path: '/campaigns/',
   getParentRoute: () => AdminRoute,
 } as any)
-const ApiWebhooksMercadopagoRoute = ApiWebhooksMercadopagoRouteImport.update({
-  id: '/api/webhooks/mercadopago',
-  path: '/api/webhooks/mercadopago',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AdminRankingIdRoute = AdminRankingIdRouteImport.update({
   id: '/ranking/$id',
   path: '/ranking/$id',
@@ -114,6 +109,12 @@ const ApiPublicWebhooksMercadopagoRoute =
     path: '/api/public/webhooks/mercadopago',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicInternalPixMaintenanceRoute =
+  ApiPublicInternalPixMaintenanceRouteImport.update({
+    id: '/api/public/internal/pix-maintenance',
+    path: '/api/public/internal/pix-maintenance',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicCampaignImageSlugRoute =
   ApiPublicCampaignImageSlugRouteImport.update({
     id: '/api/public/campaign-image/$slug',
@@ -134,11 +135,11 @@ export interface FileRoutesByFullPath {
   '/admin/campaigns/new': typeof AdminCampaignsNewRoute
   '/admin/draw/$id': typeof AdminDrawIdRoute
   '/admin/ranking/$id': typeof AdminRankingIdRoute
-  '/api/webhooks/mercadopago': typeof ApiWebhooksMercadopagoRoute
   '/admin/campaigns/': typeof AdminCampaignsIndexRoute
   '/admin/draw/': typeof AdminDrawIndexRoute
   '/admin/ranking/': typeof AdminRankingIndexRoute
   '/api/public/campaign-image/$slug': typeof ApiPublicCampaignImageSlugRoute
+  '/api/public/internal/pix-maintenance': typeof ApiPublicInternalPixMaintenanceRoute
   '/api/public/webhooks/mercadopago': typeof ApiPublicWebhooksMercadopagoRoute
 }
 export interface FileRoutesByTo {
@@ -154,11 +155,11 @@ export interface FileRoutesByTo {
   '/admin/campaigns/new': typeof AdminCampaignsNewRoute
   '/admin/draw/$id': typeof AdminDrawIdRoute
   '/admin/ranking/$id': typeof AdminRankingIdRoute
-  '/api/webhooks/mercadopago': typeof ApiWebhooksMercadopagoRoute
   '/admin/campaigns': typeof AdminCampaignsIndexRoute
   '/admin/draw': typeof AdminDrawIndexRoute
   '/admin/ranking': typeof AdminRankingIndexRoute
   '/api/public/campaign-image/$slug': typeof ApiPublicCampaignImageSlugRoute
+  '/api/public/internal/pix-maintenance': typeof ApiPublicInternalPixMaintenanceRoute
   '/api/public/webhooks/mercadopago': typeof ApiPublicWebhooksMercadopagoRoute
 }
 export interface FileRoutesById {
@@ -175,11 +176,11 @@ export interface FileRoutesById {
   '/admin/campaigns/new': typeof AdminCampaignsNewRoute
   '/admin/draw/$id': typeof AdminDrawIdRoute
   '/admin/ranking/$id': typeof AdminRankingIdRoute
-  '/api/webhooks/mercadopago': typeof ApiWebhooksMercadopagoRoute
   '/admin/campaigns/': typeof AdminCampaignsIndexRoute
   '/admin/draw/': typeof AdminDrawIndexRoute
   '/admin/ranking/': typeof AdminRankingIndexRoute
   '/api/public/campaign-image/$slug': typeof ApiPublicCampaignImageSlugRoute
+  '/api/public/internal/pix-maintenance': typeof ApiPublicInternalPixMaintenanceRoute
   '/api/public/webhooks/mercadopago': typeof ApiPublicWebhooksMercadopagoRoute
 }
 export interface FileRouteTypes {
@@ -197,11 +198,11 @@ export interface FileRouteTypes {
     | '/admin/campaigns/new'
     | '/admin/draw/$id'
     | '/admin/ranking/$id'
-    | '/api/webhooks/mercadopago'
     | '/admin/campaigns/'
     | '/admin/draw/'
     | '/admin/ranking/'
     | '/api/public/campaign-image/$slug'
+    | '/api/public/internal/pix-maintenance'
     | '/api/public/webhooks/mercadopago'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -217,11 +218,11 @@ export interface FileRouteTypes {
     | '/admin/campaigns/new'
     | '/admin/draw/$id'
     | '/admin/ranking/$id'
-    | '/api/webhooks/mercadopago'
     | '/admin/campaigns'
     | '/admin/draw'
     | '/admin/ranking'
     | '/api/public/campaign-image/$slug'
+    | '/api/public/internal/pix-maintenance'
     | '/api/public/webhooks/mercadopago'
   id:
     | '__root__'
@@ -237,11 +238,11 @@ export interface FileRouteTypes {
     | '/admin/campaigns/new'
     | '/admin/draw/$id'
     | '/admin/ranking/$id'
-    | '/api/webhooks/mercadopago'
     | '/admin/campaigns/'
     | '/admin/draw/'
     | '/admin/ranking/'
     | '/api/public/campaign-image/$slug'
+    | '/api/public/internal/pix-maintenance'
     | '/api/public/webhooks/mercadopago'
   fileRoutesById: FileRoutesById
 }
@@ -252,8 +253,8 @@ export interface RootRouteChildren {
   CampanhaSlugRoute: typeof CampanhaSlugRoute
   CheckoutOrderIdRoute: typeof CheckoutOrderIdRoute
   ConfirmacaoOrderIdRoute: typeof ConfirmacaoOrderIdRoute
-  ApiWebhooksMercadopagoRoute: typeof ApiWebhooksMercadopagoRoute
   ApiPublicCampaignImageSlugRoute: typeof ApiPublicCampaignImageSlugRoute
+  ApiPublicInternalPixMaintenanceRoute: typeof ApiPublicInternalPixMaintenanceRoute
   ApiPublicWebhooksMercadopagoRoute: typeof ApiPublicWebhooksMercadopagoRoute
 }
 
@@ -336,13 +337,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminCampaignsIndexRouteImport
       parentRoute: typeof AdminRoute
     }
-    '/api/webhooks/mercadopago': {
-      id: '/api/webhooks/mercadopago'
-      path: '/api/webhooks/mercadopago'
-      fullPath: '/api/webhooks/mercadopago'
-      preLoaderRoute: typeof ApiWebhooksMercadopagoRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/admin/ranking/$id': {
       id: '/admin/ranking/$id'
       path: '/ranking/$id'
@@ -376,6 +370,13 @@ declare module '@tanstack/react-router' {
       path: '/api/public/webhooks/mercadopago'
       fullPath: '/api/public/webhooks/mercadopago'
       preLoaderRoute: typeof ApiPublicWebhooksMercadopagoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/internal/pix-maintenance': {
+      id: '/api/public/internal/pix-maintenance'
+      path: '/api/public/internal/pix-maintenance'
+      fullPath: '/api/public/internal/pix-maintenance'
+      preLoaderRoute: typeof ApiPublicInternalPixMaintenanceRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/campaign-image/$slug': {
@@ -421,8 +422,8 @@ const rootRouteChildren: RootRouteChildren = {
   CampanhaSlugRoute: CampanhaSlugRoute,
   CheckoutOrderIdRoute: CheckoutOrderIdRoute,
   ConfirmacaoOrderIdRoute: ConfirmacaoOrderIdRoute,
-  ApiWebhooksMercadopagoRoute: ApiWebhooksMercadopagoRoute,
   ApiPublicCampaignImageSlugRoute: ApiPublicCampaignImageSlugRoute,
+  ApiPublicInternalPixMaintenanceRoute: ApiPublicInternalPixMaintenanceRoute,
   ApiPublicWebhooksMercadopagoRoute: ApiPublicWebhooksMercadopagoRoute,
 }
 export const routeTree = rootRouteImport

@@ -4,7 +4,7 @@ import { supabase } from "@/lib/supabase";
 import { formatBRL, formatDateBR, formatCalendarDateBR } from "@/lib/format";
 import { StatusBadge } from "./admin.dashboard";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, ExternalLink, Check, X, Pencil, Save, Info, Trophy, FileDown, Share2 } from "lucide-react";
+import { AlertTriangle, ArrowLeft, ExternalLink, Check, X, Pencil, Save, Info, Trophy, FileDown, Share2 } from "lucide-react";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { Input } from "@/components/ui/input";
@@ -23,6 +23,7 @@ export const Route = createFileRoute("/admin/campaigns/$id")({
 type Campaign = { id: string; name: string; slug: string; status: string; banner_url: string | null; number_quantity: number; number_price: number; goal_amount: number | null; start_date: string; end_date: string; description: string | null; short_description: string | null; prize_description: string | null; prize_image_1: string | null; prize_image_2: string | null; regulation_text: string | null; regulation_url: string | null; pix_key: string | null; drive_folder_url: string | null };
 type OrderRow = { id: string; status: string; amount: number; quantity: number; seller_name: string | null; created_at: string; paid_at: string | null; buyer: { name: string; whatsapp: string; email: string | null } | null; order_numbers: { number: number }[] };
 type SellerRank = { name: string; sales: number; total_amount: number };
+type ReconciliationIssue = { id: string; order_id: string; amount: number; status: string; reason: string; created_at: string; last_error: string | null };
 
 function CampaignAdmin() {
   const { id } = Route.useParams();
@@ -33,6 +34,7 @@ function CampaignAdmin() {
   const [form, setForm] = useState<Partial<Campaign>>({});
   const [ranking, setRanking] = useState<SellerRank[]>([]);
   const [promotions, setPromotions] = useState<PromotionTier[]>([]);
+  const [reconciliations, setReconciliations] = useState<ReconciliationIssue[]>([]);
 
   async function load() {
     const { data: camp } = await supabase.from("campaigns").select("*").eq("id", id).maybeSingle();
@@ -56,6 +58,16 @@ function CampaignAdmin() {
       .eq("campaign_id", id).order("created_at", { ascending: false });
     const allOrders = (ords ?? []) as unknown as OrderRow[];
     setOrders(allOrders.slice(0, 50)); // Display only 50 latest
+    const orderIds = allOrders.map(order => order.id);
+    if (orderIds.length > 0) {
+      const { data: issues } = await supabase.from("payment_reconciliation_issues")
+        .select("id,order_id,amount,status,reason,created_at,last_error")
+        .in("order_id", orderIds)
+        .order("created_at", { ascending: false });
+      setReconciliations((issues ?? []) as ReconciliationIssue[]);
+    } else {
+      setReconciliations([]);
+    }
 
     // Calculate ranking from all paid orders
     const ranks = allOrders.filter(o => o.status === "paid" && o.seller_name).reduce((acc: Record<string, SellerRank>, curr) => {
@@ -401,6 +413,33 @@ function CampaignAdmin() {
                     <td className="p-3 font-bold text-primary">{r.name}</td>
                     <td className="p-3 text-center font-medium">{r.sales}</td>
                     <td className="p-3 text-right font-bold text-success">{formatBRL(r.total_amount)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {reconciliations.length > 0 && (
+        <div className="rounded-2xl border border-warning/40 bg-warning/5 shadow-soft">
+          <div className="flex items-center gap-2 border-b border-warning/30 p-5">
+            <AlertTriangle className="h-5 w-5 text-warning" />
+            <h2 className="font-bold text-primary">Pagamentos em revisão</h2>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead className="bg-warning/10 text-left text-xs uppercase tracking-wider text-muted-foreground">
+                <tr><th className="p-3">Pedido</th><th className="p-3">Motivo</th><th className="p-3">Valor</th><th className="p-3">Situação</th><th className="p-3">Data</th></tr>
+              </thead>
+              <tbody className="divide-y divide-warning/20">
+                {reconciliations.map(issue => (
+                  <tr key={issue.id}>
+                    <td className="p-3 font-mono text-xs">{issue.order_id.slice(0, 8)}</td>
+                    <td className="p-3">{issue.reason}{issue.last_error ? ` — ${issue.last_error}` : ""}</td>
+                    <td className="p-3 font-bold">{formatBRL(issue.amount)}</td>
+                    <td className="p-3"><span className="rounded-md bg-warning/15 px-2 py-1 text-xs font-bold text-warning-foreground">{issue.status === "refunded" ? "Estornado" : issue.status === "refund_processing" ? "Estornando" : "Revisar"}</span></td>
+                    <td className="p-3 text-xs text-muted-foreground">{formatDateBR(issue.created_at)}</td>
                   </tr>
                 ))}
               </tbody>

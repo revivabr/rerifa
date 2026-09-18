@@ -631,6 +631,27 @@ export type Database = {
           },
         ]
       }
+      pix_maintenance_tokens: {
+        Row: {
+          created_at: string
+          id: boolean
+          token: string
+          token_hash: string
+        }
+        Insert: {
+          created_at?: string
+          id?: boolean
+          token: string
+          token_hash: string
+        }
+        Update: {
+          created_at?: string
+          id?: boolean
+          token?: string
+          token_hash?: string
+        }
+        Relationships: []
+      }
       raffle_numbers: {
         Row: {
           buyer_id: string | null
@@ -755,6 +776,10 @@ export type Database = {
             Returns: Json
           }
       start_pix_payment_window: { Args: { p_order_id: string }; Returns: Json }
+      verify_pix_maintenance_token: {
+        Args: { p_token: string }
+        Returns: boolean
+      }
     }
     Enums: {
       [_ in never]: never

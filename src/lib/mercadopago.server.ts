@@ -107,8 +107,8 @@ export async function createPixPaymentRecord({
   }
 }
 
-type MercadoPagoPayment = {
-  id?: number;
+export type MercadoPagoPayment = {
+  id?: number | string;
   status?: string;
   message?: string;
   external_reference?: string;
@@ -186,7 +186,16 @@ export async function cancelPixPaymentRecord(paymentId: string) {
 
   return mercadoPagoRequest(`/v1/payments/${encodeURIComponent(paymentId)}`, {
     method: "PUT",
+    headers: { "X-Idempotency-Key": `cancel-${paymentId}` },
     body: JSON.stringify({ status: "cancelled" }),
+  });
+}
+
+export function refundPixPaymentRecord(paymentId: string) {
+  return mercadoPagoRequest(`/v1/payments/${encodeURIComponent(paymentId)}/refunds`, {
+    method: "POST",
+    headers: { "X-Idempotency-Key": `refund-${paymentId}` },
+    body: JSON.stringify({}),
   });
 }
 

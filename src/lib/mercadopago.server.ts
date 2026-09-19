@@ -76,7 +76,7 @@ export async function createPixPaymentRecord({
 
       console.error("Erro na API do Mercado Pago:", JSON.stringify(result));
       if (!isResourceLocked(response.status, result)) {
-        throw new Error(result.message || "Erro na comunicação com Mercado Pago");
+        throw new Error(paymentErrorMessage(result));
       }
 
       // O Mercado Pago pode bloquear brevemente a mesma chave idempotente
@@ -114,6 +114,14 @@ export type MercadoPagoPayment = {
 function isResourceLocked(httpStatus: number, result: MercadoPagoPayment) {
   const message = result.message?.toLowerCase() ?? "";
   return httpStatus === 423 || message.includes("resource is locked") || message.includes("lock error");
+}
+
+function paymentErrorMessage(result: MercadoPagoPayment) {
+  const message = result.message?.toLowerCase() ?? "";
+  if (message.includes("invalid user identification number")) {
+    return "CPF inválido. Confira os números informados e tente novamente.";
+  }
+  return result.message || "Erro na comunicação com Mercado Pago";
 }
 
 async function recoverPixPayment(orderId: string, accessToken: string): Promise<MercadoPagoPayment | null> {

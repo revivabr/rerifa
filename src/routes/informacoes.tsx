@@ -58,7 +58,7 @@ const sections = [
     bg: "bg-blue-50",
     content: [
       "Ao participar de nossas campanhas, você concorda com os termos e condições estabelecidos para cada ação. As campanhas são exclusivamente para maiores de 18 anos, residentes no território brasileiro.",
-      "Os números adquiridos são intransferíveis e vinculados ao CPF do comprador. Em caso de cancelamento do pagamento, a reserva é automaticamente liberada para novo comprador. Não realizamos reembolsos após a confirmação da compra.",
+      "Os números adquiridos são intransferíveis e vinculados aos dados de contato do comprador. Em caso de cancelamento do pagamento, a reserva é automaticamente liberada para novo comprador. Não realizamos reembolsos após a confirmação da compra.",
       "O sorteio é realizado com base nos resultados oficiais da Loteria Federal. O ganhador será contactado através dos dados fornecidos no ato da compra. Caso não seja localizado em até 30 dias, um novo sorteio poderá ser realizado.",
     ],
   },
@@ -69,7 +69,7 @@ const sections = [
     color: "text-green-600",
     bg: "bg-green-50",
     content: [
-      "Respeitamos sua privacidade. Os dados pessoais coletados (nome, CPF, e-mail, telefone) são utilizados exclusivamente para processar sua participação, realizar o sorteio e contactar o ganhador.",
+      "Respeitamos sua privacidade. Os dados pessoais coletados (nome, e-mail e telefone) são utilizados exclusivamente para processar sua participação, realizar o sorteio e contactar o ganhador.",
       "Não compartilhamos seus dados com terceiros para fins comerciais. Utilizamos criptografia e práticas de segurança alinhadas à LGPD para proteger suas informações contra acessos não autorizados.",
       "Você tem o direito de acessar, corrigir ou solicitar a exclusão de seus dados a qualquer momento. Para exercer esses direitos, entre em contato conosco através dos canais disponíveis em nosso site institucional.",
     ],

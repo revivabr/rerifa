@@ -5,14 +5,13 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { formatBRL, formatWhatsapp } from "@/lib/format";
-import { isValidCpf } from "@/lib/cpf";
 
 export function BuyerModal({
   open, onOpenChange, onSubmit, submitting, total, count, listTotal,
 }: {
   open: boolean;
   onOpenChange: (v: boolean) => void;
-  onSubmit: (data: { name: string; cpf: string; email: string; whatsapp: string; sellerName: string }) => void;
+  onSubmit: (data: { name: string; email: string; whatsapp: string; sellerName: string }) => void;
   submitting: boolean;
   total: number;
   listTotal?: number;
@@ -20,15 +19,11 @@ export function BuyerModal({
 }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [cpf, setCpf] = useState("");
   const [whatsapp, setWhatsapp] = useState("");
   const [sellerName, setSellerName] = useState("");
   const [agree, setAgree] = useState(false);
 
-  const cpfDigits = cpf.replace(/\D/g, "");
-  const cpfIsComplete = cpfDigits.length === 11;
-  const cpfIsValid = isValidCpf(cpfDigits);
-  const canSubmit = name.trim().length >= 3 && cpfIsValid && whatsapp.replace(/\D/g, "").length >= 10 && agree && !submitting;
+  const canSubmit = name.trim().length >= 3 && whatsapp.replace(/\D/g, "").length >= 10 && agree && !submitting;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -41,18 +36,11 @@ export function BuyerModal({
         </DialogHeader>
         <form
           className="mt-6 space-y-4"
-          onSubmit={(e) => { e.preventDefault(); if (canSubmit) onSubmit({ name: name.trim(), cpf: cpfDigits, email: email.trim(), whatsapp, sellerName: sellerName.trim() }); }}
+          onSubmit={(e) => { e.preventDefault(); if (canSubmit) onSubmit({ name: name.trim(), email: email.trim(), whatsapp, sellerName: sellerName.trim() }); }}
         >
           <div className="space-y-2">
             <Label htmlFor="name" className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Nome completo *</Label>
             <Input id="name" value={name} onChange={(e) => setName(e.target.value)} placeholder="João da Silva" className="rounded-xl border-border bg-secondary/50" required />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="cpf" className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">CPF *</Label>
-            <Input id="cpf" value={cpf} onChange={(e) => setCpf(e.target.value.replace(/\D/g, "").slice(0, 11))} placeholder="00000000000" inputMode="numeric" autoComplete="off" aria-invalid={cpfIsComplete && !cpfIsValid} aria-describedby="cpf-error" className="rounded-xl border-border bg-secondary/50" required />
-            {cpfIsComplete && !cpfIsValid ? (
-              <p id="cpf-error" className="text-xs font-medium text-destructive">Digite um CPF válido.</p>
-            ) : null}
           </div>
           <div className="space-y-2">
             <Label htmlFor="wa" className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">WhatsApp *</Label>

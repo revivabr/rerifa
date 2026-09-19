@@ -5,6 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { formatBRL, formatWhatsapp } from "@/lib/format";
+import { isValidCpf } from "@/lib/cpf";
 
 export function BuyerModal({
   open, onOpenChange, onSubmit, submitting, total, count, listTotal,
@@ -25,7 +26,9 @@ export function BuyerModal({
   const [agree, setAgree] = useState(false);
 
   const cpfDigits = cpf.replace(/\D/g, "");
-  const canSubmit = name.trim().length >= 3 && cpfDigits.length === 11 && whatsapp.replace(/\D/g, "").length >= 10 && agree && !submitting;
+  const cpfIsComplete = cpfDigits.length === 11;
+  const cpfIsValid = isValidCpf(cpfDigits);
+  const canSubmit = name.trim().length >= 3 && cpfIsValid && whatsapp.replace(/\D/g, "").length >= 10 && agree && !submitting;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -46,7 +49,10 @@ export function BuyerModal({
           </div>
           <div className="space-y-2">
             <Label htmlFor="cpf" className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">CPF *</Label>
-            <Input id="cpf" value={cpf} onChange={(e) => setCpf(e.target.value.replace(/\D/g, "").slice(0, 11))} placeholder="00000000000" inputMode="numeric" autoComplete="off" className="rounded-xl border-border bg-secondary/50" required />
+            <Input id="cpf" value={cpf} onChange={(e) => setCpf(e.target.value.replace(/\D/g, "").slice(0, 11))} placeholder="00000000000" inputMode="numeric" autoComplete="off" aria-invalid={cpfIsComplete && !cpfIsValid} aria-describedby="cpf-error" className="rounded-xl border-border bg-secondary/50" required />
+            {cpfIsComplete && !cpfIsValid ? (
+              <p id="cpf-error" className="text-xs font-medium text-destructive">Digite um CPF válido.</p>
+            ) : null}
           </div>
           <div className="space-y-2">
             <Label htmlFor="wa" className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">WhatsApp *</Label>

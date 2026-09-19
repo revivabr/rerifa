@@ -3,6 +3,7 @@ import { z } from "zod";
 import { createPixPaymentRecord } from "../mercadopago.server";
 import { createClient } from "@supabase/supabase-js";
 import process from "node:process";
+import { isValidCpf } from "../cpf";
 
 // Helper para Supabase no servidor com Service Role (pode bypass RLS para atualizar status)
 function getSupabaseAdmin() {
@@ -56,6 +57,9 @@ export const getOrGeneratePix = createServerFn({ method: "POST" })
     const buyer = order.buyers as { name?: string; email?: string; cpf?: string } | null;
     const campaign = order.campaigns as { name?: string } | null;
     if (!buyer || !campaign) throw new Error("Dados do pedido estão incompletos");
+    if (!isValidCpf(buyer.cpf ?? "")) {
+      throw new Error("CPF inválido. Volte à campanha e informe um CPF válido para gerar o PIX.");
+    }
 
     const { data: claim, error: claimError } = await supabase.rpc("claim_pix_generation", {
       p_order_id: order.id,

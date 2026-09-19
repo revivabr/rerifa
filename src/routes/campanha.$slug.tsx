@@ -246,6 +246,7 @@ function CampaignPage() {
         p_buyer_name: string;
         p_buyer_email: string;
         p_buyer_whatsapp: string;
+        p_buyer_cpf: null;
         p_seller_name: string;
       }) => ReturnType<typeof supabase.rpc>;
     };
@@ -256,6 +257,7 @@ function CampaignPage() {
       p_buyer_name: form.name,
       p_buyer_email: form.email,
       p_buyer_whatsapp: form.whatsapp,
+      p_buyer_cpf: null,
       p_seller_name: form.sellerName,
     });
     setSubmitting(false);

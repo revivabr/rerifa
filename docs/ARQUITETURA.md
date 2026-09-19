@@ -194,7 +194,7 @@ flowchart TD
 3. Se existir PIX válido para o pedido pendente, ele é reutilizado.
 4. Caso contrário, `createPixPaymentRecord` envia o valor persistido à API do Mercado Pago.
 5. O QR Code, o código copia e cola e o identificador externo são gravados no pedido.
-6. A cobrança e a reserva vencem juntas após 180 segundos, com horário salvo pelo servidor.
+6. A cobrança e a reserva vencem juntas após 10 minutos, com horário salvo pelo servidor.
 7. A tela consulta o pedido a cada 1,5 segundo e navega imediatamente quando encontra `paid`.
 8. Se a reserva zerar sem pagamento, o participante volta à campanha para iniciar um novo pedido.
 

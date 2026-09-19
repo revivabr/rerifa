@@ -116,7 +116,8 @@ function CheckoutPage() {
 
   useEffect(() => {
     if (!order?.expires_at || order.status !== "pending" || expirationHandled) return;
-    if (new Date(order.expires_at).getTime() > Date.now()) return;
+    // Pequena tolerância para pagamentos enviados nos últimos segundos.
+    if (new Date(order.expires_at).getTime() + 30_000 > Date.now()) return;
 
     setExpirationHandled(true);
     cancelOrderFn({ data: { orderId } })
@@ -238,7 +239,7 @@ function CheckoutPage() {
         <div className="bg-primary p-8 text-white relative">
           <button 
             onClick={handleCancel}
-            className="absolute top-6 right-6 p-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors"
+            className="absolute top-6 right-6 z-10 p-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors"
             title="Cancelar e liberar números"
           >
             <X className="h-5 w-5" />

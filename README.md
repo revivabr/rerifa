@@ -149,7 +149,7 @@ sequenceDiagram
 
     P->>W: Seleciona números e informa os dados
     W->>DB: reserve_numbers(...)
-    DB-->>W: Pedido pendente e reserva de 3 minutos
+    DB-->>W: Pedido pendente e reserva de 10 minutos
     W->>MP: Solicita cobrança PIX com o valor validado
     MP-->>W: QR Code e código copia e cola
     MP->>W: Notifica o pagamento

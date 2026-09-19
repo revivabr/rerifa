@@ -4,12 +4,47 @@ import { createClient } from "@supabase/supabase-js";
 import process from "node:process";
 import { cancelPixPaymentRecord } from "../mercadopago.server";
 
+const reserveOrderInput = z.object({
+  campaignId: z.string().uuid(),
+  numbers: z.array(z.number().int().positive()).min(1).max(100),
+  buyerName: z.string().trim().min(3).max(150),
+  buyerEmail: z.union([z.string().trim().email(), z.literal("")]),
+  buyerWhatsapp: z.string().trim().min(10).max(30),
+  sellerName: z.string().trim().max(150),
+});
+
 function getSupabaseAdmin() {
   const url = process.env.SUPABASE_URL;
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!url || !key) throw new Error("Supabase config faltando no servidor");
   return createClient(url, key);
 }
+
+export const reserveOrder = createServerFn({ method: "POST" })
+  .inputValidator(reserveOrderInput)
+  .handler(async ({ data }) => {
+    const supabase = getSupabaseAdmin();
+    const uniqueNumbers = [...new Set(data.numbers)].sort((a, b) => a - b);
+    if (uniqueNumbers.length !== data.numbers.length) {
+      return { ok: false, error: "A seleção contém números repetidos." };
+    }
+
+    const { data: result, error } = await supabase.rpc("reserve_numbers", {
+      p_campaign_id: data.campaignId,
+      p_numbers: uniqueNumbers,
+      p_buyer_name: data.buyerName,
+      p_buyer_email: data.buyerEmail,
+      p_buyer_whatsapp: data.buyerWhatsapp,
+      p_buyer_cpf: null,
+      p_seller_name: data.sellerName,
+    });
+
+    if (error) {
+      console.error("Erro ao reservar números:", error);
+      return { ok: false, error: "Não foi possível reservar os números. Atualize a página e tente novamente." };
+    }
+    return result as { ok: boolean; error?: string; order_id?: string; expires_at?: string };
+  });
 
 /**
  * Retorna dados seguros (sem campos sensíveis como buyer_id, payment_provider_id)
@@ -132,13 +167,19 @@ export const cancelOrder = createServerFn({ method: "POST" })
           }
           return { ok: true, paid: true };
         }
+        if (!payment.status || !["cancelled", "rejected", "refunded", "charged_back"].includes(payment.status)) {
+          return { ok: false, error: "O cancelamento ainda está sendo confirmado. Seus números continuam protegidos." };
+        }
       } catch (error) {
         console.error("Erro ao descartar cobrança PIX:", error);
-        if (!reservationExpired) {
-          return { ok: false, error: "Não foi possível descartar o PIX com segurança. Tente novamente." };
-        }
-        // Uma indisponibilidade do provedor não pode manter números vencidos
-        // bloqueados. O webhook ainda valida uma eventual aprovação tardia.
+        // Nunca libera os números sem conhecer o estado real da cobrança.
+        // A manutenção automática tentará novamente no minuto seguinte.
+        return {
+          ok: false,
+          error: reservationExpired
+            ? "Estamos confirmando o estado do PIX. Seus números continuam protegidos enquanto verificamos."
+            : "Não foi possível cancelar o PIX com segurança. Tente novamente.",
+        };
       }
     }
 

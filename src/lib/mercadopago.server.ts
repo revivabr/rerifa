@@ -27,9 +27,9 @@ export async function createPixPaymentRecord({
     throw new Error("Mercado Pago ACCESS_TOKEN não configurado no servidor.");
   }
 
-  // A cobrança e a reserva precisam vencer juntas. Assim, um código salvo não
-  // pode ser pago depois que os números já tiverem sido liberados.
-  const expiration = new Date(Date.now() + 180 * 1000);
+  // Dez minutos dão tempo realista para abrir o banco e concluir o PIX.
+  // A reserva usa exatamente o mesmo prazo no banco.
+  const expiration = new Date(Date.now() + 10 * 60 * 1000);
 
   const body = {
     transaction_amount: Number(amount.toFixed(2)),
@@ -170,13 +170,20 @@ export function getPixPaymentRecord(paymentId: string) {
 export async function cancelPixPaymentRecord(paymentId: string) {
   const payment = await getPixPaymentRecord(paymentId);
   if (payment.status === "approved") return payment;
-  if (payment.status === "cancelled" || payment.status === "rejected") return payment;
+  if (payment.status && ["cancelled", "rejected", "refunded", "charged_back"].includes(payment.status)) {
+    return payment;
+  }
 
-  return mercadoPagoRequest(`/v1/payments/${encodeURIComponent(paymentId)}`, {
+  const cancellation = await mercadoPagoRequest(`/v1/payments/${encodeURIComponent(paymentId)}`, {
     method: "PUT",
     headers: { "X-Idempotency-Key": `cancel-${paymentId}` },
     body: JSON.stringify({ status: "cancelled" }),
   });
+  if (cancellation.status === "approved") return cancellation;
+  if (!cancellation.status || !["cancelled", "rejected", "refunded", "charged_back"].includes(cancellation.status)) {
+    throw new Error(`Cancelamento do PIX ainda não confirmado (${cancellation.status ?? "sem status"})`);
+  }
+  return cancellation;
 }
 
 export function refundPixPaymentRecord(paymentId: string) {

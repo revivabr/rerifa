@@ -747,6 +747,7 @@ export type Database = {
         }[]
       }
       is_admin: { Args: never; Returns: boolean }
+      is_valid_cpf: { Args: { p_cpf: string }; Returns: boolean }
       mark_reconciliation_result: {
         Args: {
           p_error?: string

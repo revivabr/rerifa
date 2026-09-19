@@ -333,7 +333,7 @@ Os itens abaixo descrevem o estado atual e devem orientar melhorias futuras:
 
 1. **Validação do webhook:** a notificação nunca aprova um pedido diretamente; o servidor consulta a cobrança autenticada no Mercado Pago, confere pedido e valor e registra o evento de forma idempotente.
 2. **Capability do pedido:** páginas públicas consultam pedido por UUID. O retorno é mínimo, porém links de pedido devem ser tratados como privados e não enviados a terceiros.
-3. **Validade PIX versus reserva:** a cobrança do provedor dura 30 minutos e a reserva interna, três. A interface considera a reserva; evoluções devem cancelar/inutilizar cobranças antigas de forma explícita quando possível.
+3. **Validade PIX versus reserva:** cobrança e reserva duram 10 minutos. Após a tolerância de confirmação, números só são liberados quando o Mercado Pago confirma um estado terminal negativo; respostas pendentes ou indisponibilidade do provedor mantêm a reserva protegida para nova verificação.
 4. **Tipos gerados:** após novas migrações, atualizar os tipos do backend para evitar divergência entre o TypeScript e o schema real.
 5. **Metadados por rota:** cada nova página deve declarar título e descrição próprios, além dos metadados sociais aplicáveis.
 6. **Acessibilidade de movimento:** novas animações devem respeitar `prefers-reduced-motion`, especialmente sorteio, confetes e pulsação.

@@ -13,7 +13,7 @@ import { ShareCampaign } from "@/components/ShareCampaign";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { calculateCampaignPrice, type PromotionTier } from "@/lib/promotions";
-import { getCampaignNumberAvailability } from "@/lib/api/order.functions";
+import { getCampaignNumberAvailability, reserveOrder } from "@/lib/api/order.functions";
 import { buildCampaignShareMessage } from "@/lib/share";
 
 
@@ -135,6 +135,7 @@ function CampaignPage() {
   const { slug } = Route.useParams();
   const navigate = useNavigate();
   const getCampaignNumberAvailabilityFn = useServerFn(getCampaignNumberAvailability);
+  const reserveOrderFn = useServerFn(reserveOrder);
 
   const [campaign, setCampaign] = useState<Campaign | null>(null);
   const [numbers, setNumbers] = useState<RaffleNumber[]>([]);
@@ -239,30 +240,15 @@ function CampaignPage() {
     if (!campaign) return;
     setSubmitting(true);
     const nums = [...selected].sort((a,b) => a-b);
-    type ReserveNumbersClient = {
-      rpc: (name: "reserve_numbers", args: {
-        p_campaign_id: string;
-        p_numbers: number[];
-        p_buyer_name: string;
-        p_buyer_email: string;
-        p_buyer_whatsapp: string;
-        p_buyer_cpf: null;
-        p_seller_name: string;
-      }) => ReturnType<typeof supabase.rpc>;
-    };
-    const reserveClient = supabase as unknown as ReserveNumbersClient;
-    const { data, error } = await reserveClient.rpc("reserve_numbers", {
-      p_campaign_id: campaign.id,
-      p_numbers: nums,
-      p_buyer_name: form.name,
-      p_buyer_email: form.email,
-      p_buyer_whatsapp: form.whatsapp,
-      p_buyer_cpf: null,
-      p_seller_name: form.sellerName,
-    });
+    const result = await reserveOrderFn({ data: {
+      campaignId: campaign.id,
+      numbers: nums,
+      buyerName: form.name,
+      buyerEmail: form.email,
+      buyerWhatsapp: form.whatsapp,
+      sellerName: form.sellerName,
+    } });
     setSubmitting(false);
-    if (error) { toast.error(error.message); return; }
-    const result = data as { ok: boolean; error?: string; order_id?: string };
     if (!result.ok) { toast.error(result.error ?? "Erro ao reservar"); return; }
     toast.success("Números reservados!");
     if (!result.order_id) { toast.error("Não foi possível abrir o pagamento."); return; }
@@ -354,7 +340,7 @@ function CampaignPage() {
             </div>
             <div className="relative">
               <h2 className="text-2xl md:text-3xl font-bold text-primary mb-1">Escolha seus números</h2>
-              <p className="text-sm text-muted-foreground mb-6">Toque para selecionar. Reserva de 3 minutos.</p>
+              <p className="text-sm text-muted-foreground mb-6">Toque para selecionar. Reserva de 10 minutos.</p>
 
               {promotions.length > 0 && (
                 <div className="mb-6 flex flex-wrap gap-2" aria-label="Ofertas promocionais">

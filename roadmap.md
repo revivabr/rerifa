@@ -43,3 +43,8 @@
 - [x] Enviar o CPF do comprador na cobrança PIX para reduzir recusas bancárias
 - [x] Validar os dígitos verificadores do CPF antes de reservar números e gerar o PIX
 - [x] Remover o CPF do checkout e gerar o PIX sem identificação fiscal do pagador
+- [x] Ampliar cobrança e reserva para 10 minutos após auditoria dos cancelamentos reais
+- [x] Impedir liberação de números quando o estado da cobrança não puder ser confirmado
+- [x] Adicionar tolerância de confirmação para pagamentos feitos no limite do contador
+- [x] Proteger a criação da reserva no servidor e retirar sua execução pública direta
+- [x] Liberar números somente após cancelamento terminal confirmado pelo Mercado Pago

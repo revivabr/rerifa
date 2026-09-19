@@ -14,7 +14,6 @@ export async function createPixPaymentRecord({
   description,
   firstName,
   lastName,
-  cpf,
 }: {
   id: string;
   amount: number;
@@ -22,7 +21,6 @@ export async function createPixPaymentRecord({
   description: string;
   firstName: string;
   lastName: string;
-  cpf: string;
 }) {
   const accessToken = process.env.ACCESS_TOKEN;
   if (!accessToken) {
@@ -44,10 +42,6 @@ export async function createPixPaymentRecord({
       email: email?.trim() || "comprador@revivabrasil.com.br",
       first_name: firstName?.trim() || "Comprador",
       last_name: lastName?.trim() || "Silva",
-      identification: {
-        type: "CPF",
-        number: cpf,
-      },
     },
     date_of_expiration: formatMpExpiration(expiration),
   };
@@ -117,10 +111,6 @@ function isResourceLocked(httpStatus: number, result: MercadoPagoPayment) {
 }
 
 function paymentErrorMessage(result: MercadoPagoPayment) {
-  const message = result.message?.toLowerCase() ?? "";
-  if (message.includes("invalid user identification number")) {
-    return "CPF inválido. Confira os números informados e tente novamente.";
-  }
   return result.message || "Erro na comunicação com Mercado Pago";
 }
 

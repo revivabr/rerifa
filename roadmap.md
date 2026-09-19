@@ -42,3 +42,4 @@
 - [x] Ajustar a autenticação do webhook ao modelo disponível no Mercado Pago, sem exigir credencial inexistente
 - [x] Enviar o CPF do comprador na cobrança PIX para reduzir recusas bancárias
 - [x] Validar os dígitos verificadores do CPF antes de reservar números e gerar o PIX
+- [x] Remover o CPF do checkout e gerar o PIX sem identificação fiscal do pagador

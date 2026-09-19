@@ -3,7 +3,6 @@ import { z } from "zod";
 import { createPixPaymentRecord } from "../mercadopago.server";
 import { createClient } from "@supabase/supabase-js";
 import process from "node:process";
-import { isValidCpf } from "../cpf";
 
 // Helper para Supabase no servidor com Service Role (pode bypass RLS para atualizar status)
 function getSupabaseAdmin() {
@@ -21,7 +20,7 @@ export const getOrGeneratePix = createServerFn({ method: "POST" })
     // 1. Busca o pedido e dados necessários
     const { data: order, error: orderError } = await supabase
       .from("orders")
-      .select("*, campaigns(name), buyers(name, email, whatsapp, cpf)")
+      .select("*, campaigns(name), buyers(name, email, whatsapp)")
       .eq("id", data.orderId)
       .single();
 
@@ -54,12 +53,9 @@ export const getOrGeneratePix = createServerFn({ method: "POST" })
        return { status: order.status };
     }
 
-    const buyer = order.buyers as { name?: string; email?: string; cpf?: string } | null;
+    const buyer = order.buyers as { name?: string; email?: string } | null;
     const campaign = order.campaigns as { name?: string } | null;
     if (!buyer || !campaign) throw new Error("Dados do pedido estão incompletos");
-    if (!isValidCpf(buyer.cpf ?? "")) {
-      throw new Error("CPF inválido. Volte à campanha e informe um CPF válido para gerar o PIX.");
-    }
 
     const { data: claim, error: claimError } = await supabase.rpc("claim_pix_generation", {
       p_order_id: order.id,
@@ -104,7 +100,6 @@ export const getOrGeneratePix = createServerFn({ method: "POST" })
         description: `Rifa Reviva Brasil - ${campaign.name}`,
         firstName,
         lastName,
-        cpf: buyer.cpf ?? "",
       });
 
       const pixData = mpResponse.point_of_interaction?.transaction_data;

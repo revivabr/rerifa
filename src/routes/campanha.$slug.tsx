@@ -231,7 +231,13 @@ function CampaignPage() {
     if (status !== "available") return;
     setSelected(prev => {
       const next = new Set(prev);
-      if (next.has(n)) next.delete(n); else next.add(n);
+      if (next.has(n)) {
+        next.delete(n);
+      } else if (next.size >= 100) {
+        toast.info("Você pode selecionar até 100 números por compra.");
+      } else {
+        next.add(n);
+      }
       return next;
     });
   }
@@ -239,20 +245,26 @@ function CampaignPage() {
   async function handleSubmit(form: { name: string; email: string; whatsapp: string; sellerName: string }) {
     if (!campaign) return;
     setSubmitting(true);
-    const nums = [...selected].sort((a,b) => a-b);
-    const result = await reserveOrderFn({ data: {
-      campaignId: campaign.id,
-      numbers: nums,
-      buyerName: form.name,
-      buyerEmail: form.email,
-      buyerWhatsapp: form.whatsapp,
-      sellerName: form.sellerName,
-    } });
-    setSubmitting(false);
-    if (!result.ok) { toast.error(result.error ?? "Erro ao reservar"); return; }
-    toast.success("Números reservados!");
-    if (!result.order_id) { toast.error("Não foi possível abrir o pagamento."); return; }
-    navigate({ to: "/checkout/$orderId", params: { orderId: result.order_id } });
+    try {
+      const nums = [...selected].sort((a,b) => a-b);
+      const result = await reserveOrderFn({ data: {
+        campaignId: campaign.id,
+        numbers: nums,
+        buyerName: form.name,
+        buyerEmail: form.email,
+        buyerWhatsapp: form.whatsapp,
+        sellerName: form.sellerName,
+      } });
+      if (!result.ok) { toast.error(result.error ?? "Não foi possível reservar os números."); return; }
+      toast.success("Números reservados!");
+      if (!result.order_id) { toast.error("Não foi possível abrir o pagamento."); return; }
+      navigate({ to: "/checkout/$orderId", params: { orderId: result.order_id } });
+    } catch (error) {
+      console.error("Erro ao solicitar reserva:", error);
+      toast.error("Não foi possível reservar os números. Verifique sua conexão e tente novamente.");
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   if (loading) return <div className="mx-auto max-w-6xl px-4 py-20 text-center text-muted-foreground">Carregando…</div>;

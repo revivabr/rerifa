@@ -1,4 +1,5 @@
 import process from "node:process";
+import { isTerminalPixStatus, PIX_RESERVATION_MS } from "./pix-policy";
 
 /**
  * Formata a validade no padrão ISO-8601 em UTC, sem ambiguidade de fuso.
@@ -29,7 +30,7 @@ export async function createPixPaymentRecord({
 
   // Dez minutos dão tempo realista para abrir o banco e concluir o PIX.
   // A reserva usa exatamente o mesmo prazo no banco.
-  const expiration = new Date(Date.now() + 10 * 60 * 1000);
+  const expiration = new Date(Date.now() + PIX_RESERVATION_MS);
 
   const body = {
     transaction_amount: Number(amount.toFixed(2)),
@@ -170,7 +171,7 @@ export function getPixPaymentRecord(paymentId: string) {
 export async function cancelPixPaymentRecord(paymentId: string) {
   const payment = await getPixPaymentRecord(paymentId);
   if (payment.status === "approved") return payment;
-  if (payment.status && ["cancelled", "rejected", "refunded", "charged_back"].includes(payment.status)) {
+  if (isTerminalPixStatus(payment.status)) {
     return payment;
   }
 
@@ -180,7 +181,7 @@ export async function cancelPixPaymentRecord(paymentId: string) {
     body: JSON.stringify({ status: "cancelled" }),
   });
   if (cancellation.status === "approved") return cancellation;
-  if (!cancellation.status || !["cancelled", "rejected", "refunded", "charged_back"].includes(cancellation.status)) {
+  if (!isTerminalPixStatus(cancellation.status)) {
     throw new Error(`Cancelamento do PIX ainda não confirmado (${cancellation.status ?? "sem status"})`);
   }
   return cancellation;

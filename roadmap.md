@@ -50,3 +50,4 @@
 - [x] Liberar números somente após cancelamento terminal confirmado pelo Mercado Pago
 - [x] Evitar mensagens repetidas enquanto o cancelamento do PIX ainda está sendo confirmado
 - [x] Recuperar o botão de reserva após falhas e limitar cada compra a 100 números
+- [x] Adicionar barreiras preventivas contra regressões recorrentes de PIX, reservas e acesso público

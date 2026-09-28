@@ -3,10 +3,11 @@ import { z } from "zod";
 import { createClient } from "@supabase/supabase-js";
 import process from "node:process";
 import { cancelPixPaymentRecord } from "../mercadopago.server";
+import { isTerminalPixStatus, MAX_NUMBERS_PER_ORDER } from "../pix-policy";
 
 const reserveOrderInput = z.object({
   campaignId: z.string().uuid(),
-  numbers: z.array(z.number().int().positive()).min(1).max(100),
+  numbers: z.array(z.number().int().positive()).min(1).max(MAX_NUMBERS_PER_ORDER),
   buyerName: z.string().trim().min(3).max(150),
   buyerEmail: z.union([z.string().trim().email(), z.literal("")]),
   buyerWhatsapp: z.string().trim().min(10).max(30),
@@ -167,7 +168,7 @@ export const cancelOrder = createServerFn({ method: "POST" })
           }
           return { ok: true, paid: true };
         }
-        if (!payment.status || !["cancelled", "rejected", "refunded", "charged_back"].includes(payment.status)) {
+        if (!isTerminalPixStatus(payment.status)) {
           return { ok: false, error: "O cancelamento ainda está sendo confirmado. Seus números continuam protegidos." };
         }
       } catch (error) {

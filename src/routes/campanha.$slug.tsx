@@ -15,6 +15,7 @@ import { cn } from "@/lib/utils";
 import { calculateCampaignPrice, type PromotionTier } from "@/lib/promotions";
 import { getCampaignNumberAvailability, reserveOrder } from "@/lib/api/order.functions";
 import { buildCampaignShareMessage } from "@/lib/share";
+import { AVAILABILITY_REFRESH_MS, MAX_NUMBERS_PER_ORDER } from "@/lib/pix-policy";
 
 
 type CampaignMeta = {
@@ -214,7 +215,7 @@ function CampaignPage() {
         } catch {
           // A próxima atualização tenta novamente sem interromper a compra.
         }
-      }, 5000);
+      }, AVAILABILITY_REFRESH_MS);
     })();
     return () => {
       if (refreshAvailability !== null) window.clearInterval(refreshAvailability);
@@ -232,8 +233,8 @@ function CampaignPage() {
       const next = new Set(prev);
       if (next.has(n)) {
         next.delete(n);
-      } else if (next.size >= 100) {
-        toast.info("Você pode selecionar até 100 números por compra.");
+      } else if (next.size >= MAX_NUMBERS_PER_ORDER) {
+        toast.info(`Você pode selecionar até ${MAX_NUMBERS_PER_ORDER} números por compra.`);
       } else {
         next.add(n);
       }

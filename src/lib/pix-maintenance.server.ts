@@ -1,4 +1,5 @@
 import { cancelPixPaymentRecord, getPixPaymentRecord, refundPixPaymentRecord } from "./mercadopago.server";
+import { isTerminalPixStatus, PIX_EXPIRATION_GRACE_MS } from "./pix-policy";
 
 type AdminClient = Awaited<typeof import("@/integrations/supabase/client.server")>["supabaseAdmin"];
 
@@ -40,7 +41,7 @@ export async function processPixMaintenance(limit = 25) {
   await supabaseAdmin.rpc("expire_pending_orders");
   // Aguarda uma margem após o contador para absorver a latência entre o banco
   // pagador, a confirmação do Mercado Pago e a chegada do webhook.
-  const cutoff = new Date(Date.now() - 30_000).toISOString();
+  const cutoff = new Date(Date.now() - PIX_EXPIRATION_GRACE_MS).toISOString();
   const { data: expiredOrders, error } = await supabaseAdmin
     .from("orders")
     .select("id,payment_provider_id")
@@ -73,7 +74,7 @@ export async function processPixMaintenance(limit = 25) {
         continue;
       }
 
-      if (!payment.status || !["cancelled", "rejected", "refunded", "charged_back"].includes(payment.status)) {
+      if (!isTerminalPixStatus(payment.status)) {
         const cancellation = await cancelPixPaymentRecord(paymentId);
         if (cancellation.status === "approved") {
           const { data } = await supabaseAdmin.rpc("confirm_payment", {
@@ -87,7 +88,7 @@ export async function processPixMaintenance(limit = 25) {
           else if (result?.requires_refund) await refundLatePayment(supabaseAdmin, paymentId);
           continue;
         }
-        if (!cancellation.status || !["cancelled", "rejected", "refunded", "charged_back"].includes(cancellation.status)) {
+        if (!isTerminalPixStatus(cancellation.status)) {
           deferred += 1;
           continue;
         }

@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { getOrGeneratePix } from "@/lib/api/payment.functions";
 import { getOrderPublic, cancelOrder } from "@/lib/api/order.functions";
+import { PIX_EXPIRATION_GRACE_MS } from "@/lib/pix-policy";
 
 
 export const Route = createFileRoute("/checkout/$orderId")({
@@ -117,7 +118,7 @@ function CheckoutPage() {
   useEffect(() => {
     if (!order?.expires_at || order.status !== "pending" || expirationHandled) return;
     // Pequena tolerância para pagamentos enviados nos últimos segundos.
-    if (new Date(order.expires_at).getTime() + 30_000 > Date.now()) return;
+    if (new Date(order.expires_at).getTime() + PIX_EXPIRATION_GRACE_MS > Date.now()) return;
 
     setExpirationHandled(true);
     cancelOrderFn({ data: { orderId } })

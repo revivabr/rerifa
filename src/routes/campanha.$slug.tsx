@@ -149,6 +149,7 @@ function CampaignPage() {
 
   useEffect(() => {
     let channel: ReturnType<typeof supabase.channel> | null = null;
+    let refreshAvailability: number | null = null;
     (async () => {
       setLoading(true);
       const { data: c } = await supabase
@@ -206,7 +207,7 @@ function CampaignPage() {
           })
         .subscribe();
 
-      const refreshAvailability = window.setInterval(async () => {
+      refreshAvailability = window.setInterval(async () => {
         try {
           const latest = await getCampaignNumberAvailabilityFn({ data: { campaignId: c.id } });
           setNumbers((latest ?? []) as RaffleNumber[]);
@@ -214,14 +215,10 @@ function CampaignPage() {
           // A próxima atualização tenta novamente sem interromper a compra.
         }
       }, 5000);
-      channel = Object.assign(channel, { refreshAvailability });
     })();
     return () => {
-      if (channel) {
-        const refreshAvailability = (channel as typeof channel & { refreshAvailability?: number }).refreshAvailability;
-        if (refreshAvailability) window.clearInterval(refreshAvailability);
-        supabase.removeChannel(channel);
-      }
+      if (refreshAvailability !== null) window.clearInterval(refreshAvailability);
+      if (channel) supabase.removeChannel(channel);
     };
   }, [getCampaignNumberAvailabilityFn, slug]);
 

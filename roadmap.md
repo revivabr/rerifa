@@ -48,3 +48,5 @@
 - [x] Adicionar tolerância de confirmação para pagamentos feitos no limite do contador
 - [x] Proteger a criação da reserva no servidor e retirar sua execução pública direta
 - [x] Liberar números somente após cancelamento terminal confirmado pelo Mercado Pago
+- [x] Evitar mensagens repetidas enquanto o cancelamento do PIX ainda está sendo confirmado
+- [x] Recuperar o botão de reserva após falhas e limitar cada compra a 100 números

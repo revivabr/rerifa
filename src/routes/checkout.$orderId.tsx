@@ -131,13 +131,15 @@ function CheckoutPage() {
           setRealPixData(null);
           toast.error("Tempo esgotado. Tente novamente — os números foram liberados.");
         } else {
-          toast.error(result.error || "Não foi possível liberar os números. Tente novamente.");
-          setExpirationHandled(false);
+          toast.info(result.error || "Estamos confirmando o estado do PIX. Seus números continuam protegidos.", {
+            id: `pix-expiration-${orderId}`,
+          });
         }
       })
       .catch(() => {
-        toast.error("Não foi possível liberar os números. Tente novamente.");
-        setExpirationHandled(false);
+        toast.info("Estamos confirmando o estado do PIX. Seus números continuam protegidos.", {
+          id: `pix-expiration-${orderId}`,
+        });
       });
   }, [campaignSlug, cancelOrderFn, expirationHandled, navigate, order?.expires_at, order?.status, orderId, remaining]);
 

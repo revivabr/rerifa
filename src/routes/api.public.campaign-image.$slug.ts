@@ -23,28 +23,45 @@ function storageLocation(imageUrl: string): { bucket: string; path: string } | n
 export const Route = createFileRoute("/api/public/campaign-image/$slug")({
   server: {
     handlers: {
-      GET: async ({ params }: { params: { slug: string } }) => {
+      GET: async ({ params, request }: { params: { slug: string }; request: Request }) => {
         const slug = params.slug.trim();
         if (!/^[a-z0-9-]{1,120}$/i.test(slug)) {
           return new Response("Campanha inválida", { status: 400 });
         }
 
+        const asset = new URL(request.url).searchParams.get("asset") ?? "banner";
+        if (!/^(?:banner|prize-[12]|award-[0-9a-f-]{36})$/i.test(asset)) {
+          return new Response("Imagem inválida", { status: 400 });
+        }
+
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
         const { data: campaign, error } = await supabaseAdmin
           .from("campaigns")
-          .select("banner_url,status")
+          .select("id,banner_url,prize_image_1,prize_image_2,status")
           .eq("slug", slug)
           .maybeSingle();
 
-        if (
-          error ||
-          !campaign?.banner_url ||
-          !PUBLIC_CAMPAIGN_STATUSES.includes(campaign.status)
-        ) {
+        if (error || !campaign || !PUBLIC_CAMPAIGN_STATUSES.includes(campaign.status)) {
           return new Response("Imagem não encontrada", { status: 404 });
         }
 
-        const location = storageLocation(campaign.banner_url);
+        let imageUrl: string | null = null;
+        if (asset === "banner") imageUrl = campaign.banner_url;
+        if (asset === "prize-1") imageUrl = campaign.prize_image_1;
+        if (asset === "prize-2") imageUrl = campaign.prize_image_2;
+        if (asset.startsWith("award-")) {
+          const prizeId = asset.slice("award-".length);
+          const { data: prize } = await supabaseAdmin
+            .from("campaign_prizes")
+            .select("image_url")
+            .eq("id", prizeId)
+            .eq("campaign_id", campaign.id)
+            .maybeSingle();
+          imageUrl = prize?.image_url ?? null;
+        }
+        if (!imageUrl) return new Response("Imagem não encontrada", { status: 404 });
+
+        const location = storageLocation(imageUrl);
         let imageResponse: Response;
 
         if (location) {
@@ -58,7 +75,7 @@ export const Route = createFileRoute("/api/public/campaign-image/$slug")({
 
           imageResponse = new Response(data);
         } else {
-          imageResponse = await fetch(campaign.banner_url, { redirect: "follow" });
+          imageResponse = await fetch(imageUrl, { redirect: "follow" });
           if (!imageResponse.ok) {
             return new Response("Imagem não encontrada", { status: 404 });
           }

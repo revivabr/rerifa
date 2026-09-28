@@ -158,22 +158,13 @@ function CampaignPage() {
         .maybeSingle();
       if (!c) { setLoading(false); return; }
       
-      let campaignData = c as Campaign;
-
-      async function signIfStorage(url: string | null): Promise<string | null> {
-        if (!url || !url.includes('/storage/v1/object/public/')) return url;
-        const path = url.split('/public/')[1].split('/').slice(1).join('/');
-        const bucket = url.split('/public/')[1].split('/')[0];
-        const { data: signedData } = await supabase.storage.from(bucket).createSignedUrl(path, 3600);
-        return signedData?.signedUrl ?? url;
-      }
-
-      const [signedBanner, signedPrize1, signedPrize2] = await Promise.all([
-        signIfStorage(campaignData.banner_url),
-        signIfStorage(campaignData.prize_image_1),
-        signIfStorage(campaignData.prize_image_2),
-      ]);
-      campaignData = { ...campaignData, banner_url: signedBanner, prize_image_1: signedPrize1, prize_image_2: signedPrize2 };
+      const imageBase = `/api/public/campaign-image/${encodeURIComponent(slug)}`;
+      const campaignData = {
+        ...(c as Campaign),
+        banner_url: c.banner_url ? imageBase : null,
+        prize_image_1: c.prize_image_1 ? `${imageBase}?asset=prize-1` : null,
+        prize_image_2: c.prize_image_2 ? `${imageBase}?asset=prize-2` : null,
+      };
 
       setCampaign(campaignData);
       
@@ -187,14 +178,9 @@ function CampaignPage() {
       const { data: pz } = await supabase.from("campaign_prizes").select("*").eq("campaign_id", c.id).order("position");
       
       // Handle prize images as well
-      const prizesWithSignedUrls = await Promise.all((pz ?? []).map(async (p) => {
-        if (p.image_url && p.image_url.includes('/storage/v1/object/public/')) {
-          const path = p.image_url.split('/public/')[1].split('/').slice(1).join('/');
-          const bucket = p.image_url.split('/public/')[1].split('/')[0];
-          const { data: signedData } = await supabase.storage.from(bucket).createSignedUrl(path, 3600);
-          if (signedData) return { ...p, image_url: signedData.signedUrl };
-        }
-        return p;
+      const prizesWithSignedUrls = (pz ?? []).map((p) => ({
+        ...p,
+        image_url: p.image_url ? `${imageBase}?asset=award-${p.id}` : null,
       }));
       
       setPrizes(prizesWithSignedUrls as Prize[]);
@@ -219,8 +205,24 @@ function CampaignPage() {
             });
           })
         .subscribe();
+
+      const refreshAvailability = window.setInterval(async () => {
+        try {
+          const latest = await getCampaignNumberAvailabilityFn({ data: { campaignId: c.id } });
+          setNumbers((latest ?? []) as RaffleNumber[]);
+        } catch {
+          // A próxima atualização tenta novamente sem interromper a compra.
+        }
+      }, 5000);
+      channel = Object.assign(channel, { refreshAvailability });
     })();
-    return () => { if (channel) supabase.removeChannel(channel); };
+    return () => {
+      if (channel) {
+        const refreshAvailability = (channel as typeof channel & { refreshAvailability?: number }).refreshAvailability;
+        if (refreshAvailability) window.clearInterval(refreshAvailability);
+        supabase.removeChannel(channel);
+      }
+    };
   }, [getCampaignNumberAvailabilityFn, slug]);
 
   const price = useMemo(() => calculateCampaignPrice(Number(campaign?.number_price ?? 0), selected.size, promotions), [selected, campaign, promotions]);

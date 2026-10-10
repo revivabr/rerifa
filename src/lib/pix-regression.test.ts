@@ -12,6 +12,13 @@ function source(path: string): string {
 }
 
 describe("regras críticas do PIX", () => {
+  it("não oculta pedidos antigos do relatório administrativo", () => {
+    const report = source("../routes/admin.campaigns.$id.tsx");
+    expect(report).toContain("setOrders(allOrders)");
+    expect(report).not.toContain("allOrders.slice(0, 50)");
+    expect(report).toContain(".range(offset, offset + batchSize - 1)");
+    expect(report).toContain('aria-label="Buscar pedidos"');
+  });
   it("mantém cobrança e reserva no prazo único de dez minutos", () => {
     expect(PIX_RESERVATION_MS).toBe(600_000);
     expect(PIX_EXPIRATION_GRACE_MS).toBe(30_000);

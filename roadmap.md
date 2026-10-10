@@ -1,5 +1,7 @@
 # Roadmap
 
+- [x] Conferir o ganhador José Carlos Pereira: número 071 pago, pedido na posição 85; relatório completo e busca validados no painel sem alterar registros
+
 - [x] Criar estrutura de promoções e histórico de preço no pedido
 - [x] Centralizar cálculo protegido na reserva
 - [x] Cadastrar 3 números por R$ 50 na campanha Vôo do Bem

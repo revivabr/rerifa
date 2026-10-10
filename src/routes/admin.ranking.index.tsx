@@ -5,6 +5,13 @@ import { Crown, ChevronRight, Calendar } from "lucide-react";
 import { formatCalendarDateBR } from "@/lib/format";
 
 export const Route = createFileRoute("/admin/ranking/")({
+  head: () => ({ meta: [
+    { title: "Rankings por campanha | Reviva Rifa" },
+    { name: "description", content: "Escolha uma campanha para consultar o ranking de vendedores Reviva Rifa." },
+    { property: "og:title", content: "Rankings por campanha | Reviva Rifa" },
+    { property: "og:description", content: "Escolha uma campanha para consultar o ranking de vendedores Reviva Rifa." },
+    { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" },
+  ] }),
   component: RankingCampaignList,
 });
 

@@ -8,6 +8,13 @@ import confetti from "canvas-confetti";
 import { formatBRL, padNumber } from "@/lib/format";
 
 export const Route = createFileRoute("/admin/ranking/$id")({
+  head: () => ({ meta: [
+    { title: "Ranking de vendedores | Reviva Rifa" },
+    { name: "description", content: "Confira o desempenho dos vendedores da campanha Reviva Rifa." },
+    { property: "og:title", content: "Ranking de vendedores | Reviva Rifa" },
+    { property: "og:description", content: "Confira o desempenho dos vendedores da campanha Reviva Rifa." },
+    { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" },
+  ] }),
   component: RankingPage,
 });
 

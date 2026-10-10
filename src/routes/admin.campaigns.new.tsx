@@ -12,6 +12,13 @@ import { toast } from "sonner";
 import { ArrowLeft, Info } from "lucide-react";
 
 export const Route = createFileRoute("/admin/campaigns/new")({
+  head: () => ({ meta: [
+    { title: "Nova campanha | Reviva Rifa" },
+    { name: "description", content: "Cadastre uma campanha solidária na Reviva Rifa." },
+    { property: "og:title", content: "Nova campanha | Reviva Rifa" },
+    { property: "og:description", content: "Cadastre uma campanha solidária na Reviva Rifa." },
+    { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" },
+  ] }),
   component: NewCampaign,
 });
 

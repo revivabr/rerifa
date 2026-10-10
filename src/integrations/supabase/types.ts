@@ -106,6 +106,35 @@ export type Database = {
         }
         Relationships: []
       }
+      campaign_draw_media: {
+        Row: {
+          campaign_id: string
+          updated_at: string
+          video_path: string | null
+          youtube_id: string | null
+        }
+        Insert: {
+          campaign_id: string
+          updated_at?: string
+          video_path?: string | null
+          youtube_id?: string | null
+        }
+        Update: {
+          campaign_id?: string
+          updated_at?: string
+          video_path?: string | null
+          youtube_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "campaign_draw_media_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: true
+            referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       campaign_prizes: {
         Row: {
           campaign_id: string | null

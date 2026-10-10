@@ -6,6 +6,13 @@ import { StatusBadge } from "./admin.dashboard";
 import { Plus, ExternalLink } from "lucide-react";
 
 export const Route = createFileRoute("/admin/campaigns/")({
+  head: () => ({ meta: [
+    { title: "Gestão de campanhas | Reviva Rifa" },
+    { name: "description", content: "Consulte e administre as campanhas solidárias Reviva Rifa." },
+    { property: "og:title", content: "Gestão de campanhas | Reviva Rifa" },
+    { property: "og:description", content: "Consulte e administre as campanhas solidárias Reviva Rifa." },
+    { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" },
+  ] }),
   component: CampaignsList,
 });
 

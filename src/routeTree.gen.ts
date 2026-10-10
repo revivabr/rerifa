@@ -26,6 +26,7 @@ import { Route as AdminCampaignsNewRouteImport } from './routes/admin.campaigns.
 import { Route as AdminCampaignsIdRouteImport } from './routes/admin.campaigns.$id'
 import { Route as ApiPublicWebhooksMercadopagoRouteImport } from './routes/api.public.webhooks.mercadopago'
 import { Route as ApiPublicInternalPixMaintenanceRouteImport } from './routes/api.public.internal.pix-maintenance'
+import { Route as ApiPublicDrawMediaSlugRouteImport } from './routes/api.public.draw-media.$slug'
 import { Route as ApiPublicCampaignImageSlugRouteImport } from './routes/api.public.campaign-image.$slug'
 
 const InformacoesRoute = InformacoesRouteImport.update({
@@ -115,6 +116,11 @@ const ApiPublicInternalPixMaintenanceRoute =
     path: '/api/public/internal/pix-maintenance',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicDrawMediaSlugRoute = ApiPublicDrawMediaSlugRouteImport.update({
+  id: '/api/public/draw-media/$slug',
+  path: '/api/public/draw-media/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicCampaignImageSlugRoute =
   ApiPublicCampaignImageSlugRouteImport.update({
     id: '/api/public/campaign-image/$slug',
@@ -139,6 +145,7 @@ export interface FileRoutesByFullPath {
   '/admin/draw/': typeof AdminDrawIndexRoute
   '/admin/ranking/': typeof AdminRankingIndexRoute
   '/api/public/campaign-image/$slug': typeof ApiPublicCampaignImageSlugRoute
+  '/api/public/draw-media/$slug': typeof ApiPublicDrawMediaSlugRoute
   '/api/public/internal/pix-maintenance': typeof ApiPublicInternalPixMaintenanceRoute
   '/api/public/webhooks/mercadopago': typeof ApiPublicWebhooksMercadopagoRoute
 }
@@ -159,6 +166,7 @@ export interface FileRoutesByTo {
   '/admin/draw': typeof AdminDrawIndexRoute
   '/admin/ranking': typeof AdminRankingIndexRoute
   '/api/public/campaign-image/$slug': typeof ApiPublicCampaignImageSlugRoute
+  '/api/public/draw-media/$slug': typeof ApiPublicDrawMediaSlugRoute
   '/api/public/internal/pix-maintenance': typeof ApiPublicInternalPixMaintenanceRoute
   '/api/public/webhooks/mercadopago': typeof ApiPublicWebhooksMercadopagoRoute
 }
@@ -180,6 +188,7 @@ export interface FileRoutesById {
   '/admin/draw/': typeof AdminDrawIndexRoute
   '/admin/ranking/': typeof AdminRankingIndexRoute
   '/api/public/campaign-image/$slug': typeof ApiPublicCampaignImageSlugRoute
+  '/api/public/draw-media/$slug': typeof ApiPublicDrawMediaSlugRoute
   '/api/public/internal/pix-maintenance': typeof ApiPublicInternalPixMaintenanceRoute
   '/api/public/webhooks/mercadopago': typeof ApiPublicWebhooksMercadopagoRoute
 }
@@ -202,6 +211,7 @@ export interface FileRouteTypes {
     | '/admin/draw/'
     | '/admin/ranking/'
     | '/api/public/campaign-image/$slug'
+    | '/api/public/draw-media/$slug'
     | '/api/public/internal/pix-maintenance'
     | '/api/public/webhooks/mercadopago'
   fileRoutesByTo: FileRoutesByTo
@@ -222,6 +232,7 @@ export interface FileRouteTypes {
     | '/admin/draw'
     | '/admin/ranking'
     | '/api/public/campaign-image/$slug'
+    | '/api/public/draw-media/$slug'
     | '/api/public/internal/pix-maintenance'
     | '/api/public/webhooks/mercadopago'
   id:
@@ -242,6 +253,7 @@ export interface FileRouteTypes {
     | '/admin/draw/'
     | '/admin/ranking/'
     | '/api/public/campaign-image/$slug'
+    | '/api/public/draw-media/$slug'
     | '/api/public/internal/pix-maintenance'
     | '/api/public/webhooks/mercadopago'
   fileRoutesById: FileRoutesById
@@ -254,6 +266,7 @@ export interface RootRouteChildren {
   CheckoutOrderIdRoute: typeof CheckoutOrderIdRoute
   ConfirmacaoOrderIdRoute: typeof ConfirmacaoOrderIdRoute
   ApiPublicCampaignImageSlugRoute: typeof ApiPublicCampaignImageSlugRoute
+  ApiPublicDrawMediaSlugRoute: typeof ApiPublicDrawMediaSlugRoute
   ApiPublicInternalPixMaintenanceRoute: typeof ApiPublicInternalPixMaintenanceRoute
   ApiPublicWebhooksMercadopagoRoute: typeof ApiPublicWebhooksMercadopagoRoute
 }
@@ -379,6 +392,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicInternalPixMaintenanceRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/draw-media/$slug': {
+      id: '/api/public/draw-media/$slug'
+      path: '/api/public/draw-media/$slug'
+      fullPath: '/api/public/draw-media/$slug'
+      preLoaderRoute: typeof ApiPublicDrawMediaSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/campaign-image/$slug': {
       id: '/api/public/campaign-image/$slug'
       path: '/api/public/campaign-image/$slug'
@@ -423,6 +443,7 @@ const rootRouteChildren: RootRouteChildren = {
   CheckoutOrderIdRoute: CheckoutOrderIdRoute,
   ConfirmacaoOrderIdRoute: ConfirmacaoOrderIdRoute,
   ApiPublicCampaignImageSlugRoute: ApiPublicCampaignImageSlugRoute,
+  ApiPublicDrawMediaSlugRoute: ApiPublicDrawMediaSlugRoute,
   ApiPublicInternalPixMaintenanceRoute: ApiPublicInternalPixMaintenanceRoute,
   ApiPublicWebhooksMercadopagoRoute: ApiPublicWebhooksMercadopagoRoute,
 }

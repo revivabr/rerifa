@@ -15,6 +15,10 @@ export const Route = createFileRoute("/informacoes")({
   head: () => ({
     meta: [
       { title: "Informações — Reviva Brasil" },
+      { property: "og:title", content: "Informações — Reviva Brasil" },
+      { property: "og:description", content: "Conheça a Associação Reviva Brasil e como funcionam nossas rifas solidárias." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       {
         name: "description",
         content:

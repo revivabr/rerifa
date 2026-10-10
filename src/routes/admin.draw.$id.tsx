@@ -9,12 +9,20 @@ import confetti from "canvas-confetti";
 import { padNumber } from "@/lib/format";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { DrawPublication } from "@/components/admin/DrawPublication";
 
 export const Route = createFileRoute("/admin/draw/$id")({
+  head: () => ({ meta: [
+    { title: "Sorteio e certificados | Reviva Rifa" },
+    { name: "description", content: "Administre o sorteio, publique seu vídeo e emita o certificado do ganhador na Reviva Rifa." },
+    { property: "og:title", content: "Sorteio e certificados | Reviva Rifa" },
+    { property: "og:description", content: "Vídeo oficial e certificados dos ganhadores da Reviva Rifa." },
+    { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" },
+  ] }),
   component: RaffleDraw,
 });
 
-type SoldNumber = { number: number; buyer_id: string; buyer_name: string; buyer_whatsapp: string | null };
+type SoldNumber = { number: number; buyer_id: string; buyer_name: string; buyer_whatsapp: string | null; order_id: string | null };
 type Prize = { title: string; description: string | null; image_url: string | null; position: number };
 
 function RaffleDraw() {
@@ -30,6 +38,8 @@ function RaffleDraw() {
   const [isLoading, setIsLoading] = useState(true);
   const [adminId, setAdminId] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
+  const [savingResult, setSavingResult] = useState(false);
+  const [resultRevision, setResultRevision] = useState(0);
 
   const drawIntervalRef = useRef<number | null>(null);
   const drawTimeoutRef = useRef<number | null>(null);
@@ -39,7 +49,7 @@ function RaffleDraw() {
       setIsLoading(true);
       const [{ data: camp }, { data: nums }, { data: prizes }, { data: sessionData }] = await Promise.all([
         supabase.from("campaigns").select("*").eq("id", id).maybeSingle(),
-        supabase.from("raffle_numbers").select("number, buyer_id, status, buyers(name, whatsapp)").eq("campaign_id", id),
+        supabase.from("raffle_numbers").select("number, buyer_id, current_order_id, status, buyers(name, whatsapp)").eq("campaign_id", id).order("number").range(0, 999),
         supabase.from("campaign_prizes").select("title, description, image_url, position").eq("campaign_id", id).order("position"),
         supabase.auth.getSession(),
       ]);
@@ -57,6 +67,7 @@ function RaffleDraw() {
           buyer_id: n.buyer_id,
           buyer_name: n.buyers?.name || "Comprador",
           buyer_whatsapp: n.buyers?.whatsapp ?? null,
+          order_id: n.current_order_id ?? null,
         }));
       setSoldNumbers(sold);
 
@@ -121,18 +132,24 @@ function RaffleDraw() {
   };
 
   const saveResult = async () => {
-    if (!winner || saved) return;
+    if (!winner || saved || savingResult) return;
+    if (!winner.order_id) { toast.error("O número sorteado não possui pedido vinculado. Confira os pedidos antes de salvar."); return; }
+    setSavingResult(true);
+    try {
     const { error } = await supabase.from("draws").insert({
       campaign_id: id,
       winner_number: winner.number,
       winner_buyer_id: winner.buyer_id,
+      winner_order_id: winner.order_id,
       eligible_numbers_count: soldNumbers.length,
       draw_method: "Sistema Aleatório",
       drawn_at: new Date().toISOString(),
       drawn_by: adminId,
     });
     if (error) toast.error("Erro: " + error.message);
-    else { setSaved(true); toast.success("Resultado salvo!"); }
+    else { setSaved(true); setResultRevision(r => r + 1); toast.success("Resultado salvo! O certificado está disponível abaixo."); }
+    } catch { toast.error("Não foi possível salvar o resultado. Tente novamente."); }
+    finally { setSavingResult(false); }
   };
 
   if (isLoading) {
@@ -224,6 +241,7 @@ function RaffleDraw() {
             <span className="inline-flex items-center gap-1.5"><span className="h-3 w-3 rounded border border-gray-200 bg-gray-50" /> Disponível</span>
           </div>
         </div>
+        <DrawPublication campaignId={id} total={total} refreshKey={resultRevision} />
       </div>
 
       {/* Modal do ganhador */}
@@ -267,8 +285,8 @@ function RaffleDraw() {
             )}
 
             <div className="flex flex-col sm:flex-row gap-2 pt-2">
-              <Button onClick={saveResult} disabled={saved} className="flex-1 bg-primary hover:bg-primary/90 text-white font-bold h-12 rounded-xl">
-                {saved ? "✓ Salvo" : "Salvar Resultado"}
+              <Button onClick={saveResult} disabled={saved || savingResult} className="flex-1 bg-primary hover:bg-primary/90 text-white font-bold h-12 rounded-xl">
+                {saved ? "✓ Salvo" : savingResult ? "Salvando…" : "Salvar Resultado"}
               </Button>
               <Button onClick={() => { setShowModal(false); setWinner(null); setHighlight(null); }} variant="outline" className="flex-1 font-bold h-12 rounded-xl">
                 Fechar

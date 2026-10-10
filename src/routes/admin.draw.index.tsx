@@ -5,6 +5,13 @@ import { Trophy, ChevronRight, Calendar } from "lucide-react";
 import { formatCalendarDateBR } from "@/lib/format";
 
 export const Route = createFileRoute("/admin/draw/")({
+  head: () => ({ meta: [
+    { title: "Campanhas para sorteio | Reviva Rifa" },
+    { name: "description", content: "Escolha uma campanha para sortear, publicar o vídeo ou gerar certificados na Reviva Rifa." },
+    { property: "og:title", content: "Campanhas para sorteio | Reviva Rifa" },
+    { property: "og:description", content: "Sorteios e certificados das campanhas Reviva Rifa." },
+    { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" },
+  ] }),
   component: DrawCampaignList,
 });
 
@@ -27,7 +34,7 @@ function DrawCampaignList() {
       const { data } = await supabase
         .from("campaigns")
         .select("id,name,slug,status,number_quantity,end_date,banner_url")
-        .eq("status", "active")
+        .in("status", ["active", "paused", "finished", "drawn"])
         .order("end_date", { ascending: true });
       setItems((data ?? []) as Campaign[]);
       setLoading(false);
@@ -42,7 +49,7 @@ function DrawCampaignList() {
         </div>
         <div>
           <h1 className="text-3xl font-black text-primary">Sorteador</h1>
-          <p className="text-sm text-muted-foreground">Escolha a campanha para iniciar o sorteio</p>
+           <p className="text-sm text-muted-foreground">Sorteios, vídeos e certificados dos ganhadores</p>
         </div>
       </div>
 

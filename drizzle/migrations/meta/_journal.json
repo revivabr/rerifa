@@ -8,6 +8,13 @@
       "when": 1791665279219,
       "tag": "0000_restrict_campaign_asset_downloads",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1791665661913,
+      "tag": "0001_campaign_draw_media",
+      "breakpoints": true
     }
   ]
 }

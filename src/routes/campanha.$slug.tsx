@@ -16,6 +16,7 @@ import { calculateCampaignPrice, type PromotionTier } from "@/lib/promotions";
 import { getCampaignNumberAvailability, reserveOrder } from "@/lib/api/order.functions";
 import { buildCampaignShareMessage } from "@/lib/share";
 import { AVAILABILITY_REFRESH_MS, MAX_NUMBERS_PER_ORDER } from "@/lib/pix-policy";
+import { DrawVideo } from "@/components/DrawVideo";
 
 
 type CampaignMeta = {
@@ -345,6 +346,7 @@ function CampaignPage() {
         </div>
 
         {/* 3) Escolha seus números — largura total */}
+        <DrawVideo slug={slug} />
         <section id="escolher-numeros">
           <div className="relative overflow-hidden rounded-[2rem] border border-black/[0.05] bg-white p-4 shadow-2xl sm:p-6 md:rounded-[2.5rem] md:p-12">
             <div className="absolute top-0 right-0 p-8 opacity-5 pointer-events-none">

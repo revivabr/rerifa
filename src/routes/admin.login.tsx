@@ -9,6 +9,13 @@ import { toast } from "sonner";
 import logoColor from "@/assets/logo-reviva-color.png.asset.json";
 
 export const Route = createFileRoute("/admin/login")({
+  head: () => ({ meta: [
+    { title: "Acesso administrativo | Reviva Rifa" },
+    { name: "description", content: "Acesso seguro ao painel da Associação Reviva Brasil." },
+    { property: "og:title", content: "Acesso administrativo | Reviva Rifa" },
+    { property: "og:description", content: "Acesso seguro ao painel da Associação Reviva Brasil." },
+    { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" },
+  ] }),
   component: AdminLogin,
 });
 

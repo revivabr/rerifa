@@ -7,6 +7,13 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/admin")({
+  head: () => ({ meta: [
+    { title: "Administração | Reviva Rifa" },
+    { name: "description", content: "Painel de gestão da Reviva Rifa da Associação Reviva Brasil." },
+    { property: "og:title", content: "Administração | Reviva Rifa" },
+    { property: "og:description", content: "Painel de gestão da Reviva Rifa da Associação Reviva Brasil." },
+    { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" },
+  ] }),
   component: AdminLayout,
 });
 

@@ -5,6 +5,13 @@ import { formatBRL, formatDateBR } from "@/lib/format";
 import { Ticket, DollarSign, Users, TrendingUp, Plus } from "lucide-react";
 
 export const Route = createFileRoute("/admin/dashboard")({
+  head: () => ({ meta: [
+    { title: "Visão administrativa | Reviva Rifa" },
+    { name: "description", content: "Acompanhe campanhas e vendas solidárias da Associação Reviva Brasil." },
+    { property: "og:title", content: "Visão administrativa | Reviva Rifa" },
+    { property: "og:description", content: "Acompanhe campanhas e vendas solidárias da Associação Reviva Brasil." },
+    { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" },
+  ] }),
   component: AdminDashboard,
 });
 

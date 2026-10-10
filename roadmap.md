@@ -1,5 +1,8 @@
 # Roadmap
 
+- [x] Disponibilizar vídeo do sorteio por YouTube ou arquivo na página pública (envio WebM, entrega MP4 e intervalos 206 validados em campanha temporária removida)
+- [x] Gerar PDF comemorativo do ganhador com compra verificada no painel e validar visualmente (José Carlos, 071; duas páginas sem cortes ou sobreposições)
+
 - [x] Conferir o ganhador José Carlos Pereira: número 071 pago, pedido na posição 85; relatório completo e busca validados no painel sem alterar registros
 
 - [x] Criar estrutura de promoções e histórico de preço no pedido

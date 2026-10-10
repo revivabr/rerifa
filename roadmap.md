@@ -1,5 +1,7 @@
 # Roadmap
 
+- [ ] Conferir o ganhador José Carlos Pereira, número sorteado e sua ausência no relatório administrativo (incluindo captura enviada)
+
 - [x] Criar estrutura de promoções e histórico de preço no pedido
 - [x] Centralizar cálculo protegido na reserva
 - [x] Cadastrar 3 números por R$ 50 na campanha Vôo do Bem

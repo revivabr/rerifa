@@ -17,6 +17,14 @@ import { PromotionEditor } from "@/components/admin/PromotionEditor";
 import type { PromotionTier } from "@/lib/promotions";
 
 export const Route = createFileRoute("/admin/campaigns/$id")({
+  head: () => ({ meta: [
+    { title: "Pedidos da campanha | Reviva Rifa" },
+    { name: "description", content: "Consulta administrativa dos pedidos e compradores da campanha Reviva Rifa." },
+    { property: "og:title", content: "Pedidos da campanha | Reviva Rifa" },
+    { property: "og:description", content: "Consulta administrativa dos pedidos e compradores da campanha Reviva Rifa." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+  ] }),
   component: CampaignAdmin,
 });
 
@@ -30,6 +38,8 @@ function CampaignAdmin() {
   const [c, setC] = useState<Campaign | null>(null);
   const [stats, setStats] = useState({ sold: 0, reserved: 0, available: 0, raised: 0, buyers: 0 });
   const [orders, setOrders] = useState<OrderRow[]>([]);
+  const [orderSearch, setOrderSearch] = useState("");
+  const [ordersError, setOrdersError] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [form, setForm] = useState<Partial<Campaign>>({});
   const [ranking, setRanking] = useState<SellerRank[]>([]);
@@ -53,11 +63,27 @@ function CampaignAdmin() {
     const buyers = new Set((paid ?? []).map((o: { buyer_id: string }) => o.buyer_id)).size;
     setStats({ sold: sold ?? 0, reserved: reserved ?? 0, available: available ?? 0, raised, buyers });
 
-    const { data: ords } = await supabase.from("orders")
-      .select("id,status,amount,quantity,seller_name,created_at,paid_at,buyer:buyers(name,whatsapp,email),order_numbers(number)")
-      .eq("campaign_id", id).order("created_at", { ascending: false });
-    const allOrders = (ords ?? []) as unknown as OrderRow[];
-    setOrders(allOrders.slice(0, 50)); // Display only 50 latest
+    // Read every page; neither the screen nor the API's default row limit may hide old purchases.
+    const allOrders: OrderRow[] = [];
+    const batchSize = 500;
+    for (let offset = 0; ; offset += batchSize) {
+      const { data: ords, error } = await supabase.from("orders")
+        .select("id,status,amount,quantity,seller_name,created_at,paid_at,buyer:buyers(name,whatsapp,email),order_numbers(number)")
+        .eq("campaign_id", id)
+        .order("created_at", { ascending: false }).order("id", { ascending: false })
+        .range(offset, offset + batchSize - 1);
+      if (error) {
+        setOrdersError("Não foi possível carregar todos os pedidos. Tente atualizar novamente.");
+        return;
+      }
+      const batch = (ords ?? []) as unknown as OrderRow[];
+      allOrders.push(...batch);
+      if (batch.length < batchSize) break;
+    }
+    setOrdersError(null);
+    setOrders(allOrders);
+    setStats({ sold: sold ?? 0, reserved: reserved ?? 0, available: available ?? 0,
+      raised: allOrders.filter(o => o.status === "paid").reduce((sum, o) => sum + Number(o.amount), 0), buyers });
     const orderIds = allOrders.map(order => order.id);
     if (orderIds.length > 0) {
       const { data: issues } = await supabase.from("payment_reconciliation_issues")
@@ -234,6 +260,11 @@ function CampaignAdmin() {
 
   if (!c) return <p className="text-muted-foreground">Carregando…</p>;
   const pct = Math.round((stats.sold / c.number_quantity) * 100);
+  const normalize = (value: string) => value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+  const search = normalize(orderSearch);
+  const visibleOrders = orders.filter(o => !search ||
+    normalize([o.buyer?.name, o.buyer?.whatsapp, o.buyer?.email, o.seller_name, o.id].filter(Boolean).join(" ")).includes(search) ||
+    o.order_numbers.some(n => /^\d+$/.test(search) && n.number === Number(search)));
 
   return (
     <div className="space-y-6">
@@ -449,15 +480,22 @@ function CampaignAdmin() {
       )}
 
       <div className="rounded-2xl border border-border bg-card shadow-soft">
-        <div className="border-b border-border p-5"><h2 className="font-bold text-primary">Pedidos</h2></div>
+        <div className="border-b border-border p-5 space-y-3">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <h2 className="font-bold text-primary">Pedidos ({orders.length})</h2>
+            <Button variant="outline" size="sm" onClick={() => void load()}>Atualizar pedidos</Button>
+          </div>
+          <Input aria-label="Buscar pedidos" placeholder="Buscar comprador, contato ou número" value={orderSearch} onChange={e => setOrderSearch(e.target.value)} />
+          {ordersError && <p role="alert" className="text-sm text-destructive">{ordersError}</p>}
+        </div>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead className="bg-secondary text-left text-xs uppercase tracking-wider text-muted-foreground">
               <tr><th className="p-3">Comprador</th><th className="p-3">Vendedor</th><th className="p-3">Contato</th><th className="p-3">Números</th><th className="p-3">Qtd</th><th className="p-3">Valor</th><th className="p-3">Status</th><th className="p-3">Data</th><th className="p-3"></th></tr>
             </thead>
             <tbody className="divide-y divide-border">
-              {orders.length === 0 && <tr><td colSpan={9} className="p-6 text-center text-muted-foreground">Nenhum pedido ainda.</td></tr>}
-              {orders.map(o => {
+              {visibleOrders.length === 0 && <tr><td colSpan={9} className="p-6 text-center text-muted-foreground">{orderSearch ? "Nenhum pedido encontrado." : "Nenhum pedido ainda."}</td></tr>}
+              {visibleOrders.map(o => {
                 const nums = (o.order_numbers ?? []).map(n => n.number).sort((a, b) => a - b);
                 return (
                 <tr key={o.id} className="hover:bg-secondary/30">

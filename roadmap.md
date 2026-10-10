@@ -1,5 +1,6 @@
 # Roadmap
 
+- [x] Corrigir autorização de vídeo/PDF: PDF real baixado, upload e reprodução pública validados em campanha temporária removida; 14 testes preventivos aprovados
 - [x] Disponibilizar vídeo do sorteio por YouTube ou arquivo na página pública (envio WebM, entrega MP4 e intervalos 206 validados em campanha temporária removida)
 - [x] Gerar PDF comemorativo do ganhador com compra verificada no painel e validar visualmente (José Carlos, 071; duas páginas sem cortes ou sobreposições)
 
